@@ -2,8 +2,13 @@
 
 HepCEP project networks repository
 
+
+To test the ergm.userterms package.
+
+
 ```R
 library(network)
+library(ergm.userterms)
 
 # Test of dist metric 
 nw.size <- 10000
