@@ -145,7 +145,7 @@
 
 
 InitErgmTerm.dist <- function(nw, arglist, ...) {
-  a <- check.ErgmTerm(nw, arglist, directed=FALSE, bipartite=FALSE,
+  a <- check.ErgmTerm(nw, arglist, directed=NULL, bipartite=FALSE,
       varnames = c("dist"),
       vartypes = c("numeric"),
       required = c(TRUE),
