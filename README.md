@@ -4,8 +4,7 @@ HepCEP project networks repository
 
 
 To test the ergm.userterms package.
-# Package can be built using R CMD build and R CMD INSTALL as explained at 
-# https://cran.r-project.org/web/packages/ergm.userterms/ergm.userterms.pdf
+# Package can be built using R CMD build and R CMD INSTALL as explained [at](https://cran.r-project.org/web/packages/ergm.userterms/ergm.userterms.pdf)
 
 ```R
 library(network)
