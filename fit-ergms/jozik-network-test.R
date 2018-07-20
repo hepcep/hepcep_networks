@@ -20,7 +20,7 @@ ggg %v% "lon" <- rep(-87.6964695120882,times = nw.size)
 summary(ggg ~ dist(1:7))
 
 # fit ergm
-undir1 <- ergm(ggg ~ edges + dist(1:5))
+undir1 <- ergm(ggg ~ edges + dist(1:5)) #specifying dist(7) produces a coef of NA
 summary(undir1)
 
 # simulate and test gof
