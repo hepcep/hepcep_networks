@@ -1,5 +1,9 @@
 # Space for Networks Agenda and Notes
 
+## July 27, 2018
+* Critique email to statnet listserv regarding NA parameter.
+* Discuss if large population model (32K nodes) with edges+dist(c(1:5,7)) works. Might not know the answer by the time we start our call.
+
 ## July 20, 2018
 * ERGMs using the distance term did not work on the full network. 
 Most failed with a degeneracy error, it was not just a matter of converging. 
