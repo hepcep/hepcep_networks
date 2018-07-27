@@ -2,7 +2,9 @@
 
 ## July 27, 2018
 * Critique email to statnet listserv regarding NA parameter.
-* Discuss if large population model (32K nodes) with edges+dist(c(1:5,7)) works. Might not know the answer by the time we start our call.
+* Discuss if large population model (32K nodes) with edges+dist(c(1:5,7)) works. Might not know the answer by the time we start our call. 
+On reason may be that in the network of size 10K we first initialized a random network and then estimated coefficients for `edges+dist(c(1:5,7)`.
+In the case with 32K nodes, we are trying to supply target statistics for parameters and estimate coefficients that way.
 
 ## July 20, 2018
 * ERGMs using the distance term did not work on the full network. 
