@@ -26,7 +26,51 @@ fit <- ergm(n0 ~ edges +
 ```
 See output in `out/large-net-edges-dist-1thru5-7.RData`.
 
-* Now add some degree terms here.
+* Now add some degree terms here. 
+Following model didn't converge as per the default convergence metrics, but output may be worth examining:
+`out/large-net-edges-dist-indeg0-2-outdeg0-2.RData`
+```
+ dist.terms <- c(1:5,7) #leave one out 
+> 
+> fit <- ergm(n0 ~ edges + 
++             dist(dist.terms) +
++             odegree(c(0, 2)) + idegree(c(0,2)),
++             target.stats = c(nedges, 
++                              dist.nedge.distribution[dist.terms],
++                              outdeg_tbl[c(1,3)], indeg_tbl[c(1,3)]),
++             eval.loglik = FALSE,
++             control = control.ergm(MCMLE.maxit = 500)
++             )
+Unable to match target stats. Using MCMLE estimation.
+Starting maximum likelihood estimation via MCMLE:
+Iteration 1 of at most 500:
+Optimizing with step length 0.212847367446147.
+...
+Iteration 500 of at most 500:
+Optimizing with step length 0.527544819426537.
+The log-likelihood improved by 1.868.
+MCMLE estimation did not converge after 500 iterations. The estimated coefficients may not be accurate. Estimation may be resumed by passing the coefficients as initial values; see 'init' under ?control.ergm for details.
+This model was fit using MCMC.  To examine model diagnostics and check for degeneracy, use the mcmc.diagnostics() function.
+> 
+> 
+> sim <- simulate(fit)
+> sim
+ Network attributes:
+  vertices = 32001 
+  directed = TRUE 
+  hyper = FALSE 
+  loops = FALSE 
+  multiple = FALSE 
+  bipartite = FALSE 
+  total edges= 15796 
+    missing edges= 0 
+    non-missing edges= 15796 
+
+ Vertex attribute names: 
+    lat lon vertex.names 
+
+ Edge attribute names not shown 
+```
 
 ## July 27, 2018
 * Critique email to statnet listserv regarding NA parameter.
