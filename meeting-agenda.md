@@ -71,6 +71,57 @@ This model was fit using MCMC.  To examine model diagnostics and check for degen
 
  Edge attribute names not shown 
 ```
+* Above model seems to produce reasonable output, even though ERGM did not converge as per default criteria:
+
+```
+> load("large-net-edges-dist-indeg0-2-outdeg0-2.RData")
+> ls()
+ [1] "data"                    "dist.nedge.distribution" "dist.prop.distribution"  "dist.terms"             
+ [5] "fit"                     "indeg"                   "indeg_tbl"               "mdeg"                   
+ [9] "n0"                      "nedges"                  "outdeg"                  "outdeg_tbl"             
+[13] "sim"                    
+> sim
+ Network attributes:
+  vertices = 32001 
+  directed = TRUE 
+  hyper = FALSE 
+  loops = FALSE 
+  multiple = FALSE 
+  bipartite = FALSE 
+  total edges= 15796 
+    missing edges= 0 
+    non-missing edges= 15796 
+
+ Vertex attribute names: 
+    lat lon vertex.names 
+
+ Edge attribute names not shown 
+
+
+> summary(sim ~ dist(1:7))/(sum(summary(sim ~ dist(1:7))))
+     dist1      dist2      dist3      dist4      dist5      dist6      dist7 
+0.29450494 0.11971385 0.11971385 0.15003798 0.15351988 0.10268422 0.05982527 
+> dist.nedge.distribution
+[1] 4704.60 1881.84 1881.84 2352.30 2352.30 1568.20  940.92
+> dist.nedge.distribution/sum(dist.nedge.distribution)
+[1] 0.30 0.12 0.12 0.15 0.15 0.10 0.06
+
+> outdeg_tbl
+ [1] 22990  6482  1592   478   193   135    23    11    16    29     2     4    12     2     1    27     4
+
+> summary(sim ~ odegree(0:10))
+ odegree0  odegree1  odegree2  odegree3  odegree4  odegree5  odegree6  odegree7  odegree8  odegree9 
+    22565      5776      1764      1316       416       119        36         4         4         1 
+odegree10 
+        0 
+
+> indeg_tbl
+ [1] 21652  7704  1775   438   175    92    51    29    29     2     5    25     3    16     2     3
+> summary(sim ~ idegree(0:10))
+ idegree0  idegree1  idegree2  idegree3  idegree4  idegree5  idegree6  idegree7  idegree8  idegree9 idegree10 
+    21350      7381      1876      1018       293        67        12         3         0         1         0 
+ 
+```
 
 ## July 27, 2018
 * Critique email to statnet listserv regarding NA parameter.
