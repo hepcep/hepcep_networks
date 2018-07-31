@@ -24,6 +24,7 @@ fit <- ergm(n0 ~ edges +
 
 
 ```
+See output in `out/large-net-edges-dist-1thru5-7.RData`.
 
 * Now add some degree terms here.
 
