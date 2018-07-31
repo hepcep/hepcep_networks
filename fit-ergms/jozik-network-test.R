@@ -10,7 +10,7 @@ library(ergm.userterms)
 # Initialize (and test with) undirected network ----
 
 # set up network 1
-nw.size <- 10000
+nw.size <- 32000
 m = matrix(c(rep(1,nw.size-1),2:nw.size), byrow = FALSE, ncol = 2)
 ggg <- as.network(m, matrix.type='edgelist',directed = F)
 ggg %v% "lat" <- seq(41.9,41.3,length.out = nw.size)
@@ -20,7 +20,7 @@ ggg %v% "lon" <- rep(-87.6964695120882,times = nw.size)
 summary(ggg ~ dist(1:7))
 
 # fit ergm
-undir1 <- ergm(ggg ~ edges + dist(1:5)) #specifying dist(7) produces a coef of NA
+undir1 <- ergm(ggg ~ edges + dist(c(1:5, 7))) #specifying dist(7) produces a coef of NA
 summary(undir1)
 
 # simulate and test gof
