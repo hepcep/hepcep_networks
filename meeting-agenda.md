@@ -1,4 +1,13 @@
-# Space for Networks Agenda and Notes
+# Agenda and Notes
+
+## July 31, 2018
+* Emailed Steve G about the seventh distance parameter to check if it is being assigned an ERGM coefficientof NA 
+because it is considered to be a base term.
+* We have seen that the starting network in our [example](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/jozik-network-test.R)
+produced valid estimates and simulated network outputs with a population size of 10K. 
+This model specification works even with a population of size 32K. 
+* The model crashes When we attempt to fit an ERGM with target statistics specified for a newtwork with 32K nodes. 
+Think about whether these specified target statistics are somehow incorrect.
 
 ## July 27, 2018
 * Critique email to statnet listserv regarding NA parameter.
