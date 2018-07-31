@@ -7,7 +7,25 @@ because it is considered to be a base term.
 produced valid estimates and simulated network outputs with a population size of 10K. 
 This model specification works even with a population of size 32K. 
 * The model crashes When we attempt to fit an ERGM with target statistics specified for a newtwork with 32K nodes. 
-Think about whether these specified target statistics are somehow incorrect.
+Think about whether these specified target statistics are somehow incorrect. 
+* Found the error in above -- I had forgotten to divide the %s in the distance distribution by 100. 
+After I corrected the error, the following model converged:
+
+```
+dist.terms <- c(1:5,7) #leave one out 
+
+fit <- ergm(n0 ~ edges + 
+            dist(dist.terms),
+            target.stats = c(nedges, 
+                             dist.nedge.distribution[dist.terms]),
+            eval.loglik = FALSE,
+            control = control.ergm(MCMLE.maxit = 500)
+            )
+
+
+```
+
+* Now add some degree terms here.
 
 ## July 27, 2018
 * Critique email to statnet listserv regarding NA parameter.
