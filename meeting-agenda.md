@@ -123,6 +123,11 @@ odegree10
  
 ```
 
+#### To-dos:
+* Specify degree 3 in out- and in-degrees in the above model with edges+dist+deg(0,2)
+* Think about the strengths and weaknesses of ERGM as opposed to Sasha's APK approach. 
+* Think about how these cross-sectional fits can be translated to the type of dynamic model that we are interested in. 
+
 ## July 27, 2018
 * Critique email to statnet listserv regarding NA parameter.
 * Discuss if large population model (32K nodes) with edges+dist(c(1:5,7)) works. Might not know the answer by the time we start our call. 
