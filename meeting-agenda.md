@@ -1,5 +1,27 @@
 # Agenda and Notes
 
+## August 31, 2018
+* Review base terms response from Steven G
+* Think about the strengths and weaknesses of ERGM as opposed to Sasha's APK approach (in terms of using ERGM to predict the exact links that are represented in the data)
+* Think about how these cross-sectional fits can be translated to the type of dynamic model that we are interested in. 
+* Add degree 3 to converged model `*degree(c(0,2))` below, to get:         
+                               
+```
+> dist.terms <- c(1:5,7) #leave one out 
+ 
+> fit <- ergm(n0 ~ edges + 
++             dist(dist.terms) +
++             odegree(c(0,2,3)) + idegree(c(0,2,3)),
++             target.stats = c(nedges, 
++                              dist.nedge.distribution[dist.terms],
++                              outdeg_tbl[c(1,3,4)], indeg_tbl[c(1,3,4)]),
++             eval.loglik = FALSE,
++             control = control.ergm(MCMLE.maxit = 500)
++             )
+
+```
+I've run the model above, but it is running slowly.     
+         
 ## July 31, 2018
 * Emailed Steve G about the seventh distance parameter to check if it is being assigned an ERGM coefficientof NA 
 because it is considered to be a base term.
