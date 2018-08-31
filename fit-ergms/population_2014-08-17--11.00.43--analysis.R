@@ -38,65 +38,23 @@ mdeg <- nedges/nrow(data)
 sum(indeg)
 sum(outdeg)
 
-dist.prop.distribution <- c(30, 12, 12, 15, 15, 10)
+dist.prop.distribution <- c(30, 12, 12, 15, 15, 10, 6)/100 #seventh term calculated as 1-sum(of first 6)
 dist.nedge.distribution <- nedges*dist.prop.distribution
 
-    
 # Fit ERGM ----------
 
 n0 <- network.initialize(n = nrow(data))
 n0 %v% "lat" <- data$lat
 n0 %v% "lon" <- data$lon
 
-dist.terms <- 1:4
-
-##  fit <- ergm(n0 ~ edges + odegree(0) + idegree(0),
-##             target.stats = c(nedges, outdeg_tbl[1], indeg_tbl[1]),
-##             eval.loglik = FALSE,
-##             control = control.ergm(MCMLE.maxit = 100)
-##             )
-
-## sim <- simulate(fit)
-## sim
-
-## fit.add.degrees <-
-##   ergm(
-##     n0 ~ edges + odegree(c(0, 2)) + idegree(c(0,2)),
-##     target.stats = c(nedges, outdeg_tbl[c(1,3)], indeg_tbl[c(1,3)]),
-##     eval.loglik = FALSE,
-##     control = control.ergm(MCMLE.maxit = 100)
-##   )
-
-## summary(fit.add.degrees)
-## sim.fit.add.degrees <- simulate(fit.add.degrees)
-
-## fit <- ergm(n0 ~ edges + odegree(0) + idegree(0)+
-##            + dist(1:6),
-##             target.stats = c(nedges, outdeg_tbl[1], indeg_tbl[1],
-##                              dist.nedge.distribution),
-##             eval.loglik = FALSE,
-##             control = control.ergm(MCMLE.maxit = 500)
-##             )
-
-##############################
-#ABOVE ERGM DID NOT CONVERGE
-##############################
-
-## fit <- ergm(n0 ~ edges + odegree(0) + idegree(0)+
-##            + dist(dist.terms),
-##             target.stats = c(nedges, outdeg_tbl[1], indeg_tbl[1],
-##                              dist.nedge.distribution[dist.terms]),
-##             eval.loglik = FALSE,
-##             control = control.ergm(MCMLE.maxit = 500)
-##             )
-##############################
-#ABOVE ERGM DID NOT CONVERGE
-##############################
+dist.terms <- c(1:5,7) #leave one out 
 
 fit <- ergm(n0 ~ edges + 
-            dist(dist.terms),
+            dist(dist.terms) +
+            odegree(c(0, 2)) + idegree(c(0,2)),
             target.stats = c(nedges, 
-                             dist.nedge.distribution[dist.terms]),
+                             dist.nedge.distribution[dist.terms],
+                             outdeg_tbl[c(1,3)], indeg_tbl[c(1,3)]),
             eval.loglik = FALSE,
             control = control.ergm(MCMLE.maxit = 500)
             )
