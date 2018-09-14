@@ -1,5 +1,66 @@
 # Agenda and Notes
 
+## September 14, 2018
+* Think about the strengths and weaknesses of ERGM as opposed to Sasha's APK approach (in terms of using ERGM to predict the exact links that are represented in the data)
+* Think about how these cross-sectional fits can be translated to the type of dynamic model that we are interested in. 
+* Try Steve G's recommendation on flipping order of `dist` terms to see if one that gets the NA switches.
+
+## August 31, 2018
+* Review base terms response from Steven G
+* Think about the strengths and weaknesses of ERGM as opposed to Sasha's APK approach (in terms of using ERGM to predict the exact links that are represented in the data)
+* Think about how these cross-sectional fits can be translated to the type of dynamic model that we are interested in. 
+* Add degree 3 to converged model `*degree(c(0,2))` below, to get:         
+                               
+```
+> dist.terms <- c(1:5,7) #leave one out 
+ 
+> fit <- ergm(n0 ~ edges + 
++             dist(dist.terms) +
++             odegree(c(0,2,3)) + idegree(c(0,2,3)),
++             target.stats = c(nedges, 
++                              dist.nedge.distribution[dist.terms],
++                              outdeg_tbl[c(1,3,4)], indeg_tbl[c(1,3,4)]),
++             eval.loglik = FALSE,
++             control = control.ergm(MCMLE.maxit = 500)
++             )
+
+```
+Model fit is below:
+
+```
+> load("large-net-dist-term.RData")
+
+> summary(sim ~ odegree(0:15))/sum(summary(sim ~ odegree(0:15))) 
+    odegree0     odegree1     odegree2     odegree3     odegree4     odegree5 
+6.997594e-01 1.933377e-01 5.674823e-02 1.724946e-02 2.253055e-02 7.437268e-03 
+    odegree6     odegree7     odegree8     odegree9    odegree10    odegree11 
+2.031187e-03 7.187275e-04 1.249961e-04 6.249805e-05 0.000000e+00 0.000000e+00 
+   odegree12    odegree13    odegree14    odegree15 
+0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 
+
+> outdeg_tbl/nrow(data)
+ [1] 7.184150e-01 2.025562e-01 4.974845e-02 1.493703e-02 6.031062e-03
+ [6] 4.218618e-03 7.187275e-04 3.437393e-04 4.999844e-04 9.062217e-04
+[11] 6.249805e-05 1.249961e-04 3.749883e-04 6.249805e-05 3.124902e-05
+[16] 8.437236e-04 1.249961e-04
+
+> summary(sim ~ idegree(0:15))/sum(summary(sim ~ idegree(0:15)))
+    idegree0     idegree1     idegree2     idegree3     idegree4     idegree5 
+6.621668e-01 2.397113e-01 6.156058e-02 1.459329e-02 1.493703e-02 4.656104e-03 
+    idegree6     idegree7     idegree8     idegree9    idegree10    idegree11 
+1.624949e-03 7.187275e-04 3.124902e-05 0.000000e+00 0.000000e+00 0.000000e+00 
+   idegree12    idegree13    idegree14    idegree15 
+0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 
+
+> indeg_tbl/nrow(data)
+ [1] 6.766039e-01 2.407425e-01 5.546702e-02 1.368707e-02 5.468579e-03
+ [6] 2.874910e-03 1.593700e-03 9.062217e-04 9.062217e-04 6.249805e-05
+[11] 1.562451e-04 7.812256e-04 9.374707e-05 4.999844e-04 6.249805e-05
+[16] 9.374707e-05
+
+> 
+```
+         
 ## July 31, 2018
 * Emailed Steve G about the seventh distance parameter to check if it is being assigned an ERGM coefficientof NA 
 because it is considered to be a base term.
