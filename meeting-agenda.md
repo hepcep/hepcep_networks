@@ -5,8 +5,9 @@
 * Think about how these cross-sectional fits can be translated to the type of dynamic model that we are interested in. 
 * Verified Steve G's recommendation on flipping order of `dist` terms to see if one that gets the NA switches. See [here](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/jozik-network-test.R).
 
-To do:
-* Generate a sample (say 100) networks from the fitted ERGM with specified targets below.   
+**To do:**   
+
+* Generate a sample (say 100) networks from the fitted ERGM with specified targets below.      
 * What are the additional mixing terms that need to be picked?     
 * What is the distribution of these mixing parameters of interest on the sample of networks generated above?    
 * Pick one value for that mixing parameter within this distribution.     
