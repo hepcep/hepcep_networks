@@ -6,11 +6,11 @@
 * Verified Steve G's recommendation on flipping order of `dist` terms to see if one that gets the NA switches. See [here](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/jozik-network-test.R).
 
 To do:
-* Generate a sample (say 100) networks from the fitted ERGM with specified targets below.
-* What are the additional mixing terms that need to be picked?
-* What is the distribution of these mixing parameters of interest on the sample of networks generated above?
-* Pick one value for that mixing parameter within this distribution. 
-* Check if a convergent ERGM can be fit ny specifing this value as a target statistic for the mixing paramter of interest.
+* Generate a sample (say 100) networks from the fitted ERGM with specified targets below.   
+* What are the additional mixing terms that need to be picked?     
+* What is the distribution of these mixing parameters of interest on the sample of networks generated above?    
+* Pick one value for that mixing parameter within this distribution.     
+* Check if a convergent ERGM can be fit ny specifing this value as a target statistic for the mixing paramter of interest.     
 
 
 ## August 31, 2018
