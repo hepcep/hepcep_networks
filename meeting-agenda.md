@@ -3,7 +3,7 @@
 ## September 14, 2018
 * Think about the strengths and weaknesses of ERGM as opposed to Sasha's APK approach (in terms of using ERGM to predict the exact links that are represented in the data)
 * Think about how these cross-sectional fits can be translated to the type of dynamic model that we are interested in. 
-* Try Steve G's recommendation on flipping order of `dist` terms to see if one that gets the NA switches.
+* Verified Steve G's recommendation on flipping order of `dist` terms to see if one that gets the NA switches. See [here](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/jozik-network-test.R).
 
 ## August 31, 2018
 * Review base terms response from Steven G
