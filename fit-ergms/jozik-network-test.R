@@ -23,7 +23,7 @@ summary(ggg ~ dist(1:7))
 undir1 <- ergm(ggg ~ edges + dist(c(1:5, 7))) #specifying dist(7) produces a coef of NA
 summary(undir1)
 
-undir2 <- ergm(ggg ~ edges + dist(7:1)) #specifying dist(7) produces a coef of NA
+undir2 <- ergm(ggg ~ edges + dist(7:1)) #specifying in reverse order
 summary(undir2)
 
 # simulate and test gof
