@@ -3,7 +3,12 @@
 ## October 12, 2018
 * I am sorry I haven't had a chance to make much progress on these tasks given everything that has been going on with BARS and other things. 
 * I am working on it now. I'll have some questions for you today, and then complete the task list from last time over next week. 
-* I will send an update by email while you are away. 
+* I will send an update by email while you are away.
+
+To-do:
+* Recode Zip in data as `chicago=1, else=0` if first three digits of Zip are 606.
+* Consider race mixing, gender mixing and chicago mixing as test cases for convergence with mixing parameters
+* Complete to-dos from September 14.
 
 ## September 14, 2018
 * Think about the strengths and weaknesses of ERGM as opposed to Sasha's APK approach (in terms of using ERGM to predict the exact links that are represented in the data)
