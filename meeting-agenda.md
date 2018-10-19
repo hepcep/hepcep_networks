@@ -4,8 +4,7 @@
 * Set up for testing convergence of models with target statistics estimated from 100 networks, including coding for 
 race, gender, Chicago residence is [here](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/simulate-convergence-setup.R).    
 
-* We did this exercise because we don't have reliable estimates of mixing by race, gender or Chicago residence. 
-I was getting some model specification error with race. I will add that in next.    
+* We did this exercise because we don't have reliable estimates of mixing by race, gender or Chicago residence.   
    
 * Convergence of model fit with edges, distance, odegree, idegree, chicago-mixing, gender-mixing below. Add race in next 
 (I was getting some form of specification error in that.)        
