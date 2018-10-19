@@ -2,7 +2,187 @@
 
 ## October 19, 2018 (non-meeting update)
 * Set up for testing convergence of models with target statistics estimated from 100 networks, including coding for 
-race, gender, Chicago residence is [here](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/simulate-convergence-setup.R).
+race, gender, Chicago residence is [here](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/simulate-convergence-setup.R).   
+  
+* Convergence of model fit with edges, distance, odegree, idegree, chicago-mixing, gender-mixing below. Add race in next 
+(I was getting some form of specification error in that.)     
+
+```     
+> rm(list=ls())
+> 
+> # Libraries ---------------------------
+> 
+> library(network)
+network: Classes for Relational Data
+Version 1.13.0.1 created on 2015-08-31.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+                    Skye Bender-deMoll, University of Washington
+ For citation information, type citation("network").
+ Type help("network-package") to get started.
+
+> library(ergm)
+Loading required package: statnet.common
+
+Attaching package: 'statnet.common'
+
+The following object is masked from 'package:base':
+
+    order
+
+
+ergm: version 3.8.0, created on 2017-08-18
+Copyright (c) 2017, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+                    with contributions from
+                    Li Wang
+                    Kirk Li, University of Washington
+                    Skye Bender-deMoll, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm").
+
+NOTE: Versions before 3.6.1 had a bug in the implementation of the bd()
+constriant which distorted the sampled distribution somewhat. In
+addition, Sampson's Monks datasets had mislabeled vertices. See the
+NEWS and the documentation for more details.
+
+
+Attaching package: 'ergm'
+
+The following objects are masked from 'package:statnet.common':
+
+    colMeans.mcmc.list, sweep.mcmc.list
+
+> library(dplyr)
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+> library(ergm.userterms)
+
+ergm.userterms: version 3.1.1, created on 2013-04-26
+Copyright (c) 2013, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm.userterms").
+
+NOTE: If you use custom ERGM terms based on 'ergm.userterms' version
+prior to 3.1, you will need to perform a one-time update of the package
+boilerplate files (the files that you did not write or modify) from
+'ergm.userterms' 3.1 or later. See help('eut-upgrade') for
+instructions.
+
+Warning messages:
+1: replacing previous import 'statnet.common::colMeans.mcmc.list' by 'ergm::colMeans.mcmc.list' when loading 'ergm.userterms' 
+2: replacing previous import 'statnet.common::sweep.mcmc.list' by 'ergm::sweep.mcmc.list' when loading 'ergm.userterms' 
+> 
+> 
+> # Load data ---------------------------
+> 
+> load("simulate-convergence-setup.RData")
+> 
+> 
+> # Fit ERGM with mixing targets derived above ---------------------------
+> 
+> fit.mixing <- ergm(n0 ~ edges + 
++               dist(dist.terms) +
++               #nodematch("race", diff=TRUE, keep=c(1,3,6,10))+
++               nodematch("gender", diff=TRUE, keep=c(1,4))+ 
++               nodematch("chicago", diff=TRUE, keep=c(1,4))+
++               odegree(c(0,2,3))+ 
++               idegree(c(0,2,3)),
++               target.stats = c(
++                   nedges_mean, 
++                   dist.nedge.distribution[dist.terms],
++                   #race_mm_mat_mean[c(1,3,6,10)],
++                   gender_mm_mat_mean[c(1,4)],
++                   chicago_mm_mat_mean[c(1,4)],
++                   outdeg_tbl[c(1,3,4)], 
++                   indeg_tbl[c(1,3,4)]
++                   ),
++             eval.loglik = FALSE,
++             control = control.ergm(MCMLE.maxit = 500)
++ )
+Unable to match target stats. Using MCMLE estimation.
+Starting maximum likelihood estimation via MCMLE:
+Iteration 1 of at most 500:
+Optimizing with step length 0.192489573511744.
+The log-likelihood improved by 6.734.
+Iteration 2 of at most 500:
+Optimizing with step length 0.240416658815067.
+The log-likelihood improved by 1.56.
+Iteration 3 of at most 500:
+...
+The log-likelihood improved by 1.577.
+Iteration 499 of at most 500:
+Optimizing with step length 0.151438045602504.
+The log-likelihood improved by 1.558.
+Iteration 500 of at most 500:
+Optimizing with step length 0.117474149225453.
+The log-likelihood improved by 1.945.
+MCMLE estimation did not converge after 500 iterations. The estimated coefficients may not be accurate. Estimation may be resumed by passing the coefficients as initial values; see 'init' under ?control.ergm for details.
+This model was fit using MCMC.  To examine model diagnostics and check for degeneracy, use the mcmc.diagnostics() function.
+> 
+> # Simualte ERGM from above with mixing targets derived above ---------------------------
+> 
+> sim <- simulate(fit.mixing)
+> sim
+ Network attributes:
+  vertices = 32001 
+  directed = TRUE 
+  hyper = FALSE 
+  loops = FALSE 
+  multiple = FALSE 
+  bipartite = FALSE 
+  total edges= 16272 
+    missing edges= 0 
+    non-missing edges= 16272 
+
+ Vertex attribute names: 
+    age age_started azi chicago daily_injection_intensity fraction_recept_sharing gender hcv lat lon num_buddies race syringe_source vertex.names zip zz 
+
+ Edge attribute names not shown 
+> 
+> # Compare statistics ---------------------------
+> 
+> network.edgecount(sim); nedges_mean
+[1] 16272
+[1] 15833.67
+> summary(sim ~ dist(1:7)); dist_mat_mean
+dist1 dist2 dist3 dist4 dist5 dist6 dist7 
+ 4615  1831  1959  2455  2535  1866  1011 
+[1] 4519.19 1807.88 1919.56 2517.60 2460.31 1628.49  980.64
+> 
+> # Save data ---------------------------
+> 
+> save.image("large-net-dist-term-mixing.RData")
+> 
+> proc.time()
+    user   system  elapsed 
+6775.931   48.892 6830.738      
+        
+```        
+
+
 
 ## October 12, 2018
 * I am sorry I haven't had a chance to make much progress on these tasks given everything that has been going on with BARS and other things. 
