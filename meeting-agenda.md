@@ -1,5 +1,102 @@
 # Agenda and Notes
 
+## November 2, 2018 (non-meeting notes)
+* Adding race mixing terms seem to produce reasonable results (see below)        
+* When i tried to run the ERGM fit to 500 iterations, the model hung at 212, twice. That was weird.
+
+```
+
+> 
+> # Load data ---------------------------
+> 
+> load("simulate-convergence-setup.RData")
+> 
+> 
+> # Fit ERGM with mixing targets derived above ---------------------------
+> 
+> fit.mixing <- ergm(n0 ~ edges + 
++               dist(dist.terms)+
++               nodemix("race", base=c(1))+
++               nodematch("gender", diff=TRUE, keep=c(1,4))+ 
++               nodematch("chicago", diff=TRUE, keep=c(1,4))+
++               odegree(c(0,2,3))+ 
++               idegree(c(0,2,3)),
++               target.stats = c(
++                   nedges_mean, 
++                   dist.nedge.distribution[dist.terms],
++                   race_mm_mat_mean[c(2:16)],
++                   gender_mm_mat_mean[c(1,4)],
++                   chicago_mm_mat_mean[c(1,4)],
++                   outdeg_tbl[c(1,3,4)], 
++                   indeg_tbl[c(1,3,4)]
++                   ),
++             eval.loglik = FALSE,
++             control = control.ergm(MCMLE.maxit = 200)
++ )
+Unable to match target stats. Using MCMLE estimation.
+Starting maximum likelihood estimation via MCMLE:
+Iteration 1 of at most 200:
+Optimizing with step length 0.112684084557912.
+The log-likelihood improved by 2.725.
+Iteration 2 of at most 200:
+...
+Iteration 198 of at most 200:
+Optimizing with step length 0.0793548444627166.
+The log-likelihood improved by 1.513.
+Iteration 199 of at most 200:
+Optimizing with step length 0.0695780145887017.
+The log-likelihood improved by 2.021.
+Iteration 200 of at most 200:
+Optimizing with step length 0.0339390788183932.
+The log-likelihood improved by 1.611.
+MCMLE estimation did not converge after 200 iterations. The estimated coefficients may not be accurate. Estimation may be resumed by passing the coefficients as initial values; see 'init' under ?control.ergm for details.
+This model was fit using MCMC.  To examine model diagnostics and check for degeneracy, use the mcmc.diagnostics() function.
+> 
+> # Simualte ERGM from above with mixing targets derived above ---------------------------
+> 
+> sim <- simulate(fit.mixing)
+> sim
+ Network attributes:
+  vertices = 32001 
+  directed = TRUE 
+  hyper = FALSE 
+  loops = FALSE 
+  multiple = FALSE 
+  bipartite = FALSE 
+  total edges= 16276 
+    missing edges= 0 
+    non-missing edges= 16276 
+
+ Vertex attribute names: 
+    age age_started azi chicago daily_injection_intensity fraction_recept_sharing gender hcv lat lon num_buddies race syringe_source vertex.names zip zz 
+
+ Edge attribute names not shown 
+ > # Compare statistics ---------------------------
+> 
+> network.edgecount(sim); nedges_mean
+[1] 16276
+[1] 15833.67
+> summary(sim ~ dist(1:7)); dist_mat_mean
+dist1 dist2 dist3 dist4 dist5 dist6 dist7 
+ 4626  1828  1967  2509  2468  1871  1007 
+[1] 4519.19 1807.88 1919.56 2517.60 2460.31 1628.49  980.64
+> mixingmatrix(sim, "race")
+       To
+From       1    2    3   4 Total
+  1     1452  780 1898 123  4253
+  2      842 1590 1609 101  4142
+  3     1761 1423 4031 225  7440
+  4       97   88  229  27   441
+  Total 4152 3881 7767 476 16276
+
+# target race mixing (fills above matrix by column)
+> race_mm_mat_mean
+ [1] 1496.09  841.32 1728.88  112.23  824.42 1560.46
+ [7] 1399.37   98.13 1866.76 1539.03 3694.66  215.42
+[13]  125.12   98.84  209.98   22.96
+
+```
+
 ## October 19, 2018 (non-meeting update)
 * Set up for testing convergence of models with target statistics estimated from 100 networks, including coding for 
 race, gender, Chicago residence is [here](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/simulate-convergence-setup.R).    
