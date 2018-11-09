@@ -98,6 +98,16 @@ From       1    2    3   4 Total
  [7] 1399.37   98.13 1866.76 1539.03 3694.66  215.42
 [13]  125.12   98.84  209.98   22.96
 
+...
+
+> # Save data ---------------------------
+> 
+> save.image("large-net-dist-term-mixing.RData")
+> 
+> proc.time()
+    user   system  elapsed 
+9369.545   38.992 9419.191 
+
 ```
 
 ## October 19, 2018 (non-meeting update)
