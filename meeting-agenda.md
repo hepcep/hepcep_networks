@@ -1,7 +1,9 @@
 # Agenda and Notes
 
 ## November 9, 2018 (non-meeting notes)
-* Talk through the modeling exercise and notes below.
+* Talk through the modeling exercise and notes below.   
+To do:
+* Why is there s `keep` argument in `nodemix`? Try removing it?
 
 ## November 2, 2018 (non-meeting notes)
 * Adding race mixing terms seem to produce reasonable results (see below)        
