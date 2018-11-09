@@ -1,5 +1,8 @@
 # Agenda and Notes
 
+## November 9, 2018 (non-meeting notes)
+* Talk through the modeling exercise and notes below.
+
 ## November 2, 2018 (non-meeting notes)
 * Adding race mixing terms seem to produce reasonable results (see below)        
 * When i tried to run the ERGM fit to 500 iterations, the model hung at 212, twice. That was weird.
