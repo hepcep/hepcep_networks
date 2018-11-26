@@ -1,6 +1,89 @@
 # Agenda and Notes
 
-## November 9, 2018 (non-meeting notes)
+## November 12, 2018 (non-meeting notes)
+* Removing `keep` argument in `nodemix` (as per to-do from November 9) still gives a convergent model.
+```
+> # Fit ERGM with mixing targets derived above ---------------------------
+> 
+> fit.mixing <- ergm(n0 ~ edges + 
++               dist(dist.terms)+
++               nodemix("race", base=c(1))+
++               nodematch("gender", diff=TRUE)+ 
++               nodematch("chicago", diff=TRUE)+
++               odegree(c(0,2,3))+ 
++               idegree(c(0,2,3)),
++               target.stats = c(
++                   nedges_mean, 
++                   dist.nedge.distribution[dist.terms],
++                   race_mm_mat_mean[c(2:16)],
++                   gender_mm_mat_mean[c(1,4)],
++                   chicago_mm_mat_mean[c(1,4)],
++                   outdeg_tbl[c(1,3,4)], 
++                   indeg_tbl[c(1,3,4)]
++                   ),
++             eval.loglik = FALSE,
++             control = control.ergm(MCMLE.maxit = 200)
++ )
+Unable to match target stats. Using MCMLE estimation.
+Starting maximum likelihood estimation via MCMLE:
+Iteration 1 of at most 200:
+Optimizing with step length 0.130963704709344.
+The log-likelihood improved by 3.128.
+...
+Iteration 200 of at most 200:
+Optimizing with step length 0.0366082455954375.
+The log-likelihood improved by 1.638.
+MCMLE estimation did not converge after 200 iterations. The estimated coefficients may not be accurate. Estimation may be resumed by passing the coefficients as initial values; see 'init' under ?control.ergm for details.
+This model was fit using MCMC.  To examine model diagnostics and check for degeneracy, use the mcmc.diagnostics() function.
+> 
+> # Simualte ERGM from above with mixing targets derived above ---------------------------
+> 
+> sim <- simulate(fit.mixing)
+> sim
+ Network attributes:
+  vertices = 32001 
+  directed = TRUE 
+  hyper = FALSE 
+  loops = FALSE 
+  multiple = FALSE 
+  bipartite = FALSE 
+  total edges= 16333 
+    missing edges= 0 
+    non-missing edges= 16333 
+
+ Vertex attribute names: 
+    age age_started azi chicago daily_injection_intensity fraction_recept_sharing gender hcv lat lon num_buddies race syringe_source vertex.names zip zz 
+
+ Edge attribute names not shown 
+> 
+> # Compare statistics ---------------------------
+> 
+> network.edgecount(sim); nedges_mean
+[1] 16333
+[1] 15833.67
+> summary(sim ~ dist(1:7)); dist_mat_mean
+dist1 dist2 dist3 dist4 dist5 dist6 dist7 
+ 4663  1881  1932  2498  2529  1835   995 
+[1] 4519.19 1807.88 1919.56 2517.60 2460.31 1628.49  980.64
+> mixingmatrix(sim, "race")
+       To
+From       1    2    3   4 Total
+  1     1487  826 1920 126  4359
+  2      795 1567 1628  86  4076
+  3     1802 1429 3975 227  7433
+  4      122   98  227  18   465
+  Total 4206 3920 7750 457 16333
+> 
+> # Save data ---------------------------
+> 
+> save.image("large-net-dist-term-mixing.RData")
+> 
+> proc.time()
+    user   system  elapsed 
+7554.853   36.120 7598.442 
+```
+
+## November 9, 2018 
 * Talk through the modeling exercise and notes below.   
 *To do:*
 * Why is there s `keep` argument in `nodemix`? Try removing it?
