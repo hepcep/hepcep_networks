@@ -1,7 +1,8 @@
 # Agenda and Notes
 
 ## December 07, 2018 (non-meeting notes)
-* Debrief regarding meeting with Basmattee
+* Debrief regarding calls with Basmattee (11/09 and 12/06).
+* Tabled about potential terms we may need for HeCep, nodefactor may work, or an "interaction" nodefactor as per Jenness et al, line 75 [here](https://github.com/EpiModel/PrEPGuidelines/blob/master/scripts/estimation/02.estim.R).
 
 ## November 12, 2018 (non-meeting notes)
 * Removing `keep` argument in `nodemix` (as per to-do from November 9) still gives a convergent model.
