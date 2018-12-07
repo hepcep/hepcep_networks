@@ -1,5 +1,8 @@
 # Agenda and Notes
 
+## December 07, 2018 (non-meeting notes)
+* Debrief regarding meeting with Basmattee
+
 ## November 12, 2018 (non-meeting notes)
 * Removing `keep` argument in `nodemix` (as per to-do from November 9) still gives a convergent model.
 ```
