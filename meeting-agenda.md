@@ -1,5 +1,19 @@
 # Agenda and Notes
 
+## January 18, 2018:   
+* Emailed the HepCep group (Basmattee, Anna, Mary Ellen) regarding next steps:
+```
+
+
+On 1/18/19, 12:37 PM, "Ozik, Jonathan" <jozik@anl.gov> wrote:
+
+    Hi all,
+    
+    I wanted to check back in on our joint meta-analysis and ERGM paper work. Have you been able to look further into or compile the relevant data? Please let us know if we should set up a follow up call or if you need any information from our end.
+    
+    Jonathan
+```
+
 ## December 07, 2018 (non-meeting notes)
 * Debrief regarding calls with Basmattee (11/09 and 12/06).
 * Tabled about potential terms we may need for HeCep, nodefactor may work, or an "interaction" nodefactor as per Jenness et al, line 75 [here](https://github.com/EpiModel/PrEPGuidelines/blob/master/scripts/estimation/02.estim.R).
