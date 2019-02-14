@@ -1,6 +1,9 @@
 # Agenda and Notes
 
-## January 18, 2018:   
+## Feb 1 and Feb 15, 2019:       
+* No meeting (waiting for response from UIC team)    
+
+## January 18, 2019:   
 * Emailed the HepCep group (Basmattee, Anna, Mary Ellen) regarding next steps:
 ```
 
