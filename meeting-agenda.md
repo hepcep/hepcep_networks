@@ -1,4 +1,7 @@
-# Agenda and Notes
+# Agenda and Notes   
+
+## April 26, 2019:
+* Synthesize recent conversations with the broader HepCep team and discuss next coding steps. 
 
 ## Feb 1 and Feb 15, 2019:       
 * No meeting (waiting for response from UIC team)    
