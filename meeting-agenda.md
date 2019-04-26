@@ -2,6 +2,12 @@
 
 ## April 26, 2019:
 * Synthesize recent conversations with the broader HepCep team and discuss next coding steps. 
+* From file, "demog_prop_est" sasign groups 1 - 32 with %s.
+* Use "distributions" Excel file from the first three tabs to fit ERGM.
+To do later:    
+* Zipcode distributions
+* In the "zipcount" file, create demographic group IDs with proportion.
+* Ignore zipcat = 0
 
 ## Feb 1 and Feb 15, 2019:       
 * No meeting (waiting for response from UIC team)    
