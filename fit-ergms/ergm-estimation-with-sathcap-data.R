@@ -67,23 +67,23 @@ tgt.young.pctold <- from.young*young.pctold
 tgt.old.pctyoung <- from.old*young.pctyoung  
 tgt.old.pctold <- from.old*young.pctold
 
-# ## chicago (young-old) 
-# ### mixing information from meta-analysis of sathcap AND socnet
-# chicago.pctchicago <- 0.60
-# chicago.pctold <- 0.40
-# old.pctchicago <- 0.14
-# old.pctold <- 0.86
-# 
-# ### mixing from simulation
-# chicago.mm <- mixingmatrix(sim, "gender") #fem=1, chicago=2
-# from.old <- sum(chicago.mm$matrix[,1])
-# from.chicago <- sum(chicago.mm$matrix[,2])
-# 
-# ### set chicago targets from sathcap
-# tgt.chicago.pctchicago <- from.chicago*chicago.pctchicago
-# tgt.chicago.pctold <- from.chicago*chicago.pctold
-# tgt.old.pctchicago <- from.old*chicago.pctchicago  
-# tgt.old.pctold <- from.old*chicago.pctold
+## chicago 
+### mixing information from meta-analysis of sathcap AND socnet
+chicago.pctchicago <- 0.67
+chicago.pctnonchicago <- 0.30
+nonchicago.pctchicago <- 0.60
+nonchicago.pctnonchicago <- 0.40
+
+### mixing from simulation
+chicago.mm <- mixingmatrix(sim, "chicago") #fem=1, chicago=2
+from.nonchicago <- sum(chicago.mm$matrix[,1])
+from.chicago <- sum(chicago.mm$matrix[,2])
+
+### set chicago targets from sathcap
+tgt.chicago.pctchicago <- from.chicago*chicago.pctchicago
+tgt.chicago.pctnonchicago <- from.chicago*chicago.pctnonchicago
+tgt.nonchicago.pctchicago <- from.nonchicago*chicago.pctchicago
+tgt.nonchicago.pctnonchicago <- from.nonchicago*chicago.pctnonchicago
 
 
 # Fit ERGM (with SATHCAP mixing) ----------
@@ -94,11 +94,13 @@ fit.sathcap.mixing <-
       edges +
       #odegree(c(0, 2, 3)) + idegree(c(0, 2, 3))+
       nodematch("gender", diff=TRUE)+
-      nodematch("young", diff=TRUE),
+      nodematch("young", diff=TRUE)+
+      nodematch("chicago", diff=TRUE),
     target.stats = c(nedges,
                      #outdeg_tbl[c(1, 3, 4)], indeg_tbl[c(1, 3, 4)],
                      c(tgt.female.pctfemale, tgt.male.pctmale),
-                     c(tgt.young.pctyoung, tgt.old.pctold)
+                     c(tgt.young.pctyoung, tgt.old.pctold),
+                     c(tgt.chicago.pctchicago, tgt.nonchicago.pctnonchicago)
                      ),
     eval.loglik = FALSE,
     control = control.ergm(MCMLE.maxit = 500)
