@@ -1,5 +1,10 @@
 # Agenda and Notes   
 
+## May 9, 2019:
+* Use distribution data from demogr.xlsx to assign groups.
+* Pages 1 and 2 contain the % of in-edges and pages 3-4 contain the % of out-edges which can be multiplied by n (total number of agents) to get indegree and outdegree. 
+* We can sum the number of in and out-degrees to get the total number of in and out edges.  
+
 ## April 26, 2019:
 * Synthesize recent conversations with the broader HepCep team and discuss next coding steps. 
 * From file, "demog_prop_est" sasign groups 1 - 32 with %s.
