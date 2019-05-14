@@ -16,12 +16,21 @@ library(dplyr)
 # demography
 demog.data <- read_excel("../HepCEP_ERGM/demog_prop_est.xlsx") 
 
+# edge data
+inedges.data <- read.csv(file = "../HepCEP_ERGM/inedges_data.csv", header = TRUE)
+outedges.data <- read.csv(file = "../HepCEP_ERGM/outedges_data.csv", header = TRUE)
 
 # Initialize network ----------
 
 n <- 32000
 n0 <- network.initialize(n = n, directed = TRUE)
 
+
+# Compute target number of edges ----------
+
+inedges_target <- sum(inedges.data$k * inedges.data$nbprob * n)
+outedges_target <- sum(outedges.data$k * outedges.data$nbprob * n)
+edges_target <- mean(c(inedges_target, outedges_target))
 
 # Set vertex attributes ----------
 
