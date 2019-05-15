@@ -70,6 +70,8 @@ n0 %v% "chicago" <- data$chicago #mutated chicago variable
 
 dist.terms <- c(1:5,7) #leave one out 
 
+list.vertex.attributes(n0)
+
 
 # Fit ERGM ----------
 
@@ -83,8 +85,11 @@ fit <- ergm(n0 ~ edges +
             control = control.ergm(MCMLE.maxit = 500)
             )
 
+list.vertex.attributes(n0)
 
 sim <- simulate(fit)
 sim
+
+list.vertex.attributes(n0)
 
 save.image("large-net-dist-term.RData")
