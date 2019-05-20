@@ -50,25 +50,23 @@ tgt.male.pctfemale <- edges_target*edges.male.end*male.pctfemale
 tgt.female.pctmale <- edges_target*edges.female.end*female.pctmale  
 tgt.female.pctfemale <- edges_target*edges.female.end*female.pctfemale
 
-# ## young (1=young; 0=old) 
-# ### mixing information from meta-analysis of sathcap AND socnet
-# young.pctyoung <- 0.60
-# young.pctold <- 0.40
-# old.pctyoung <- 0.14
-# old.pctold <- 0.86
-# 
-# ### mixing from simulation
-# sim %v% "young" <- n0 %v% "young" #attach "young" att for sim from n0
-# young.mm <- mixingmatrix(sim, "young")
-# from.old <- sum(young.mm$matrix[,1])
-# from.young <- sum(young.mm$matrix[,2])
-# 
-# ### set young targets from sathcap
-# tgt.young.pctyoung <- from.young*young.pctyoung
-# tgt.young.pctold <- from.young*young.pctold
-# tgt.old.pctyoung <- from.old*young.pctyoung  
-# tgt.old.pctold <- from.old*young.pctold
-# 
+## young (1=young; 0=old)
+### mixing information from meta-analysis of sathcap AND socnet
+edges.young.end <- 0.10
+edges.old.end <- 0.90
+  
+young.pctyoung <- 0.60
+young.pctold <- 0.40
+old.pctyoung <- 0.14
+old.pctold <- 0.86
+ 
+## set young targets from meta data
+tgt.young.pctyoung <- edges_target * edges.young.end * young.pctyoung
+tgt.young.pctold <- edges_target * edges.young.end * young.pctold
+tgt.old.pctyoung <- edges_target * edges.old.end * old.pctyoung
+tgt.old.pctold <- edges_target * edges.old.end * old.pctold
+
+
 # ## chicago 
 # ### mixing information from meta-analysis of sathcap AND socnet
 # chicago.pctchicago <- 0.67
@@ -112,9 +110,11 @@ fit.sathcap.mixing <-
     n0 ~ 
       edges +
       #odegree(c(0, 2, 3)) + idegree(c(0, 2, 3))+
-      nodemix("gender", base=1),
+      nodemix("gender", base=1)+
+      nodemix("young", base=1),
       target.stats = c(edges_target,
-                     c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale)
+                     c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
+                     c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung)
                      ),
     eval.loglik = FALSE,
     control = control.ergm(MCMLE.maxit = 500)
