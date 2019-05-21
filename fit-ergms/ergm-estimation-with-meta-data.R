@@ -26,11 +26,16 @@ age.cat.df <-
   mutate(age.cat, young = ifelse(age.cat == 0, 1, 0), .data = age.cat.df)
 xtabs(~age.cat+young, data = age.cat.df)
 
+# recode race variable to set ordering of categories
+race <- n0 %v% "race"
+race.num <- recode(race, 
+                   white = 1, black = 2,
+                   hispanic = 3, other = 4)
 
 # Initialize network and add attributes ----------
 
 n0 %v% "young" <- age.cat.df$young
-
+n0 %v% "race.num" <- race.num
 
 # Generate target statistics from meta-mixing data ----------
 
@@ -67,13 +72,18 @@ tgt.old.pctyoung <- edges_target * edges.old.end * old.pctyoung
 tgt.old.pctold <- edges_target * edges.old.end * old.pctold
 
 
-# ## chicago 
-# ### mixing information from meta-analysis of sathcap AND socnet
-# chicago.pctchicago <- 0.67
-# chicago.pctnonchicago <- 0.30
-# nonchicago.pctchicago <- 0.60
-# nonchicago.pctnonchicago <- 0.40
-# 
+## chicago
+### mixing information from meta-analysis of sathcap AND socnet
+
+edges.chicago.end <- 0.87
+edges.nonchicago.end <- 0.13
+
+chicago.pctchicago <- 0.67
+chicago.pctnonchicago <- 0.30
+nonchicago.pctchicago <- 0.60
+nonchicago.pctnonchicago <- 0.40
+
+
 # ### mixing from simulation
 # chicago.mm <- mixingmatrix(sim, "chicago") #fem=1, chicago=2
 # from.nonchicago <- sum(chicago.mm$matrix[,1])
@@ -84,24 +94,53 @@ tgt.old.pctold <- edges_target * edges.old.end * old.pctold
 # tgt.chicago.pctnonchicago <- from.chicago*chicago.pctnonchicago
 # tgt.nonchicago.pctchicago <- from.nonchicago*chicago.pctchicago
 # tgt.nonchicago.pctnonchicago <- from.nonchicago*chicago.pctnonchicago
-# 
-# ## race (1=Hisp, 2=NH Black,3=NHWhite, 4=O)
-# race.1.1 <- 0.58
-# race.1.2 <- 0.12
-# race.1.3 <- 0.18
-# race.1.4 <- 0.12
-# race.2.1 <- 0.06
-# race.2.2 <- 0.83
-# race.2.3 <- 0.10
-# race.2.4 <- 0.01
-# race.3.1 <- 0.12
-# race.3.2 <- 0.10
-# race.3.3 <- 0.73
-# race.3.4 <- 0.05
-# race.4.1 <- 0.22
-# race.4.2 <- 0.21
-# race.4.3 <- 0.43
-# race.4.4 <- 0.14
+
+
+## race (1=Black, 2=hispani,3=other, 4=O)
+
+table(n0 %v% "race.num") # will be sorted alphabetically
+
+pct_to_white	<- mean(c(0.30, 0.31))
+pct_to_black	<- mean(c(0.41,	0.42))
+pct_to_hispanic	<- mean(c(0.21, 0.22))
+pct_to_other	<- mean(c(0.04,	0.05))
+
+race.w.w <- 0.73
+race.b.w <- 0.10
+race.h.w <- 0.12
+race.o.w <- 0.04
+race.w.b <- 0.10
+race.b.b <- 0.83
+race.h.b <- 0.06
+race.o.b <- 0.01
+race.w.h <- 0.21
+race.b.h <- 0.15
+race.h.h <- 0.62
+race.o.h <- 0.02
+race.w.o <- 0.43
+race.b.o <- 0.21
+race.h.o <- 0.22
+race.o.o <- 0.14
+
+target.w.w <- edges_target * pct_to_white * race.w.w
+target.b.w <- edges_target * pct_to_white * race.b.w
+target.h.w <- edges_target * pct_to_white * race.h.w
+target.o.w <- edges_target * pct_to_white * race.o.w
+
+target.w.b <- edges_target * pct_to_black * race.w.b
+target.b.b <- edges_target * pct_to_black * race.b.b
+target.h.b <- edges_target * pct_to_black * race.h.b
+target.o.b <- edges_target * pct_to_black * race.o.b
+
+target.w.h <- edges_target * pct_to_hispanic * race.w.h
+target.b.h <- edges_target * pct_to_hispanic * race.b.h
+target.h.h <- edges_target * pct_to_hispanic * race.h.h
+target.o.h <- edges_target * pct_to_hispanic * race.o.h
+
+target.w.o <- edges_target * pct_to_other * race.w.o
+target.b.o <- edges_target * pct_to_other * race.b.o
+target.h.o <- edges_target * pct_to_other * race.h.o
+target.o.o <- edges_target * pct_to_other * race.o.o
 
 # Fit ERGM (with SATHCAP mixing) ----------
 
@@ -111,10 +150,15 @@ fit.sathcap.mixing <-
       edges +
       #odegree(c(0, 2, 3)) + idegree(c(0, 2, 3))+
       nodemix("gender", base=1)+
-      nodemix("young", base=1),
+      nodemix("young", base=1)+
+      nodemix("race.num", base=1),
       target.stats = c(edges_target,
                      c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
-                     c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung)
+                     c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung),
+                     c(target.b.w, target.h.w, target.o.w,
+                       target.w.b, target.b.b, target.h.b, target.o.b,
+                       target.w.h, target.b.h, target.h.h, target.o.h,
+                       target.w.o, target.b.o, target.h.o, target.o.o)
                      ),
     eval.loglik = FALSE,
     control = control.ergm(MCMLE.maxit = 500)
