@@ -14,8 +14,12 @@ library(ergm.userterms)
 
 # Data ----------
 
-load("meta-mixing-init-net.RData")
+load("meta-mixing-init-net.RData") # starting network from meta mixing data
+
+inedges <- read.csv("../HepCEP_ERGM/pplrss.csv") #in- and out-edges
+outedges <- read.csv("../HepCEP_ERGM/ppldss.csv")
 # refer to "population_2014-08-17--11.00.43--analysis.R" for an example
+
 
 # Recode to add new variables to dataset ----------
 
@@ -142,23 +146,33 @@ target.b.o <- edges_target * pct_to_other * race.b.o
 target.h.o <- edges_target * pct_to_other * race.h.o
 target.o.o <- edges_target * pct_to_other * race.o.o
 
+## degree distributions
+inedges <- inedges %>% 
+  mutate(n_nodes = n*nbprob)
+outedges <- outedges %>% 
+  mutate(n_nodes = n*nbprob)
+
+
 # Fit ERGM (with SATHCAP mixing) ----------
+
+deg.terms <- 1:3
 
 fit.sathcap.mixing <- 
   ergm(
     n0 ~ 
       edges +
-      #odegree(c(0, 2, 3)) + idegree(c(0, 2, 3))+
+      odegree(c(deg.terms)) + idegree(c(deg.terms))+
       nodemix("gender", base=1)+
-      nodemix("young", base=1)+
-      nodemix("race.num", base=1),
+      nodemix("young", base=1),
+      #nodemix("race.num", base=1),
       target.stats = c(edges_target,
+                     c(inedges$n_nodes[c(deg.terms+1)], outedges$n_nodes[deg.terms+1]), 
                      c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
-                     c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung),
-                     c(target.b.w, target.h.w, target.o.w,
-                       target.w.b, target.b.b, target.h.b, target.o.b,
-                       target.w.h, target.b.h, target.h.h, target.o.h,
-                       target.w.o, target.b.o, target.h.o, target.o.o)
+                     c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung)
+                     #c(target.b.w, target.h.w, target.o.w,
+                      # target.w.b, target.b.b, target.h.b, target.o.b,
+                       #target.w.h, target.b.h, target.h.h, target.o.h,
+                       #target.w.o, target.b.o, target.h.o, target.o.o)
                      ),
     eval.loglik = FALSE,
     control = control.ergm(MCMLE.maxit = 500)
