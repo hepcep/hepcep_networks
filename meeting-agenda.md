@@ -12,9 +12,9 @@ does not converge but networks simulated from fit seem reasonable.
 
 * Adding all four race mixing terms to this model using `nodemix` produces a degenerate model. 
 Recommended solution is to increase san parameters. A ten-fold increase in `SAN.maxit=100, SAN.burnin.times=100`
-did not help.
+ did not help.
 
-* MNodel with full race mixing specified does work when i- and o-degree terms are left out.
+* Model with full race mixing specified does work when i- and o-degree terms are left out.
 
 * Next step is to try specifying other configurations for race mixing when i- and o-degrees are included.
 
