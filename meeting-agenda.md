@@ -19,8 +19,7 @@ Recommended solution is to increase san parameters. A ten-fold increase in `SAN.
 * Next step is to try specifying other configurations for race mixing when i- and o-degrees are included.
 
 * If that doesn't work, email statnet listserv. 
-
-* Maybe try 
+   
 ## May 9, 2019:
 * Use distribution data from demogr.xlsx to assign groups.
 * Pages 1 and 2 contain the % of in-edges and pages 3-4 contain the % of out-edges which can be multiplied by n (total number of agents) to get indegree and outdegree. 
