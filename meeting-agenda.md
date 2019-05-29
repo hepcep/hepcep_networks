@@ -1,5 +1,26 @@
 # Agenda and Notes   
 
+## Model fit notes (05/29/2019):
+* Following model:
+```
+edges+
+idegree(1:3)+odegree(1:3)+
+nodemix("gender", base=1)+
+nodemix("young", base=1)
+```
+does not converge but networks simulated from fit seem reasonable.
+
+* Adding all four race mixing terms to this model using `nodemix` produces a degenerate model. 
+Recommended solution is to increase san parameters. A ten-fold increase in `SAN.maxit=100, SAN.burnin.times=100`
+did not help.
+
+* MNodel with full race mixing specified does work when i- and o-degree terms are left out.
+
+* Next step is to try specifying other configurations for race mixing when i- and o-degrees are included.
+
+* If that doesn't work, email statnet listserv. 
+
+* Maybe try 
 ## May 9, 2019:
 * Use distribution data from demogr.xlsx to assign groups.
 * Pages 1 and 2 contain the % of in-edges and pages 3-4 contain the % of out-edges which can be multiplied by n (total number of agents) to get indegree and outdegree. 
