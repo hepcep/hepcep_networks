@@ -8,7 +8,7 @@ idegree(1:3)+odegree(1:3)+
 nodemix("gender", base=1)+
 nodemix("young", base=1)
 ```
-does not converge but networks simulated from fit seem reasonable.
+does not converge but networks simulated from fit seem [close](https://docs.google.com/document/d/1JBKLihbtemgnyVHN9DpmqCb0NJcOKB5UkdWUAAOnh-I/edit?usp=sharing).
 
 * Adding all four race mixing terms to this model using `nodemix` produces a degenerate model. 
 Recommended solution is to increase san parameters. A ten-fold increase in `SAN.maxit=100, SAN.burnin.times=100`
@@ -18,7 +18,7 @@ Recommended solution is to increase san parameters. A ten-fold increase in `SAN.
 
 * Next step is to try specifying other configurations for race mixing when i- and o-degrees are included.
 
-* If that doesn't work, email statnet listserv. 
+* If that doesn't work, email `statnet` listserv. 
    
 ## May 9, 2019:
 * Use distribution data from demogr.xlsx to assign groups.
