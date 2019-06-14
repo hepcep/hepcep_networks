@@ -1,5 +1,9 @@
 # Agenda and Notes   
 
+## Meeting: 06/14/2019
+* Jonathan and I discussed the progress on ERGM fitting below, and drafted an email to the statnet helplist. 
+* Aditya has sent that email.  
+
 ## Model fit notes (05/29/2019):
 * Following model:
 ```
