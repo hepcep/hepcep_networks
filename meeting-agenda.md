@@ -1,5 +1,9 @@
 # Agenda and Notes   
 
+## Meeting: 07/09/2019
+* Review email sent to statnet listserv
+* Review alternate specification of model fit with `nodeifactor+nodeofactor+nodematch` instead of `nodemix`.
+
 ## Meeting: 06/14/2019
 * Jonathan and I discussed the progress on ERGM fitting below, and drafted an email to the statnet helplist. 
 * Aditya has sent that email.  
