@@ -1,5 +1,21 @@
 # Agenda and Notes   
 
+## Meeting: 07/19/2019
+* I tried a race `nodematch` term to the          
+```
+edges+
+idegree(1:3)+odegree(1:3)+
+nodemix("gender", base=1)+
+nodemix("young", base=1)
+```
+model that seemed to generate a reasonable fit, and which we described in our email to the statnet listserv on 06/14/2019.  
+* The model with nodematch added did not work well, details in the [Google doc](https://docs.google.com/document/d/1JBKLihbtemgnyVHN9DpmqCb0NJcOKB5UkdWUAAOnh-I/edit?usp=sharing)  
+(Refer to the model with "race.num", since that contains the correct ordering of nodal attributes).      
+* I will prepare a summary of notes for Jonathan on the recent statnet listerv conversation between Martina, Carter and Fillipo Santi.       
+* Jonathan and I will then review the conversation to see if there are any helpful tips for us to understand our network structure better.      
+* We will then implement those tips and/or go back to the statnet list for help.       
+       
+     
 ## Meeting: 07/09/2019
 * Review email sent to statnet listserv
 * Review alternate specification of model fit with `nodeifactor+nodeofactor+nodematch` instead of `nodemix`.
