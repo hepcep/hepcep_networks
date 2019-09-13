@@ -5,8 +5,7 @@
 We should talk about: (1) Generating synthetic networks; (2) Basmattee's manuscript draft and our response to it.
 
 
-In response to our model fitting question to the Statnet listserv, we received the following [suggestions]
-(https://docs.google.com/document/d/1wAeHIDCO1Ekj7fRlbMNIGbObEmNWVnNusJLPjTE6rmg/edit?usp=sharing):   
+In response to our model fitting question to the Statnet listserv, we received the following [suggestions](https://docs.google.com/document/d/1wAeHIDCO1Ekj7fRlbMNIGbObEmNWVnNusJLPjTE6rmg/edit?usp=sharing):   
 * To add terms one-by-one to diagnose the problems (I was already doing this).
 * To use a large number of MCMC iterations (I was already doing this).
 * To check the model summaries using `summary(fit...)`
