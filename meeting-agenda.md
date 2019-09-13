@@ -22,10 +22,13 @@ I still have to do the `netstats` investigation, but the rest of it is there.
 
 Assuming the goal is still to produce a synthetic network wtih 32,000 nodes, next, I will explore 
 
-* Model 4: Add outedges to Model 3
-* Model 5: Add nodemix("gender", base=1) and nodemix("young", base=1) to Model 4    
-If Model 5 looks OK, we can then add the distance terms to it as well.
-We can then follow-up with the statnet listserv. I will aim to do by the end of next week.
+* Model 4: Add outedges to Model 3 
+* Model 5: And at least up to the fourth degree on i- and o-degree  
+* Model 6: Add nodemix("gender", base=1) and nodemix("young", base=1) to Model 5   
+If Model 6 looks OK, we can: (1) add the distance terms to it as well; 
+(2) follow-up with the statnet listserv, in terms of sharing the output they asked for and checking if the fit could
+be improved by increasing specific ERGM control parameters. 
+I will aim to do by the end of next week.
 
 
 ## Meeting: 07/19/2019
