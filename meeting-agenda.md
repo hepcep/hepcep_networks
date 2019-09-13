@@ -11,17 +11,18 @@ from the Statnet listserv on our questions. There were a few main suggestions:
 * To generate the MCMC diagnostic plots.
 * To use netstats to check each term.   
 
-Based on this feedback, I have examined four models, paying attention to the steps we were asked to articulate:
+Based on this feedback, I have [examined](https://docs.google.com/document/d/16NzSIrIDhWZWqqEnRKv2VURSazpDjByG2GePwMJgiIs/edit?usp=sharing) four models, paying attention to the steps we were asked to articulate:    
 * Model 0: `edges + nodemix("gender", base=1)+ nodemix("young", base=1)`  
-* Model 1: ` Model 1: edges + nodemix("gender", base=1)+ nodemix("young", base=1)+ nodemix("race.num", base=1)`
-* Model 2: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T)+ nodeifactor("race")`
-* Model 3: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T)`
+* Model 1: ` Model 1: edges + nodemix("gender", base=1)+ nodemix("young", base=1)+ nodemix("race.num", base=1)`      
+* Model 2: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T)+ nodeifactor("race")`      
+* Model 3: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T)`          
 
 I still have to do the `netstats` investigation, but the rest of it is there.   
 
 Assuming the goal is still to produce a synthetic network wtih 32,000 nodes, next, I will explore 
 
-* Model 4: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T) + nodemix("gender", base=1)+ nodemix("young", base=1)`
+* Model 4: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T) + 
+nodemix("gender", base=1)+ nodemix("young", base=1)`     
 and then contact the statnet listserv. I will aim to do this early next week, by Tuesday.    
 
 
