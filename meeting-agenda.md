@@ -1,5 +1,30 @@
 # Agenda and Notes   
 
+## Meeting: 09/13/2019
+
+We should talk about: (1) Generating synthetic networks; (2) Basmattee's manuscript draft and our response to it.
+We received [feedback](https://docs.google.com/document/d/1wAeHIDCO1Ekj7fRlbMNIGbObEmNWVnNusJLPjTE6rmg/edit?usp=sharing)
+from the Statnet listserv on our questions. There were a few main suggestions:   
+* To add terms one-by-one to diagnose the problems (I was already doing this).
+* To use a large number of MCMC iterations (I was already doing this).
+* To check the model summaries using `summary(fit...)`
+* To generate the MCMC diagnostic plots.
+* To use netstats to check each term.   
+
+Based on this feedback, I have examined four models, paying attention to the steps we were asked to articulate:
+* Model 0: `edges + nodemix("gender", base=1)+ nodemix("young", base=1)`  
+* Model 1: ` Model 1: edges + nodemix("gender", base=1)+ nodemix("young", base=1)+ nodemix("race.num", base=1)`
+* Model 2: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T)+ nodeifactor("race")`
+* Model 3: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T)`
+
+I still have to do the `netstats` investigation, but the rest of it is there.   
+
+Assuming the goal is still to produce a synthetic network wtih 32,000 nodes, next, I will explore 
+
+* Model 4: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T) + nodemix("gender", base=1)+ nodemix("young", base=1)`
+and then contact the statnet listserv. I will aim to do this early next week, by Tuesday.    
+
+
 ## Meeting: 07/19/2019
 * I tried a race `nodematch` term to the          
 ```
