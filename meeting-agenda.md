@@ -22,9 +22,10 @@ I still have to do the `netstats` investigation, but the rest of it is there.
 
 Assuming the goal is still to produce a synthetic network wtih 32,000 nodes, next, I will explore 
 
-* Model 4: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T) + 
-nodemix("gender", base=1)+ nodemix("young", base=1)`     
-and then contact the statnet listserv. I will aim to do this early next week, by Tuesday.    
+* Model 4: Add outedges to Model 3
+* Model 5: Add nodemix("gender", base=1) and nodemix("young", base=1) to Model 4    
+If Model 5 looks OK, we can then add the distance terms to it as well.
+We can then follow-up with the statnet listserv. I will aim to do by the end of next week.
 
 
 ## Meeting: 07/19/2019
