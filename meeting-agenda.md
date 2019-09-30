@@ -32,7 +32,7 @@ Model 5:
        deg.terms <- 1:4`
 were both degenerate.
 
-
+*** Try Model 3.5 with increased SAN parameters ****
 
 
 
