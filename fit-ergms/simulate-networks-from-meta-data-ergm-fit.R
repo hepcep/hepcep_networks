@@ -15,41 +15,32 @@ library(dplyr)
 
 # Data ----------
 
-load("out/meta-mixing-ergm-fit.RData")
+load("out/model3-5.RData")
+
+
+# Model summary
+summary(fit.metadata.mixing)
+
+
+# MCMC diagnostics
+pdf(file="out/model3-5.pdf")
+mcmc.diagnostics(fit.metadata.mixing)
+dev.off()
 
 
 # Simulate networks ----------
 
-sim <- simulate(fit.sathcap.mixing)
-sim
+net <- simulate(fit.metadata.mixing)
+net
 
 
-# Investigate statistics of simulated network(s) ----------
+# Investigate netstats ----------
 
-## edges
-abs(network.edgecount(sim)-edges_target)/
-  edges_target
+summary(net ~ edges)
+edges_target
 
-## out- and in-degrees
-degs.to.investigate <- 0:10
-
-odegree_mat <- matrix(summary(sim ~ 
-                                odegree(degs.to.investigate)), 
-                      nrow=1, byrow = TRUE)/network.size(sim)
-odegree_summ <- apply(odegree_mat, 2, mean)
-cbind(odegree_summ, 
-      c(outedges[["n_nodes"]][degs.to.investigate+1]/n)
-)
-
-idegree_mat <- matrix(summary(sim ~ 
-                                idegree(degs.to.investigate)), 
-                      nrow=1, byrow = TRUE)/network.size(sim)
-idegree_summ <- apply(idegree_mat, 2, mean)
-cbind(idegree_summ, 
-      c(inedges[["n_nodes"]][degs.to.investigate+1]/n)
-)
-
-mixingmatrix(sim, "race.num")
+summary(net ~ idegree(0:4)) 
+inedges$n_nodes[1:4]
 
 
-save.image("out/simulate-meta-mixing-ergm-fit.RData")
+save.image("out/simulate-model-3-5.RData")
