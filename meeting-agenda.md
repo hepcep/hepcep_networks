@@ -1,5 +1,42 @@
 # Agenda and Notes   
 
+## Meeting: 10/04/2019
+Model 3:           
+`edges +
+      idegree(c(deg.terms)) +      
+      nodematch("race.num", diff=T)...
+      SAN.maxit = 100`,
+ where degrees = 1:3, looks OK.
+ 
+ Model 3.5: 
+`+       edges +
++       idegree(deg.terms) +
++       odegree(deg.terms) +
++       nodematch("race.num", diff=T),
+deg.terms <- 1:3`
+looks very bad on the netstats of the simulated network.
+
+Additionally,
+Model 4: `edges +
+idegree(deg.terms) +
+odegree(deg.terms) +
+nodematch("race.num", diff=T), deg.terms <- 1:4`
+and 
+Model 5: 
+`       edges +
+       idegree(deg.terms) +
+       odegree(deg.terms) +
+       nodematch("race.num", diff=T)+
+       nodemix("gender", base=1)+
+       nodemix("young", base=1),
+       deg.terms <- 1:4`
+were both degenerate.
+
+
+
+
+
+
 ## Meeting: 09/13/2019
 
 We should talk about: (1) Generating synthetic networks; (2) Basmattee's manuscript draft and our response to it.
