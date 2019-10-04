@@ -35,8 +35,16 @@ were both degenerate.
 *** Try Model 3.5 with increased SAN parameters ****
 
 
+Notes:
+1. Possible bug in outdegree specification.       
+2. The network parameters are physically incompatible with each other.   
+3. The learning (SAN/MCMC) parameters need to be increased (or specified differently).  
 
+To do:
+1. The synthesize the model outputs so far.
+2. Compose an email back to the statnet listserv.   
 
+                                     
 ## Meeting: 09/13/2019
 
 We should talk about: (1) Generating synthetic networks; (2) Basmattee's manuscript draft and our response to it.
