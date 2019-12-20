@@ -1,5 +1,103 @@
 # Agenda and Notes   
 
+## Meeting: 12/18/2019
+Discuss the draft [email](https://docs.google.com/document/d/1wAeHIDCO1Ekj7fRlbMNIGbObEmNWVnNusJLPjTE6rmg/edit?usp=sharing) to statnet, and plan needed edits before sending.
+
+## Meeting: 10/04/2019
+Model 3:           
+`edges +
+      idegree(c(deg.terms)) +      
+      nodematch("race.num", diff=T)...
+      SAN.maxit = 100`,
+ where degrees = 1:3, looks OK.
+ 
+ Model 3.5: 
+`+       edges +
++       idegree(deg.terms) +
++       odegree(deg.terms) +
++       nodematch("race.num", diff=T),
+deg.terms <- 1:3`
+looks very bad on the netstats of the simulated network.
+
+Additionally,
+Model 4: `edges +
+idegree(deg.terms) +
+odegree(deg.terms) +
+nodematch("race.num", diff=T), deg.terms <- 1:4`
+and 
+Model 5: 
+`       edges +
+       idegree(deg.terms) +
+       odegree(deg.terms) +
+       nodematch("race.num", diff=T)+
+       nodemix("gender", base=1)+
+       nodemix("young", base=1),
+       deg.terms <- 1:4`
+were both degenerate.
+
+*** Try Model 3.5 with increased SAN parameters ****
+
+
+Notes:
+1. Possible bug in outdegree specification.       
+2. The network parameters are physically incompatible with each other.   
+3. The learning (SAN/MCMC) parameters need to be increased (or specified differently).  
+
+To do:
+1. The synthesize the model outputs so far.
+2. Compose an email back to the statnet listserv.   
+
+                                     
+## Meeting: 09/13/2019
+
+We should talk about: (1) Generating synthetic networks; (2) Basmattee's manuscript draft and our response to it.
+
+
+In response to our model fitting question to the Statnet listserv, we received the following [suggestions](https://docs.google.com/document/d/1wAeHIDCO1Ekj7fRlbMNIGbObEmNWVnNusJLPjTE6rmg/edit?usp=sharing):   
+* To add terms one-by-one to diagnose the problems (I was already doing this).
+* To use a large number of MCMC iterations (I was already doing this).
+* To check the model summaries using `summary(fit...)`
+* To generate the MCMC diagnostic plots.
+* To use netstats to check each term.   
+
+Based on this feedback, I have [examined](https://docs.google.com/document/d/16NzSIrIDhWZWqqEnRKv2VURSazpDjByG2GePwMJgiIs/edit?usp=sharing) four models, paying attention to the steps we were asked to articulate:    
+* Model 0: `edges + nodemix("gender", base=1)+ nodemix("young", base=1)`  
+* Model 1: ` Model 1: edges + nodemix("gender", base=1)+ nodemix("young", base=1)+ nodemix("race.num", base=1)`      
+* Model 2: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T)+ nodeifactor("race")`      
+* Model 3: `edges + idegree(c(deg.terms)) + nodematch("race.num", diff=T)`          
+
+I still have to do the `netstats` investigation, but the rest of it is there.   
+
+Assuming the goal is still to produce a synthetic network wtih 32,000 nodes, next, I will explore 
+
+* Model 3-5 (if needed): Add outedges to Model 3 
+* Model 4: And at least up to the fourth degree on i- and o-degree  
+* Model 5: Add nodemix("gender", base=1) and nodemix("young", base=1) to Model 5 
+* Model 6 - Model 3.5 + nodemix("gender", base=1)
+* Model 7 - Model 6 + nodemix("young", base=1)
+
+If Model 6 looks OK, we can: (1) add the distance terms to it as well; 
+(2) follow-up with the statnet listserv, in terms of sharing the output they asked for and checking if the fit could
+be improved by increasing specific ERGM control parameters. 
+I will aim to do by the end of next week.
+
+
+## Meeting: 07/19/2019
+* I tried a race `nodematch` term to the          
+```
+edges+
+idegree(1:3)+odegree(1:3)+
+nodemix("gender", base=1)+
+nodemix("young", base=1)
+```
+model that seemed to generate a reasonable fit, and which we described in our email to the statnet listserv on 06/14/2019.  
+* The model with nodematch added did not work well, details in the [Google doc](https://docs.google.com/document/d/1JBKLihbtemgnyVHN9DpmqCb0NJcOKB5UkdWUAAOnh-I/edit?usp=sharing)  
+(Refer to the model with "race.num", since that contains the correct ordering of nodal attributes).      
+* I will prepare a summary of notes for Jonathan on the recent statnet listerv conversation between Martina, Carter and Fillipo Santi.       
+* Jonathan and I will then review the conversation to see if there are any helpful tips for us to understand our network structure better.      
+* We will then implement those tips and/or go back to the statnet list for help.       
+       
+     
 ## Meeting: 07/09/2019
 * Review email sent to statnet listserv
 * Review alternate specification of model fit with `nodeifactor+nodeofactor+nodematch` instead of `nodemix`.
