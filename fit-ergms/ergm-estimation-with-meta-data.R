@@ -100,9 +100,9 @@ nonchicago.pctnonchicago <- 0.40
 # tgt.nonchicago.pctnonchicago <- from.nonchicago*chicago.pctnonchicago
 
 
-## race (1=Black, 2=hispani,3=other, 4=O)
+## race (1=Black, 2=hispani,3=other, 4=white)
 
-table(n0 %v% "race.num") # will be sorted alphabetically
+table(n0 %v% "race.num") # will be sorted as per 1=W, 2=B, 3=H, 4=O
 
 pct_to_white	<- mean(c(0.30, 0.31))
 pct_to_black	<- mean(c(0.41,	0.42))
@@ -157,26 +157,62 @@ outedges <- outedges %>%
 
 deg.terms <- 1:3
 
-fit.sathcap.mixing <- 
+# fit.metadata.mixing <- 
+#   ergm(
+#     n0 ~ 
+#       edges +
+#       idegree(c(deg.terms)) + 
+#       #odegree(c(deg.terms))+
+#       #nodemix("gender", base=1)+
+#       #nodemix("young", base=1)+
+#       nodematch("race.num", diff=T)+
+#       nodeifactor("race.num", base=1),
+#       #nodemix("race.num", base=1),
+#       target.stats = c(edges_target),
+#                      c(inedges$n_nodes[c(deg.terms+1)]), 
+#                      #c(outedges$n_nodes[deg.terms+1]), 
+#                      #c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
+#                      #c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung),
+#                      c(target.w.w, target.b.b, target.h.h, target.o.o),
+#                      c(#sum(target.w.w, target.w.b, target.w.h, target.w.o),
+#                        sum(target.b.w, target.b.b, target.b.h, target.b.o),
+#                        sum(target.h.w, target.h.b, target.h.h, target.h.o),
+#                        sum(target.o.w, target.o.b, target.o.h, target.o.o)
+#                        ),
+#                     #c(target.b.w, target.h.w, target.o.w,
+#                     #target.w.b, target.b.b, target.h.b, target.o.b,
+#                     #target.w.h, target.b.h, target.h.h, target.o.h,
+#                     #target.w.o, target.b.o, target.h.o, target.o.o)
+#                     #),
+#     eval.loglik = FALSE,
+#     control = control.ergm(MCMLE.maxit = 500,
+#                            SAN.maxit = 100
+#                            )
+#   )
+
+fit.metadata.mixing <-
   ergm(
-    n0 ~ 
+    n0 ~
       edges +
-      odegree(c(deg.terms)) + idegree(c(deg.terms))+
-      nodemix("gender", base=1)+
-      nodemix("young", base=1),
-      #nodemix("race.num", base=1),
+      nodemix("race.num", base=1),
       target.stats = c(edges_target,
-                     c(inedges$n_nodes[c(deg.terms+1)], outedges$n_nodes[deg.terms+1]), 
-                     c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
-                     c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung)
-                     #c(target.b.w, target.h.w, target.o.w,
-                      # target.w.b, target.b.b, target.h.b, target.o.b,
-                       #target.w.h, target.b.h, target.h.h, target.o.h,
-                       #target.w.o, target.b.o, target.h.o, target.o.o)
-                     ),
+                     c(            target.b.w, target.h.w, target.o.w,
+                       target.w.b, target.b.b, target.h.b, target.o.b,
+                       target.w.h, target.b.h, target.h.h, target.o.h,
+                       target.w.o, target.b.o, target.h.o, target.o.o
+                       )
+                       ),
     eval.loglik = FALSE,
-    control = control.ergm(MCMLE.maxit = 500)
+    control = control.ergm(MCMLE.maxit = 500,
+                           SAN.maxit = 500,
+                           SAN.control = control.san(
+                                                     SAN.maxit = 500, 
+                                                     SAN.init.maxedges = 20000*10, 
+                                                     SAN.nsteps = 1024 * 16 * 8 * 10, 
+                                                     SAN.samplesize = 1024*10
+                                                     )
+    
+                           )
   )
 
-
-save.image("out/meta-mixing-ergm-fit.RData")
+save.image("out/model7-0-increase-san.RData")
