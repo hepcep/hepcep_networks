@@ -1,5 +1,8 @@
 # Agenda and Notes   
 
+## Meeting: 12/18/2019
+Discuss the draft [email](https://docs.google.com/document/d/1wAeHIDCO1Ekj7fRlbMNIGbObEmNWVnNusJLPjTE6rmg/edit?usp=sharing) to statnet, and plan needed edits before sending.
+
 ## Meeting: 10/04/2019
 Model 3:           
 `edges +
