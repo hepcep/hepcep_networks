@@ -1,5 +1,14 @@
 # Agenda and Notes   
 
+## Meeting: 01/14/2019
+Based on feedback from call with NMG:
+
+* The most important step, I think, is to increase the MCMC parameters and see if that helps improve Model 0, and then subsequent models. 
+* Fit for Model 0 should be perfect before we move forward.
+* Check for any bugs on the race mixing specifications. 
+* If indegree+outdegree together still doesn’t work, then that might be worth a subsequent conversation wit h NMG..
+
+
 ## Meeting: 12/18/2019
 Discuss the draft [email](https://docs.google.com/document/d/1wAeHIDCO1Ekj7fRlbMNIGbObEmNWVnNusJLPjTE6rmg/edit?usp=sharing) to statnet, and plan needed edits before sending.
 
