@@ -12,7 +12,7 @@
 Try specifying only one of those and see how the fit goes.
 If that fit (with i- OR o-degree specified) converges, then we can still build a narrative.    
                  
-* Check if the target stats for distance are available
+* Check if the target stats for distance are available: https://uchicago.box.com/s/w6pkvzhlzbg9b581722ag55oce5wt572
 
 
 
