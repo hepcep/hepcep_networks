@@ -7,12 +7,12 @@
 * Perhaps it is worth trying to incude the distance terms with the dyadic independent model as I am experimenting with i- and 0-degrees.
 * If possible, let us talk about the mechanics of including the distance terms. A quick refresher on the mechanics would be helpful.
 
-- To-do:
+### To-do:
 * Simultaneously specifying i- and o-degrees is not working. 
 Try specifying only one of those and see how the fit goes.
 If that fit (with i- OR o-degree specified) converges, then we can still build a narrative.    
                  
-* 
+* Check if the target stats for distance are available
 
 
 
