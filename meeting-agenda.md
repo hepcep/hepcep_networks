@@ -8,13 +8,15 @@
 * If possible, let us talk about the mechanics of including the distance terms. A quick refresher on the mechanics would be helpful.
 
 ### To-do:
-* Simultaneously specifying i- and o-degrees is not working. 
+* (AK) Simultaneously specifying i- and o-degrees is not working. AK will follow-up with JO by Sunday.
 Try specifying only one of those and see how the fit goes.
 If that fit (with i- OR o-degree specified) converges, then we can still build a narrative.    
                  
-* Check if the target stats for distance are available: https://uchicago.box.com/s/w6pkvzhlzbg9b581722ag55oce5wt572
+* AK/JO Check if the target stats for distance are available: https://uchicago.box.com/s/w6pkvzhlzbg9b581722ag55oce5wt572
 
+* JO will check on how the custom user terms need to be modified to incorporate the new data.
 
+* JO will speak to PIs about AK's effort and submission to Sunbelt deadline (02/07)
 
 ## Meeting: 01/14/2020
 Based on feedback from call with NMG:
