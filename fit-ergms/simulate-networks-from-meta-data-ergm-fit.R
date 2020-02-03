@@ -15,7 +15,7 @@ library(dplyr)
 
 # Data ----------
 
-load("out/model6-2-increase-san.RData")
+load("out/model6-w-racenodemix-outdeg0-3only-increase-MCMC-params.RData")
 
 
 # Model summary
@@ -23,7 +23,7 @@ summary(fit.metadata.mixing)
 
 
 # MCMC diagnostics
-pdf(file="out/model7-increase-san-increase-san.pdf")
+pdf(file="out/model6-w-racenodemix-outdeg0-3only-increase-MCMC-params.pdf")
 mcmc.diagnostics(fit.metadata.mixing)
 dev.off()
 
@@ -56,13 +56,13 @@ round(
 
 
 
-summary(net ~ idegree(0:4)) 
+summary(net ~ outdegree(0:4)) 
 inedges$n_nodes[1:4]
 
 summary(net ~ odegree(0:4)) 
 outedges$n_nodes[1:5]
 
 
-save.image("out/simulate-model6-2-increase-san.RData")
+save.image("out/model6-w-racenodemix-outdeg0-3only-increase-MCMC-params.RData")
 
 
