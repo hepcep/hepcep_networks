@@ -1,5 +1,32 @@
 # Agenda and Notes   
 
+## Meeting: 01/31/2020
+* I have had success with getting convergent models with good MCMC diagnostics for dyadic independent models, even including race terms.
+* Fitting models with odegree and idegree is still in progress.
+* Report on the dyadic indepdent models is at: https://docs.google.com/document/d/1aXZq6LyLMfFhJXM3fmr_8TTLbxC6P6UaT90DHGgEW3A/edit?usp=sharing
+* Perhaps it is worth trying to incude the distance terms with the dyadic independent model as I am experimenting with i- and 0-degrees.
+* If possible, let us talk about the mechanics of including the distance terms. A quick refresher on the mechanics would be helpful.
+
+### To-do:
+* (AK) Simultaneously specifying i- and o-degrees is not working. AK will follow-up with JO by Sunday.
+Try specifying only one of those and see how the fit goes.
+If that fit (with i- OR o-degree specified) converges, then we can still build a narrative.    
+                 
+* AK/JO Check if the target stats for distance are available: https://uchicago.box.com/s/w6pkvzhlzbg9b581722ag55oce5wt572
+
+* JO will check on how the custom user terms need to be modified to incorporate the new data.
+
+* JO will speak to PIs about AK's effort and submission to Sunbelt deadline (02/07)
+
+## Meeting: 01/14/2020
+Based on feedback from call with NMG:
+
+* The most important step, I think, is to increase the MCMC parameters and see if that helps improve Model 0, and then subsequent models. 
+* Fit for Model 0 should be perfect before we move forward.
+* Check for any bugs on the race mixing specifications. 
+* If indegree+outdegree together still doesn�t work, then that might be worth a subsequent conversation wit h NMG..
+
+
 ## Meeting: 12/18/2019
 Discuss the draft [email](https://docs.google.com/document/d/1wAeHIDCO1Ekj7fRlbMNIGbObEmNWVnNusJLPjTE6rmg/edit?usp=sharing) to statnet, and plan needed edits before sending.
 
