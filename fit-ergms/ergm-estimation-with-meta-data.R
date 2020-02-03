@@ -155,64 +155,39 @@ outedges <- outedges %>%
 
 # Fit ERGM (with SATHCAP mixing) ----------
 
-deg.terms <- 1:3
-
-# fit.metadata.mixing <- 
-#   ergm(
-#     n0 ~ 
-#       edges +
-#       idegree(c(deg.terms)) + 
-#       #odegree(c(deg.terms))+
-#       #nodemix("gender", base=1)+
-#       #nodemix("young", base=1)+
-#       nodematch("race.num", diff=T)+
-#       nodeifactor("race.num", base=1),
-#       #nodemix("race.num", base=1),
-#       target.stats = c(edges_target),
-#                      c(inedges$n_nodes[c(deg.terms+1)]), 
-#                      #c(outedges$n_nodes[deg.terms+1]), 
-#                      #c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
-#                      #c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung),
-#                      c(target.w.w, target.b.b, target.h.h, target.o.o),
-#                      c(#sum(target.w.w, target.w.b, target.w.h, target.w.o),
-#                        sum(target.b.w, target.b.b, target.b.h, target.b.o),
-#                        sum(target.h.w, target.h.b, target.h.h, target.h.o),
-#                        sum(target.o.w, target.o.b, target.o.h, target.o.o)
-#                        ),
-#                     #c(target.b.w, target.h.w, target.o.w,
-#                     #target.w.b, target.b.b, target.h.b, target.o.b,
-#                     #target.w.h, target.b.h, target.h.h, target.o.h,
-#                     #target.w.o, target.b.o, target.h.o, target.o.o)
-#                     #),
-#     eval.loglik = FALSE,
-#     control = control.ergm(MCMLE.maxit = 500,
-#                            SAN.maxit = 100
-#                            )
-#   )
+deg.terms <- 0:3
 
 fit.metadata.mixing <-
   ergm(
     n0 ~
       edges +
-      nodemix("race.num", base=1),
-      target.stats = c(edges_target,
+      nodemix("gender", base=1)+
+      nodemix("young", base=1)+
+      nodemix("race.num", base=1)+
+      idegree(deg.terms)+
+      odegree(deg.terms),
+    target.stats = c(edges_target,
+                     c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),           
+                     c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung),
                      c(            target.b.w, target.h.w, target.o.w,
-                       target.w.b, target.b.b, target.h.b, target.o.b,
-                       target.w.h, target.b.h, target.h.h, target.o.h,
-                       target.w.o, target.b.o, target.h.o, target.o.o
-                       )
-                       ),
+                                   target.w.b, target.b.b, target.h.b, target.o.b,
+                                   target.w.h, target.b.h, target.h.h, target.o.h,
+                                   target.w.o, target.b.o, target.h.o, target.o.o),
+                     c(inedges$n_nodes[c(deg.terms+1)]),
+                     c(outedges$n_nodes[c(deg.terms+1)])
+                     
+    ),
     eval.loglik = FALSE,
     control = control.ergm(MCMLE.maxit = 500,
-                           SAN.maxit = 500,
+                           MCMC.interval = 1e5,
+                           MCMC.samplesize = 1e5,
                            SAN.control = control.san(
-                                                     SAN.maxit = 500, 
-                                                     SAN.init.maxedges = 20000*10, 
-                                                     SAN.nsteps = 1024 * 16 * 8 * 10, 
-                                                     SAN.samplesize = 1024*10
-                                                     )
-    
+                             SAN.maxit = 500, 
+                             SAN.init.maxedges = 20000*10, 
+                             SAN.nsteps = 1e8
                            )
+                           
+    )
   )
 
-save.image("out/model7-0-increase-san.RData")
+save.image("out/model6-w-racenodemix-inoutdeg0-3only-increase-MCMC-params.RData")
