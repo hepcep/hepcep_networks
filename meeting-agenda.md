@@ -1,5 +1,11 @@
 # Agenda and Notes   
 
+## Meeting: 02/14/2020
+* o-degre + dist model converged. i-degree+dist didnt, but try again
+* Work on summarizing the results of ERGM fitting and generation for the HepCep meta analysis paper
+* Work on preparing a follow-up to NMG with questions on i-degree+o-degree simultaneously
+
+
 ## Meeting: 01/31/2020
 * I have had success with getting convergent models with good MCMC diagnostics for dyadic independent models, even including race terms.
 * Fitting models with odegree and idegree is still in progress.
