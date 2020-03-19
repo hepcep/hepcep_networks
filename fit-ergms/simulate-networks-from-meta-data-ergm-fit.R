@@ -154,5 +154,3 @@ summary(sim_results[[10]] ~ nodemix("young"))
 round(c(tgt.old.pctold, tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung))
 
 save.image("out/sims-outdegonly-plus-dist.RData")
-
-
