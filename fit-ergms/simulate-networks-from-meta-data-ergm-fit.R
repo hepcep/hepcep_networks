@@ -148,7 +148,7 @@ round(c(tgt.female.pctfemale, tgt.female.pctmale, tgt.male.pctfemale, tgt.male.p
 ## nodemix(young)
 young <- unlist(lapply(sim_results, 
                         function (x) summary(x ~ nodemix("young"))
-))
+)) # ask Jonathan how to elegantly summarize these results to compare to targets
 
 summary(sim_results[[10]] ~ nodemix("young"))
 round(c(tgt.old.pctold, tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung))
