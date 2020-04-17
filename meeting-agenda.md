@@ -1,5 +1,10 @@
 # Agenda and Notes   
 
+## Meeting: 03/27/2020
+* Draft write-up is coming together, Box link shared.
+* Let's discuss what is there and next steps
+* Coding question  about summarizing aggregate data 
+
 ## Meeting: 02/14/2020
 * o-degre + dist model converged. i-degree+dist didnt, but try again
 * Work on summarizing the results of ERGM fitting and generation for the HepCep meta analysis paper
