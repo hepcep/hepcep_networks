@@ -1,5 +1,8 @@
 # Agenda and Notes   
 
+## Update: 04/20/2020
+* Sent follow-up [questions](https://docs.google.com/document/d/1CycWPgfvj_TIAE5p6uy_l1_5yqGU_opYvqeBKza1WH8/edit?usp=sharing) on simultanelouslys spcifying i- and o-degrees to NMG.
+
 ## Meeting: 03/27/2020
 * Draft write-up is coming together, Box link shared.
 * Let's discuss what is there and next steps
