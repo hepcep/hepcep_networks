@@ -18,6 +18,9 @@ load("meta-mixing-init-net.RData") # starting network from meta mixing data
 
 inedges <- read.csv("../HepCEP_ERGM/pplrss.csv") #in- and out-edges
 outedges <- read.csv("../HepCEP_ERGM/ppldss.csv")
+negbin_indeg <- read.csv("../../data/negbin-indeg.csv")
+negbin_outdeg <- read.csv("../../data/negbin-outdeg.csv")
+
 # refer to "population_2014-08-17--11.00.43--analysis.R" for an example
 
 data <- read.csv("/project2/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon.csv", header = T)
@@ -156,6 +159,11 @@ inedges <- inedges %>%
 outedges <- outedges %>% 
   mutate(n_nodes = n*nbprob)
 
+negbin_inedges <- negbin_indeg %>% 
+  mutate(n_nodes = n*nbprob)
+negbin_outedges <- negbin_outdeg %>% 
+  mutate(n_nodes = n*nbprob)
+
 ## distance term
 
 dist.prop.distribution <- c(15.7, 35.1, 24.1, 22)/100
@@ -174,9 +182,9 @@ fit.metadata.mixing <-
       nodemix("gender", base=1)+
       nodemix("young", base=1)+
       nodemix("race.num", base=1)+
+      #idegree(deg.terms)+,
+      odegree(deg.terms)+
       dist(dist.terms),
-      #idegree(deg.terms)+
-      #odegree(deg.terms),
     target.stats = c(edges_target,
                      c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),           
                      c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung),
@@ -184,9 +192,9 @@ fit.metadata.mixing <-
                                    target.w.b, target.b.b, target.h.b, target.o.b,
                                    target.w.h, target.b.h, target.h.h, target.o.h,
                                    target.w.o, target.b.o, target.h.o, target.o.o),
-                     c(dist.nedge.distribution[dist.terms])
                      #c(inedges$n_nodes[c(deg.terms+1)]),
-                     #c(outedges$n_nodes[c(deg.terms+1)])
+                     c(outedges$n_nodes[c(deg.terms+1)]),
+                     c(dist.nedge.distribution[dist.terms])
                      
     ),
     eval.loglik = FALSE,
@@ -202,4 +210,4 @@ fit.metadata.mixing <-
     )
   )
 
-save.image("out/racemix-plus-dist.RData")
+save.image("out/racemix-plus-dist-plus-odeg.RData")
