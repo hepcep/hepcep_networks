@@ -1,5 +1,11 @@
 # Agenda and Notes   
 
+## Update: 05/08/2020
+* Follow-up questions and next steps with statnet
+* New updates from Mary Ellen:
+[data](https://uchicago.box.com/s/e1ne8ychrsklutj9irwd50p785bnpwv8) and 
+[explanation](https://uchicago.box.com/s/qt0rl101gfp2w9z00dv9a2j4nmhxjxyo)
+
 ## Update: 04/20/2020
 * Sent follow-up [questions](https://docs.google.com/document/d/1CycWPgfvj_TIAE5p6uy_l1_5yqGU_opYvqeBKza1WH8/edit?usp=sharing) on simultanelouslys spcifying i- and o-degrees to NMG.
 
