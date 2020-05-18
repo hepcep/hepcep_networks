@@ -182,8 +182,8 @@ fit.metadata.mixing <-
       nodemix("gender", base=1)+
       nodemix("young", base=1)+
       nodemix("race.num", base=1)+
-      idegree(deg.terms)+
-      #odegree(deg.terms)+
+      #idegree(deg.terms)+
+      odegree(deg.terms)+
       dist(dist.terms),
     target.stats = c(edges_target,
                      c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),           
@@ -192,8 +192,8 @@ fit.metadata.mixing <-
                                    target.w.b, target.b.b, target.h.b, target.o.b,
                                    target.w.h, target.b.h, target.h.h, target.o.h,
                                    target.w.o, target.b.o, target.h.o, target.o.o),
-                     c(negbin_inedges$n_nodes[c(deg.terms+1)]),
-                     #c(outedges$n_nodes[c(deg.terms+1)]),
+                     #c(negbin_inedges$n_nodes[c(deg.terms+1)]),
+                     c(outedges$n_nodes[c(deg.terms+1)]),
                      c(dist.nedge.distribution[dist.terms])
                      
     ),
