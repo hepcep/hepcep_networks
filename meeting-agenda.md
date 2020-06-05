@@ -1,5 +1,13 @@
 # Agenda and Notes   
 
+## Update: 06/05/2020
+* [Draft](https://docs.google.com/document/d/1T2YGBbAw2meBmqe9HklzXndT1nbxfas17G7yY0ghKZw/edit?usp=sharing) response to Steve
+* A `racemix+ideg(0)+odeg(0)+dist()` model converged: See `/project2/khanna7/Projects/midway2/HepCep/hepcep_networks/fit-ergms/out/simulat
+e-racemix-plus-negbin-indeg0-outdeg0-only.Rout`
+* A `racemix+ideg(0)+odeg(0:3)+dist()` model converged once (a model has to converge twice for statnet default to consider it good), then timed out. I am running it again.
+* I haven't had a chance to work on the draft yet, but I will once I am done compiling results from the latest fits.
+
+ 
 ## Update: 05/08/2020
 * Follow-up questions and next steps with statnet
 * New updates from Mary Ellen:
