@@ -15,15 +15,14 @@ library(ergm.userterms)
 
 # Data ----------
 
-load("out/outdegonly-plus-dist.RData")
-
+load("out/racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
 
 # Model summary
 summary(fit.metadata.mixing)
 
 
 # MCMC diagnostics
-pdf(file="out/idegonly-plus-dist.pdf")
+pdf(file="out/racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.pdf") 
 mcmc.diagnostics(fit.metadata.mixing)
 dev.off()
 
@@ -56,11 +55,14 @@ round(
 
 
 
-summary(net ~ odegree(0:4)) 
+summary(net ~ idegree(0:4)) 
 inedges$n_nodes[1:4]
 
 summary(net ~ odegree(0:4)) 
 outedges$n_nodes[1:5]
+
+summary(net ~ dist(1:4))
+round(dist.nedge.distribution)
 
 # Simulate 100 networks ----------
 
@@ -148,9 +150,10 @@ round(c(tgt.female.pctfemale, tgt.female.pctmale, tgt.male.pctfemale, tgt.male.p
 ## nodemix(young)
 young <- unlist(lapply(sim_results, 
                         function (x) summary(x ~ nodemix("young"))
-)) # ask Jonathan how to elegantly summarize these results to compare to targets
+)) 
 
 summary(sim_results[[10]] ~ nodemix("young"))
 round(c(tgt.old.pctold, tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung))
 
-save.image("out/sims-outdegonly-plus-dist.RData")
+save.image("out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
+
