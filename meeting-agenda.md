@@ -1,5 +1,18 @@
 # Agenda and Notes   
 
+## Update: 07/17/2020
+* We discussed Table 5, comparing the simulated means and IQRs to the targets. 
+IQRs might be too restrictive, and we can use the 2.5th, 97.5th percentile instead.
+We can also plot the simulated statistcs as boxplots to display the matching.
+Aditya can ask Bryan to help with the figure.
+
+* We can move Table 5 to the Appendix if we plot the data that are presented there. 
+Jonathan and Aditya will put together an explanation of the distance term there, and
+make the code avaiable in a public repository.
+
+* Visualizing the network might not be necessary. The visualization described above
+might be sufficient.
+
 ## Update: 06/05/2020
 * [Draft](https://docs.google.com/document/d/1T2YGBbAw2meBmqe9HklzXndT1nbxfas17G7yY0ghKZw/edit?usp=sharing) response to Steve
 * A `racemix+ideg(0)+odeg(0)+dist()` model converged: See `/project2/khanna7/Projects/midway2/HepCep/hepcep_networks/fit-ergms/out/simulat
