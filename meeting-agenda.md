@@ -1,5 +1,10 @@
 # Agenda and Notes   
 
+## Update: 08/17/2020
+* How do we show the target statistics for ERGm terms that are not specified? Look at papers, ask Steve
+or Francis, ...
+
+
 ## Update: 07/17/2020
 * We discussed Table 5, comparing the simulated means and IQRs to the targets. 
 IQRs might be too restrictive, and we can use the 2.5th, 97.5th percentile instead.
