@@ -1,8 +1,20 @@
 # Agenda and Notes   
 
 ## Update: 08/17/2020
+
 * How do we show the target statistics for ERGm terms that are not specified? Look at papers, ask Steve
 or Francis, ...
+* Bryan will work on visualizations of the in-deg 0-2 model that Francis fit using the `dev` 
+ERGM version that he has. See simulated data from this model in:
+
+```
+-rw-rw-r-- 1 francislee pi-khanna7 106356262 Aug 2 00:29 sim100networks.indeg02.RData
+```
+at
+
+```
+/project2/khanna7/francis/HepCep
+```
 
 
 ## Update: 07/17/2020
