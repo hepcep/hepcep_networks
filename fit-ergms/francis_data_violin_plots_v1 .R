@@ -166,7 +166,7 @@ d1_plot <- ggplot(izero.data, aes(x=distance, y=count, fill=indegree))
 d2_plot <- ggplot(ione.data, aes(x=distance, y=count, fill=indegree))
 d3_plot <- ggplot(itwo.data, aes(x=distance, y=count, fill=indegree))
 d4_plot <- ggplot(ithree.data, aes(x=distance, y=count, fill=indegree))
-dfull_plot <- ggplot(full_distance, aes(x=distance, y=count, fill=indegree)) + cgeom_boxplot()
+dfull_plot <- ggplot(full_distance, aes(x=distance, y=count, fill=indegree)) + geom_boxplot()
 
 #final boxplot adjustments
 d1f <- d1_plot + geom_violin() + geom_hline(yintercept=c(18992))
