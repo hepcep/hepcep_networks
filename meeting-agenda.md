@@ -1,5 +1,12 @@
 # Agenda and Notes   
 
+## To be done: 09/11/2020
+* Use the the outdeg0-3+indeg0-2 model. 
+* Aditya and Bryan will synthesize the figures and numerical results from the 100 networks simulated from above
+* Aditya to update [Table 5](https://uofi.box.com/s/v12cgpyhaszv6oott247a2bx6ibkblnf) with the above
+* Explain the custom ERGM term code line-by-line in the [Appendix](https://uofi.box.com/s/mfaas3rae6bp821d1xwn0yp3jkusnz5j).
+* Collect the manuscript text, tables, figures, and Appendices so that the ERGM pieces are complete.
+
 ## Update: 08/17/2020
 
 * How do we show the target statistics for ERGm terms that are not specified? Look at papers, ask Steve
