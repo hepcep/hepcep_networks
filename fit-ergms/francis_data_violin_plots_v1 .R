@@ -18,7 +18,6 @@ library(RColorBrewer)
 load("/home/bryan/Desktop/sim100networks.indeg02.RData")
 
 
-
 # Load in terms ---------
 nsim.vec <- 1:100
 sim.race.num <- lapply(nsim.vec, function (x) summary(sim100networks.indeg02[[x]] ~ nodemix("race.num")))### CRASHES EVERY TIME
@@ -101,6 +100,8 @@ c + pal + theme_bw() +nl + no_y
 ################################################################################
 
 ##Age
+#create dataframes
+
 ##This numbering disagrees with the manuscript-- middle two are old-young THEN young-old in this code
 i0 = data.frame(indegree="0.0", count=unlist(lapply(sim.young, function (x) x["mix.young.0.0"])), probs = c(2.5/100, 97.5/100))
 i1 = data.frame(indegree="1.0", count=unlist(lapply(sim.young, function (x) x["mix.young.1.0"])), probs = c(2.5/100, 97.5/100))
@@ -135,9 +136,8 @@ ic <- three_final <- ithree_plot + geom_violin() + geom_hline(yintercept=c(1474)
 #geom_jitter(alpha=0.12)
 #id <- four_final <- ifour_plot + geom_violin() + geom_hline(yintercept=c(617)) 
 #geom_jitter(alpha=0.12) 
-i_f <- ifull_plot + geom_boxplot()
 
-#Generating Plots
+i_f <- ifull_plot + geom_boxplot()
 #color palette
 pal <- scale_fill_brewer(palette="Dark2")
 #indegree framed plot
@@ -154,19 +154,20 @@ ib
 ic
 i_f
 ################################################################################
+
 ##Distance
 d1 = data.frame(distance="0.0", count=unlist(lapply(sim.dist, function (x) x["dist1"])), probs = c(2.5/100, 97.5/100))
 d2 = data.frame(distance="0.0", count=unlist(lapply(sim.dist, function (x) x["dist2"])), probs = c(2.5/100, 97.5/100))
 d3 = data.frame(distance="0.0", count=unlist(lapply(sim.dist, function (x) x["dist3"])), probs = c(2.5/100, 97.5/100))
 d4 = data.frame(distance="0.0", count=unlist(lapply(sim.dist, function (x) x["dist4"])), probs = c(2.5/100, 97.5/100))
-full_distance = rbind(i0,i1,i2,i3)
+full_distance = rbind(d1,d2,d3,d4)
 
 
-d1_plot <- ggplot(izero.data, aes(x=distance, y=count, fill=indegree))
-d2_plot <- ggplot(ione.data, aes(x=distance, y=count, fill=indegree))
-d3_plot <- ggplot(itwo.data, aes(x=distance, y=count, fill=indegree))
-d4_plot <- ggplot(ithree.data, aes(x=distance, y=count, fill=indegree))
-dfull_plot <- ggplot(full_distance, aes(x=distance, y=count, fill=indegree)) + cgeom_boxplot()
+d1_plot <- ggplot(izero.data, aes(x=indegree, y=count, fill=indegree))
+d2_plot <- ggplot(ione.data, aes(x=indegree, y=count, fill=indegree))
+d3_plot <- ggplot(itwo.data, aes(x=indegree, y=count, fill=indegree))
+d4_plot <- ggplot(ithree.data, aes(x=indegree, y=count, fill=indegree))
+dfull_plot <- ggplot(full_distance, aes(x=indegree, y=count, fill=indegree))
 
 #final boxplot adjustments
 d1f <- d1_plot + geom_violin() + geom_hline(yintercept=c(18992))
@@ -178,19 +179,20 @@ d3f <- d3_plot + geom_violin() + geom_hline(yintercept=c(3170))
 d4f <- d4_plot + geom_violin() + geom_hline(yintercept=c(1474))  
 
 ##Generating Plots
+dfull_out <- dfull_plot + geom_boxplot()
 #color palette
 pal <- scale_fill_brewer(palette="Dark2")
+xdist <- theme(axis.title.x = "Distance")
 #indegree framed plot
-plot_grid(d1f + pal + theme_bw()+nl+no_x,
-          d2f + pal + theme_bw()+nl+no_x+no_y,
-          d3f + pal + theme_bw()+nl,
-          d4f + pal + theme_bw()+nl+no_y,
+plot_grid(d1f + pal + theme_bw()+nl+no_x+xdist,
+          d2f + pal + theme_bw()+nl+no_x+no_y+xdist,
+          d3f + pal + theme_bw()+nl+xdist,
+          d4f + pal + theme_bw()+nl+no_y+xdist,
           #dfull_out + pal + theme_bw()+nl,
           ncol = 2)
-          
-#Generate individual plots
+
 d1f
 d2f
 d3f
 d4f
-dfull_plot
+dfull_out
