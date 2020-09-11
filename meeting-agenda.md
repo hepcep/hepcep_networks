@@ -8,6 +8,14 @@
 * Collect the manuscript text, tables, figures, and Appendices so that the ERGM pieces are complete. 
 * Figure collection might be the most tedious part. For the unspecified parameters, maybe color them differently to make it clear that those 
 parameters were left out of the ERGM specification?
+* **** Very important: resimulate the 100 networks data that Francis has:***
+```
+load("/project2/khanna7/francis/HepCep/racemix-plus-dist-plus-negbin-indeg0-2.RData")
+```
+as done [previously](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/simulate-networks-from-meta-data-ergm-fit.R)
+and analyzed [previously](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/summaries-across-simulated-distributions.R).
+
+This will then give Bryan the necessary starting points to generate the outputs.
 
 ## Update: 08/17/2020
 
