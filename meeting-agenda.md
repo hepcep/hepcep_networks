@@ -5,7 +5,9 @@
 * Aditya and Bryan will synthesize the figures and numerical results from the 100 networks simulated from above
 * Aditya to update [Table 5](https://uofi.box.com/s/v12cgpyhaszv6oott247a2bx6ibkblnf) with the above
 * Explain the custom ERGM term code line-by-line in the [Appendix](https://uofi.box.com/s/mfaas3rae6bp821d1xwn0yp3jkusnz5j).
-* Collect the manuscript text, tables, figures, and Appendices so that the ERGM pieces are complete. Figure collection might be the most tedious part.
+* Collect the manuscript text, tables, figures, and Appendices so that the ERGM pieces are complete. 
+* Figure collection might be the most tedious part. For the unspecified parameters, maybe color them differently to make it clear that those 
+parameters were left out of the ERGM specification?
 
 ## Update: 08/17/2020
 
