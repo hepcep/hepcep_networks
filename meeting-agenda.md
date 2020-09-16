@@ -1,7 +1,7 @@
 # Agenda and Notes   
 
 ## Notes: 09/16/2020
-* Turns out Francis's estimation code using the development vesion of ERGM didn't have `outdeg0-3+indeg0-2`. It only had `ideg(0:2)`.   
+* Turns out Francis's estimation code using the development vesion of ERGM didn't have `outdeg0-3+indeg0-2+other terms`. It only had `ideg(0:2)+other terms`.   
 * For now, we should then use the `racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3` model.
 *  See the ERGM fit at `/project2/khanna7/Projects/midway2/HepCep/hepcep_networks/fit-ergms/out/racemix-plus-dist-plus-negbin-outdeg0-3-indeg0-1.Rout`
 and the simulation output from this model at `simulate-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.Rout`.
