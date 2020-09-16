@@ -17,6 +17,10 @@ load("out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
 
 # Compute summaries and IQRs ----------
 
+edgecount.sim.data <- (unlist(lapply(sim_results, function (x) network.edgecount(x)))) #edge count summary
+mean(edgecount.sim.data)
+quantile(edgecount.sim.data, probs = c(2.5/100, 97.5/100))
+
 summary(outdeg0)
 summary(outdeg1) 
 summary(outdeg2)
