@@ -49,19 +49,19 @@ CHANGESTAT_FN(d_dist) {
     
     // Find dist category
     //printf("%f\n", dist);
-    if (dist < 2.0){
+    /* 
+    Categories are:
+     < 0.2km ; 0.2km  - 1.6km ; 1.6km - 32.2km ; > 32.2km
+     corresponding to
+     < 1/8 mile ; 1/8 mile - 1 mile ; 1 mile - 20 miles ; > 20 miles
+    */
+    if (dist < 0.2){
       target_cat = 1;
-    } else if (dist < 4.0) {
+    } else if (dist < 1.6) {
       target_cat = 2;
-    } else if (dist < 8.0) {
+    } else if (dist < 32.2) {
       target_cat = 3;
-    } else if (dist < 16.0) {
-      target_cat = 4;
-    } else if (dist < 32.0) {
-      target_cat = 5;
-    } else if (dist < 64.0) {
-      target_cat = 6;
-    } else target_cat = 7;
+    } else target_cat = 4;
     
     change = IS_OUTEDGE(t,h) ? -1 : 1;
     for(j = 0; j < N_CHANGE_STATS; j++) {

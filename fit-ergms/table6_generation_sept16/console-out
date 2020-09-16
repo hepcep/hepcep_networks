@@ -1,0 +1,343 @@
+
+R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> sim.dist <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ dist(1:4)))
+Error in lapply(nsim.vec, function(x) summary(sim_results[[x]] ~ dist(1:4))) : 
+  object 'nsim.vec' not found
+> nsim.vec = 1:100
+> # Summarize simulated statistics across multiple networks
+  > rm(list=ls())
+> # Libraries ----------
+> library(network)
+network: Classes for Relational Data
+Version 1.16.0 created on 2019-11-30.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+Mark S. Handcock, University of California -- Los Angeles
+David R. Hunter, Penn State University
+Martina Morris, University of Washington
+Skye Bender-deMoll, University of Washington
+For citation information, type citation("network").
+Type help("network-package") to get started.
+
+> library(ergm)
+
+ergm: version 3.10.4, created on 2019-06-10
+Copyright (c) 2019, Mark S. Handcock, University of California -- Los Angeles
+David R. Hunter, Penn State University
+Carter T. Butts, University of California -- Irvine
+Steven M. Goodreau, University of Washington
+Pavel N. Krivitsky, University of Wollongong
+Martina Morris, University of Washington
+with contributions from
+Li Wang
+Kirk Li, University of Washington
+Skye Bender-deMoll, University of Washington
+Chad Klumb
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm").
+
+NOTE: Versions before 3.6.1 had a bug in
+the implementation of the bd() constriant
+which distorted the sampled distribution
+somewhat. In addition, Sampson's Monks
+datasets had mislabeled vertices. See the
+NEWS and the documentation for more
+details.
+
+NOTE: Some common term arguments
+pertaining to vertex attribute and level
+selection have changed in 3.10.0. See
+terms help for more details. Use
+‘options(ergm.term=list(version="3.9.4"))’
+to use old behavior.
+
+> library(ergm.userterms)
+Loading required package: statnet.common
+
+Attaching package: ‘statnet.common’
+
+The following object is masked from ‘package:base’:
+
+    order
+
+
+ergm.userterms: version 3.1.1, created on 2013-04-26
+Copyright (c) 2013, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm.userterms").
+
+NOTE: If you use custom ERGM terms based
+on ‘ergm.userterms’ version prior to 3.1,
+you will need to perform a one-time
+update of the package boilerplate files
+(the files that you did not write or
+modify) from ‘ergm.userterms’ 3.1 or
+later. See help('eut-upgrade') for
+instructions.
+
+> # Data ----------
+> load("/home/bryan/Desktop/HepCep_Project_ND/Old_Organization/hepcep_networks/fit-ergms/out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
+> nsim.vec = 1:100
+> # Compute summaries and IQRs ----------
+> paste("outdegrees")
+[1] "outdegrees"
+> #quantiles
+> mean(outdeg0)
+[1] 20314.65
+> sim.dist <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ dist(1:4)))
+Warning message:
+`set_attrs()` is deprecated as of rlang 0.3.0
+This warning is displayed once per session. 
+> #quantiles
+> mean(unlist(lapply(sim.dist, function (x) x["dist1"])))
+[1] 12753.61
+> quantile((unlist(lapply(sim.dist, function (x) x["dist1"]))), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+12640.38 12873.10 
+> #quantiles
+> mean(outdeg0)
+[1] 20314.65
+> quantile(outdeg0, probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+20167.17 20451.62 
+> mean(outdeg1)
+[1] 5382
+> quantile(outdeg1, probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+5254.025 5485.825 
+> mean(outdeg2)
+[1] 2590.77
+> quantile(outdeg2, probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+2497.00 2685.05 
+> mean(outdeg3)
+[1] 1428.89
+> quantile(outdeg3, probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+1365.900 1494.575 
+> mean(outdeg4)
+[1] 1676.55
+> quantile(outdeg4, probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+1619.275 1731.875 
+> paste("indegrees:")
+[1] "indegrees:"
+> #quantiles
+> mean(outdeg0)
+[1] 20314.65
+> quantile(indeg0, probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+22990.65 23264.00 
+> #quantiles
+> mean(indeg0)
+[1] 23116.81
+> quantile(indeg0, probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+22990.65 23264.00 
+> mean(indeg1)
+[1] 4178.19
+> quantile(indeg1, probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+4078.65 4281.05 
+> mean(indeg2)
+[1] 1037.16
+> quantile(indeg2, probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+ 981.950 1099.775 
+> mean(indeg3)
+[1] 978.73
+> quantile(indeg3, probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+ 917.375 1035.050 
+> mean(indeg4)
+[1] 823.27
+> quantile(indeg4, probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+773.475 871.575 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.1"])), probs = c(2.5/100, 97.5/100))
+Error in lapply(sim.race.num, function(x) x["mix.race.num.1.1"]) : 
+  object 'sim.race.num' not found
+> sim.race.num <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ nodemix("race.num")))
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.1"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+5940.950 6221.575 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.1"])))
+[1] 911.07
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.1"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+688.425 790.525 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.1"])))
+[1] 744.03
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.1"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+688.425 790.525 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.1"])))
+[1] 911.07
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.1"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+853.900 963.525 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.1"])))
+[1] 313.83
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.1"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+291.475 339.000 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.2"])))
+[1] 1056.37
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.2"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+1002.475 1106.525 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.2"])))
+[1] 8559.05
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.2"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+8437.850 8726.775 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.2"])))
+[1] 596.22
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.2"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+561.475 643.100 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.2"])))
+[1] 97.7
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.2"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+ 79.950 118.525 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.3"])))
+[1] 1142.69
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.3"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+1085.425 1197.725 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.3"])))
+[1] 790.7
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.3"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+746.950 837.625 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.3"])))
+[1] 3353.02
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.3"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+3259.425 3459.575 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.3"])))
+[1] 108.45
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.3"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+ 93.950 124.525 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.4"])))
+[1] 477.14
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.4"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+439.000 516.575 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.4"])))
+[1] 219.74
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.4"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+193.425 249.525 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.4"])))
+[1] 245.76
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.4"])), probs = c(2.5/100, 97.5/100))
+ 2.5% 97.5% 
+  222   269 
+> mean(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.4"])))
+[1] 147.71
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.4"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+129.475 169.525 
+
+
+
+###END RACE###
+
+> paste("gender")
+[1] "gender"
+> sim.gender <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ nodemix("gender")))
+> #quantile
+> mean(unlist(lapply(sim.gender, function (x) x["mix.gender.female.female"])))
+[1] 2797.1
+> quantile(unlist(lapply(sim.gender, function (x) x["mix.gender.female.female"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+2715.475 2886.575 
+> mean(unlist(lapply(sim.gender, function (x) x["mix.gender.male.female"])))
+[1] 7579.56
+> quantile(unlist(lapply(sim.gender, function (x) x["mix.gender.male.female"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+7463.000 7750.225 
+> mean(unlist(lapply(sim.gender, function (x) x["mix.gender.female.male"])))
+[1] 6770.22
+> quantile(unlist(lapply(sim.gender, function (x) x["mix.gender.female.male"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+6596.650 6926.325 
+> mean(unlist(lapply(sim.gender, function (x) x["mix.gender.male.male"])))
+[1] 7693.55
+> quantile(unlist(lapply(sim.gender, function (x) x["mix.gender.male.male"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+7532.275 7843.200 
+> paste("age")
+[1] "age"
+> sim.young <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ nodemix("young")))
+> #quantiles
+> mean(unlist(lapply(sim.young, function (x) x["mix.young.0.0"])))
+[1] 19230.35
+> quantile(unlist(lapply(sim.young, function (x) x["mix.young.0.0"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+18948.82 19486.97 
+> mean(unlist(lapply(sim.young, function (x) x["mix.young.1.0"])))
+[1] 3131.64
+> quantile(unlist(lapply(sim.young, function (x) x["mix.young.1.0"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+3036.90 3223.05 
+> mean(unlist(lapply(sim.young, function (x) x["mix.young.0.1"])))
+[1] 990.1
+> quantile(unlist(lapply(sim.young, function (x) x["mix.young.0.1"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+ 935.175 1056.350 
+> mean(unlist(lapply(sim.young, function (x) x["mix.young.1.1"])))
+[1] 1488.34
+> quantile(unlist(lapply(sim.young, function (x) x["mix.young.1.1"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+1428.950 1555.525 
+> paste("dist")
+[1] "dist"
+> sim.dist <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ dist(1:4)))
+> #quantiles
+> mean(unlist(lapply(sim.dist, function (x) x["dist1"])))
+[1] 12753.61
+> quantile((unlist(lapply(sim.dist, function (x) x["dist1"]))), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+12640.38 12873.10 
+> mean(unlist(lapply(sim.dist, function (x) x["dist2"])))
+[1] 388.47
+> quantile((unlist(lapply(sim.dist, function (x) x["dist2"]))), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+351.475 426.525 
+> mean(unlist(lapply(sim.dist, function (x) x["dist3"])))
+[1] 973.41
+> quantile((unlist(lapply(sim.dist, function (x) x["dist3"]))), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+ 901.950 1041.525 
+> mean(unlist(lapply(sim.dist, function (x) x["dist4"])))
+[1] 1961.27
+> quantile((unlist(lapply(sim.dist, function (x) x["dist4"]))), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+1869.00 2066.05 

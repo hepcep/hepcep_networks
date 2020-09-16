@@ -1,5 +1,28 @@
 # Agenda and Notes   
 
+## Notes: 09/16/2020
+* Turns out Francis's estimation code using the development vesion of ERGM didn't have `outdeg0-3+indeg0-2+other terms`. It only had `ideg(0:2)+other terms`.   
+* For now, we should then use the `racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3` model.
+*  See the ERGM fit at `/project2/khanna7/Projects/midway2/HepCep/hepcep_networks/fit-ergms/out/racemix-plus-dist-plus-negbin-outdeg0-3-indeg0-1.Rout`
+and the simulation output from this model at `simulate-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.Rout`.
+
+## To be done: 09/11/2020
+* Use the the `outdeg0-3+indeg0-2` model. 
+* Aditya and Bryan will synthesize the figures and numerical results from the 100 networks simulated from above
+* Aditya to update [Table 5](https://uofi.box.com/s/v12cgpyhaszv6oott247a2bx6ibkblnf) with the above
+* Explain the custom ERGM term code line-by-line in the [Appendix](https://uofi.box.com/s/mfaas3rae6bp821d1xwn0yp3jkusnz5j).
+* Collect the manuscript text, tables, figures, and Appendices so that the ERGM pieces are complete. 
+* Figure collection might be the most tedious part. For the unspecified parameters, maybe color them differently to make it clear that those 
+parameters were left out of the ERGM specification?
+* **** Very important: resimulate the 100 networks data that Francis has:***
+```
+load("/project2/khanna7/francis/HepCep/racemix-plus-dist-plus-negbin-indeg0-2.RData")
+```
+as done [previously](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/simulate-networks-from-meta-data-ergm-fit.R)
+and analyzed [previously](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/summaries-across-simulated-distributions.R).
+
+This will then give Bryan the necessary starting points to generate the outputs.
+
 ## Update: 08/17/2020
 
 * How do we show the target statistics for ERGm terms that are not specified? Look at papers, ask Steve
