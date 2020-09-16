@@ -1,5 +1,86 @@
 # Agenda and Notes   
 
+## Notes: 09/16/2020
+* Turns out Francis's estimation code using the development vesion of ERGM didn't have `outdeg0-3+indeg0-2+other terms`. It only had `ideg(0:2)+other terms`.   
+* For now, we should then use the `racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3` model.
+*  See the ERGM fit at `/project2/khanna7/Projects/midway2/HepCep/hepcep_networks/fit-ergms/out/racemix-plus-dist-plus-negbin-outdeg0-3-indeg0-1.Rout`
+and the simulation output from this model at `simulate-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.Rout`.
+
+## To be done: 09/11/2020
+* Use the the `outdeg0-3+indeg0-2` model. 
+* Aditya and Bryan will synthesize the figures and numerical results from the 100 networks simulated from above
+* Aditya to update [Table 5](https://uofi.box.com/s/v12cgpyhaszv6oott247a2bx6ibkblnf) with the above
+* Explain the custom ERGM term code line-by-line in the [Appendix](https://uofi.box.com/s/mfaas3rae6bp821d1xwn0yp3jkusnz5j).
+* Collect the manuscript text, tables, figures, and Appendices so that the ERGM pieces are complete. 
+* Figure collection might be the most tedious part. For the unspecified parameters, maybe color them differently to make it clear that those 
+parameters were left out of the ERGM specification?
+* **** Very important: resimulate the 100 networks data that Francis has:***
+```
+load("/project2/khanna7/francis/HepCep/racemix-plus-dist-plus-negbin-indeg0-2.RData")
+```
+as done [previously](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/simulate-networks-from-meta-data-ergm-fit.R)
+and analyzed [previously](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/summaries-across-simulated-distributions.R).
+
+This will then give Bryan the necessary starting points to generate the outputs.
+
+## Update: 08/17/2020
+
+* How do we show the target statistics for ERGm terms that are not specified? Look at papers, ask Steve
+or Francis, ...
+* Bryan will work on visualizations of the in-deg 0-2 model that Francis fit using the `dev` 
+ERGM version that he has. See simulated data from this model in:
+
+```
+-rw-rw-r-- 1 francislee pi-khanna7 106356262 Aug 2 00:29 sim100networks.indeg02.RData
+```
+at
+
+```
+/project2/khanna7/francis/HepCep
+```
+
+
+## Update: 07/17/2020
+* We discussed Table 5, comparing the simulated means and IQRs to the targets. 
+IQRs might be too restrictive, and we can use the 2.5th, 97.5th percentile instead.
+We can also plot the simulated statistcs as boxplots to display the matching.
+Aditya can ask Bryan to help with the figure.
+
+* We can move Table 5 to the Appendix if we plot the data that are presented there. 
+Jonathan and Aditya will put together an explanation of the distance term there, and
+make the code avaiable in a public repository.
+
+* Visualizing the network might not be necessary. The visualization described above
+might be sufficient.
+
+## Update: 06/05/2020
+* [Draft](https://docs.google.com/document/d/1T2YGBbAw2meBmqe9HklzXndT1nbxfas17G7yY0ghKZw/edit?usp=sharing) response to Steve
+* A `racemix+ideg(0)+odeg(0)+dist()` model converged: See `/project2/khanna7/Projects/midway2/HepCep/hepcep_networks/fit-ergms/out/simulat
+e-racemix-plus-negbin-indeg0-outdeg0-only.Rout`
+* A `racemix+ideg(0)+odeg(0:3)+dist()` model converged once (a model has to converge twice for statnet default to consider it good), then timed out. I am running it again.
+* I haven't had a chance to work on the draft yet, but I will once I am done compiling results from the latest fits.
+
+ 
+## Update: 05/08/2020
+* Follow-up questions and next steps with statnet
+* New updates from Mary Ellen:
+[data](https://uchicago.box.com/s/e1ne8ychrsklutj9irwd50p785bnpwv8) and 
+[explanation](https://uchicago.box.com/s/qt0rl101gfp2w9z00dv9a2j4nmhxjxyo)
+
+## Update: 04/20/2020
+* Sent follow-up [questions](https://docs.google.com/document/d/1CycWPgfvj_TIAE5p6uy_l1_5yqGU_opYvqeBKza1WH8/edit?usp=sharing) on simultanelouslys spcifying i- and o-degrees to NMG.
+
+## Meeting: 03/27/2020
+* Draft write-up is coming together, Box link shared.
+* Let's discuss what is there and next steps
+* Coding question  about summarizing aggregate data 
+
+## Meeting: 02/14/2020
+* o-degre + dist model converged. i-degree+dist didnt, but try again
+* Work on summarizing the results of ERGM fitting and generation for the HepCep meta analysis paper
+* Work on preparing a follow-up to NMG with questions on i-degree+o-degree simultaneously
+
+
 ## Meeting: 01/31/2020
 * I have had success with getting convergent models with good MCMC diagnostics for dyadic independent models, even including race terms.
 * Fitting models with odegree and idegree is still in progress.
