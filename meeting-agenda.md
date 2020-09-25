@@ -1,7 +1,7 @@
 # Agenda and Notes   
 
 ## Meeting agenda: 09/25/2020  
-* Updated [Table 6)(https://uofi.box.com/s/u0sqkvuf96i6dq5ro7gixqxu8w9odzrz).   
+* Updated [Table 6](https://uofi.box.com/s/u0sqkvuf96i6dq5ro7gixqxu8w9odzrz).   
 * Updated [plots](https://drive.google.com/drive/folders/1ID0l0AtgWzs7ruqJBbvVLng65EO9MtiG?usp=sharing).  
 * [Appendix](https://uofi.box.com/s/ois9bwwmomi7zfulmczloglg2yuurdwh) with custom user term explanation.
 
