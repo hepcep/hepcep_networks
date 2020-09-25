@@ -4,7 +4,9 @@
 * Updated [Table 6](https://uofi.box.com/s/u0sqkvuf96i6dq5ro7gixqxu8w9odzrz).   
 * Updated [plots](https://drive.google.com/drive/folders/1ID0l0AtgWzs7ruqJBbvVLng65EO9MtiG?usp=sharing).  
 * [Appendix](https://uofi.box.com/s/ois9bwwmomi7zfulmczloglg2yuurdwh) with custom user term explanation.
-
+* Apropos of Basmattee's email regarding comments on the draft from her and Mary Ellen, I don't see any comments from Bas specifically 
+(apologies if I missed them), but regardless the comments are [not extensive](https://uofi.box.com/s/v12cgpyhaszv6oott247a2bx6ibkblnf).   
+  
 ## Notes: 09/16/2020
 * Turns out Francis's estimation code using the development vesion of ERGM didn't have `outdeg0-3+indeg0-2+other terms`. It only had `ideg(0:2)+other terms`.   
 * For now, we should then use the `racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3` model.
