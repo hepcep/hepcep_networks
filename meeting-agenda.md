@@ -1,5 +1,10 @@
 # Agenda and Notes   
 
+## Meeting agenda: 10/10/2020  
+* [Appendix](https://uofi.box.com/s/ois9bwwmomi7zfulmczloglg2yuurdwh) comments from Jonathan: Couple questions in the comments. 
+* [Manuscript](https://uofi.box.com/s/u0sqkvuf96i6dq5ro7gixqxu8w9odzrz): Page 9, section 3.2: Add detail as needed.  
+* Schedule follow up with Bas, Mary Ellen et al.  
+
 ## Meeting agenda: 09/25/2020  
 * Updated [Table 6](https://uofi.box.com/s/u0sqkvuf96i6dq5ro7gixqxu8w9odzrz).   
 * Updated [plots](https://drive.google.com/drive/folders/1ID0l0AtgWzs7ruqJBbvVLng65EO9MtiG?usp=sharing).  
