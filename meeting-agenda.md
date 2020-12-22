@@ -1,5 +1,8 @@
 # Agenda and Notes   
 
+## Update: 12/22/2020
+Midway files are now available at ```/project2/jozik/AK_HepCep```
+
 ## Meeting agenda: 10/10/2020  
 * [Appendix](https://uofi.box.com/s/ois9bwwmomi7zfulmczloglg2yuurdwh) comments from Jonathan: Couple questions in the comments. 
 * [Manuscript](https://uofi.box.com/s/u0sqkvuf96i6dq5ro7gixqxu8w9odzrz): Page 9, section 3.2: Add detail as needed.  
