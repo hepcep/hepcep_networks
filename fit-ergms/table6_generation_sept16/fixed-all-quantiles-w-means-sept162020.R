@@ -10,6 +10,11 @@ library(ergm.userterms)
 load("/home/bryan/Desktop/HepCep_Project_ND/Old_Organization/hepcep_networks/fit-ergms/out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
 nsim.vec = 1:100
 # Compute summaries and IQRs ----------
+paste("Edges")
+edgecount.sim.data <- (unlist(lapply(sim_results, function (x) network.edgecount(x)))) #edge count summary
+mean(edgecount.sim.data)
+quantile(edgecount.sim.data, probs = c(2.5/100, 97.5/100))
+
 paste("outdegrees")
 #quantiles
 mean(outdeg0)
