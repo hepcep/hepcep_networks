@@ -33,6 +33,14 @@ summary(indeg2)
 summary(indeg3)
 summary(indeg4)
 
+indeg.gr.0.1 <- n - (indeg0 + indeg1)
+summary(indeg.gr.0.1)
+quantile(indeg.gr.0.1, probs = c(2.5/100, 97.5/100))
+
+outdeg.gr.0.3 <- n - (outdeg0 + outdeg1 + outdeg2 + outdeg3)
+summary(outdeg.gr.0.3)
+quantile(outdeg.gr.0.3, probs = c(2.5/100, 97.5/100))
+
 sim.race.num <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ nodemix("race.num")))
 summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.1"])))
 summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.1"])))
