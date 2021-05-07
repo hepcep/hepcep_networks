@@ -1,0 +1,48 @@
+# Extract vertex attributes from simulated network 
+
+rm(list=ls())
+
+# Libraries ----------
+
+library(network)
+
+# Load data ----------
+
+load("out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
+
+
+# Check network list ---------
+
+class(sim_results); length(sim_results)
+net1 <- sim_results[[1]]
+net1
+
+
+# Extract the first vertex attribute list from all networks ---------
+
+vertex.att.list <- list.vertex.attributes(net1)
+get.vertex.attribute(net1, vertex.att.list[1])
+vertex.att.1 <- 
+  lapply(sim_results, 
+       function(x) get.vertex.attribute(x, vertex.att.list[1])
+)
+class(vertex.att.1); length(vertex.att.1)
+vertex.att.1[1]
+
+
+# Extract all vertex attribute lists from all networks ---------
+
+vertex.att.all <- vector(mode = "list", length = length(vertex.att.list))  
+
+for (i in 1:length(vertex.att.all)){
+  for(j in 1:length(sim_results)){
+    vertex.att.all[[i]][[j]] <- get.vertex.attribute(sim_results[[j]],
+                                                   vertex.att.list[i]
+                                                   )
+  }
+}
+
+length(vertex.att.all)
+names(vertex.att.all) <- vertex.att.list
+
+saveRDS(vertex.att.all, file = "vertex_att_all.RDS")
