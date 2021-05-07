@@ -32,17 +32,18 @@ vertex.att.1[1]
 
 # Extract all vertex attribute lists from all networks ---------
 
-vertex.att.all <- vector(mode = "list", length = length(vertex.att.list))  
+vertex.att.all <- vector(mode = "list", length = length(sim_results))  
 
-for (i in 1:length(vertex.att.all)){
-  for(j in 1:length(sim_results)){
-    vertex.att.all[[i]][[j]] <- get.vertex.attribute(sim_results[[j]],
+for(j in 1:length(sim_results)){
+  for (i in 1:length(vertex.att.all)){
+    vertex.att.all[[j]][[i]] <- get.vertex.attribute(sim_results[[j]],
                                                    vertex.att.list[i]
                                                    )
   }
 }
 
-length(vertex.att.all)
-names(vertex.att.all) <- vertex.att.list
+lapply(vertex.att.all, function(x)
+  names(x) <- vertex.att.list
+)
 
-saveRDS(vertex.att.all, file = "vertex_att_all.RDS")
+saveRDS(vertex.att.all, file = "out/vertex_att_all.RDS")
