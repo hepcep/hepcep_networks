@@ -9,7 +9,7 @@ library(network)
 # Load data ----------
 
 load("out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
-
+data <- read.csv("/project2/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon.csv", header = T)
 
 # Check network list ---------
 
@@ -45,5 +45,14 @@ for(j in 1:length(sim_results)){
 lapply(vertex.att.all, function(x)
   names(x) <- vertex.att.list
 )
+
+# Compare agent ordering above to network object ---------
+
+data <- data[-32001,] #the dataset consists of 32001 agents but the networks only contain 32K nodes
+dim(data)
+
+identical(sim_results[[1]] %v% "lat", data$lat)
+identical(sim_results[[1]] %v% "lon", data$lon)
+## ordering between the data set and the network matches
 
 saveRDS(vertex.att.all, file = "out/vertex_att_all.RDS")
