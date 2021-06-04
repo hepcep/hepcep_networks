@@ -55,4 +55,14 @@ identical(sim_results[[1]] %v% "lat", data$lat)
 identical(sim_results[[1]] %v% "lon", data$lon)
 ## ordering between the data set and the network matches
 
+
+# Extract vertex names and add to pwid_with_lat_lon.csv datset ---------
+
+vertex.names <- sim_results[[1]] %v% "vertex.names" 
+pwid_w_vertex_names <- cbind(vertex.names,
+                             data)
+
+# Save data
+
 saveRDS(vertex.att.all, file = "out/vertex_att_all.RDS")
+saveRDS(pwid_w_vertex_names, file="out/pwid_w_vertex_names.RDS")
