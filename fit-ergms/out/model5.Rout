@@ -1,0 +1,484 @@
+
+R version 3.6.1 (2019-07-05) -- "Action of the Toes"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Analyze synthetic dataset with 32K nodes 
+> # Fit ERGM with 5 dyadic independent terms
+> 
+> rm(list=ls())
+> 
+> 
+> # Libraries ----------
+> 
+> library(network)
+network: Classes for Relational Data
+Version 1.15 created on 2019-04-01.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+                    Skye Bender-deMoll, University of Washington
+ For citation information, type citation("network").
+ Type help("network-package") to get started.
+
+> library(ergm)
+
+ergm: version 3.10.4, created on 2019-06-10
+Copyright (c) 2019, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+                    with contributions from
+                    Li Wang
+                    Kirk Li, University of Washington
+                    Skye Bender-deMoll, University of Washington
+                    Chad Klumb
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm").
+
+NOTE: Versions before 3.6.1 had a bug in the implementation of the bd()
+constriant which distorted the sampled distribution somewhat. In
+addition, Sampson's Monks datasets had mislabeled vertices. See the
+NEWS and the documentation for more details.
+
+NOTE: Some common term arguments pertaining to vertex attribute and
+level selection have changed in 3.10.0. See terms help for more
+details. Use 'options(ergm.term=list(version="3.9.4"))' to use old
+behavior.
+
+> library(dplyr)
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+> library(ergm.userterms)
+
+ergm.userterms: version 3.10.0, created on 2019-05-15
+Copyright (c) 2019, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm.userterms").
+
+NOTE: If you use custom ERGM terms based on 'ergm.userterms' version
+prior to 3.1, you will need to perform a one-time update of the package
+boilerplate files (the files that you did not write or modify) from
+'ergm.userterms' 3.1 or later. See help('eut-upgrade') for
+instructions.
+
+> 
+> 
+> # Data ----------
+> 
+> load("meta-mixing-init-net.RData") # starting network from meta mixing data
+> 
+> inedges <- read.csv("../HepCEP_ERGM/pplrss.csv") #in- and out-edges
+> outedges <- read.csv("../HepCEP_ERGM/ppldss.csv")
+> # refer to "population_2014-08-17--11.00.43--analysis.R" for an example
+> 
+> 
+> # Recode to add new variables to dataset ----------
+> 
+> # young (< 26, to be set = 1) vs old (>= 26, to be set = 0) 
+> age.cat <- n0 %v% "age.cat"
+> age.cat.df <- as.data.frame(age.cat)
+> age.cat.df <-  
++   mutate(age.cat, young = ifelse(age.cat == 0, 1, 0), .data = age.cat.df)
+> xtabs(~age.cat+young, data = age.cat.df)
+       young
+age.cat     0     1
+      0     0  4971
+      1 12111     0
+      2  7030     0
+      3  7888     0
+> 
+> # recode race variable to set ordering of categories
+> race <- n0 %v% "race"
+> race.num <- recode(race, 
++                    white = 1, black = 2,
++                    hispanic = 3, other = 4)
+> 
+> # Initialize network and add attributes ----------
+> 
+> n0 %v% "young" <- age.cat.df$young
+> n0 %v% "race.num" <- race.num
+> 
+> # Generate target statistics from meta-mixing data ----------
+> 
+> ## gender 
+> ### mixing information from meta-analysis of sathcap AND socnet
+> edges.male.end <- mean(c(0.58, 0.59))
+> edges.female.end <- mean(c(0.40, 0.41))
+> 
+> male.pctmale <- 0.53 
+> male.pctfemale <- 0.47
+> female.pctmale <- 0.75
+> female.pctfemale <- 0.22
+> 
+> ### set gender targets 
+> tgt.male.pctmale <- edges_target*edges.male.end*male.pctmale
+> tgt.male.pctfemale <- edges_target*edges.male.end*male.pctfemale
+> tgt.female.pctmale <- edges_target*edges.female.end*female.pctmale  
+> tgt.female.pctfemale <- edges_target*edges.female.end*female.pctfemale
+> 
+> ## young (1=young; 0=old)
+> ### mixing information from meta-analysis of sathcap AND socnet
+> edges.young.end <- 0.10
+> edges.old.end <- 0.90
+>   
+> young.pctyoung <- 0.60
+> young.pctold <- 0.40
+> old.pctyoung <- 0.14
+> old.pctold <- 0.86
+>  
+> ## set young targets from meta data
+> tgt.young.pctyoung <- edges_target * edges.young.end * young.pctyoung
+> tgt.young.pctold <- edges_target * edges.young.end * young.pctold
+> tgt.old.pctyoung <- edges_target * edges.old.end * old.pctyoung
+> tgt.old.pctold <- edges_target * edges.old.end * old.pctold
+> 
+> 
+> ## chicago
+> ### mixing information from meta-analysis of sathcap AND socnet
+> 
+> edges.chicago.end <- 0.87
+> edges.nonchicago.end <- 0.13
+> 
+> chicago.pctchicago <- 0.67
+> chicago.pctnonchicago <- 0.30
+> nonchicago.pctchicago <- 0.60
+> nonchicago.pctnonchicago <- 0.40
+> 
+> 
+> # ### mixing from simulation
+> # chicago.mm <- mixingmatrix(sim, "chicago") #fem=1, chicago=2
+> # from.nonchicago <- sum(chicago.mm$matrix[,1])
+> # from.chicago <- sum(chicago.mm$matrix[,2])
+> # 
+> # ### set chicago targets from sathcap
+> # tgt.chicago.pctchicago <- from.chicago*chicago.pctchicago
+> # tgt.chicago.pctnonchicago <- from.chicago*chicago.pctnonchicago
+> # tgt.nonchicago.pctchicago <- from.nonchicago*chicago.pctchicago
+> # tgt.nonchicago.pctnonchicago <- from.nonchicago*chicago.pctnonchicago
+> 
+> 
+> ## race (1=Black, 2=hispani,3=other, 4=white)
+> 
+> table(n0 %v% "race.num") # will be sorted as per 1=W, 2=B, 3=H, 4=O
+
+    1     2     3     4 
+18660  6056  6291   993 
+> 
+> pct_to_white	<- mean(c(0.30, 0.31))
+> pct_to_black	<- mean(c(0.41,	0.42))
+> pct_to_hispanic	<- mean(c(0.21, 0.22))
+> pct_to_other	<- mean(c(0.04,	0.05))
+> 
+> race.w.w <- 0.73
+> race.b.w <- 0.10
+> race.h.w <- 0.12
+> race.o.w <- 0.04
+> race.w.b <- 0.10
+> race.b.b <- 0.83
+> race.h.b <- 0.06
+> race.o.b <- 0.01
+> race.w.h <- 0.21
+> race.b.h <- 0.15
+> race.h.h <- 0.62
+> race.o.h <- 0.02
+> race.w.o <- 0.43
+> race.b.o <- 0.21
+> race.h.o <- 0.22
+> race.o.o <- 0.14
+> 
+> target.w.w <- edges_target * pct_to_white * race.w.w
+> target.b.w <- edges_target * pct_to_white * race.b.w
+> target.h.w <- edges_target * pct_to_white * race.h.w
+> target.o.w <- edges_target * pct_to_white * race.o.w
+> 
+> target.w.b <- edges_target * pct_to_black * race.w.b
+> target.b.b <- edges_target * pct_to_black * race.b.b
+> target.h.b <- edges_target * pct_to_black * race.h.b
+> target.o.b <- edges_target * pct_to_black * race.o.b
+> 
+> target.w.h <- edges_target * pct_to_hispanic * race.w.h
+> target.b.h <- edges_target * pct_to_hispanic * race.b.h
+> target.h.h <- edges_target * pct_to_hispanic * race.h.h
+> target.o.h <- edges_target * pct_to_hispanic * race.o.h
+> 
+> target.w.o <- edges_target * pct_to_other * race.w.o
+> target.b.o <- edges_target * pct_to_other * race.b.o
+> target.h.o <- edges_target * pct_to_other * race.h.o
+> target.o.o <- edges_target * pct_to_other * race.o.o
+> 
+> ## degree distributions
+> inedges <- inedges %>% 
++   mutate(n_nodes = n*nbprob)
+> outedges <- outedges %>% 
++   mutate(n_nodes = n*nbprob)
+> 
+> 
+> # Fit ERGM (with SATHCAP mixing) ----------
+> 
+> deg.terms <- 1:4
+> 
+> # fit.metadata.mixing <- 
+> #   ergm(
+> #     n0 ~ 
+> #       edges +
+> #       idegree(c(deg.terms)) + 
+> #       #odegree(c(deg.terms))+
+> #       #nodemix("gender", base=1)+
+> #       #nodemix("young", base=1)+
+> #       nodematch("race.num", diff=T)+
+> #       nodeifactor("race.num", base=1),
+> #       #nodemix("race.num", base=1),
+> #       target.stats = c(edges_target),
+> #                      c(inedges$n_nodes[c(deg.terms+1)]), 
+> #                      #c(outedges$n_nodes[deg.terms+1]), 
+> #                      #c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
+> #                      #c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung),
+> #                      c(target.w.w, target.b.b, target.h.h, target.o.o),
+> #                      c(#sum(target.w.w, target.w.b, target.w.h, target.w.o),
+> #                        sum(target.b.w, target.b.b, target.b.h, target.b.o),
+> #                        sum(target.h.w, target.h.b, target.h.h, target.h.o),
+> #                        sum(target.o.w, target.o.b, target.o.h, target.o.o)
+> #                        ),
+> #                     #c(target.b.w, target.h.w, target.o.w,
+> #                     #target.w.b, target.b.b, target.h.b, target.o.b,
+> #                     #target.w.h, target.b.h, target.h.h, target.o.h,
+> #                     #target.w.o, target.b.o, target.h.o, target.o.o)
+> #                     #),
+> #     eval.loglik = FALSE,
+> #     control = control.ergm(MCMLE.maxit = 500,
+> #                            SAN.maxit = 100
+> #                            )
+> #   )
+> 
+> fit.metadata.mixing <-
++   ergm(
++     n0 ~
++       edges +
++       idegree(deg.terms) +
++       odegree(deg.terms) +
++       nodematch("race.num", diff=T)+
++       nodemix("gender", base=1)+
++       nodemix("young", base=1),
++       target.stats = c(edges_target,
++                      c(inedges$n_nodes[c(deg.terms+1)]),
++                      c(outedges$n_nodes[c(deg.terms+1)]),
++                      c(target.w.w, target.b.b, target.h.h, target.o.o),
++                      c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
++                      c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung)
++                      ),
++     eval.loglik = FALSE,
++     control = control.ergm(MCMLE.maxit = 500,
++                            SAN.maxit = 100
++                            )
++   )
+In term 'nodemix' in package 'ergm': Argument 'base' has been superseded by 'levels2', and it is recommended to use the latter.  Note that its interpretation may be different.
+Unable to match target stats. Using MCMLE estimation.
+Starting maximum pseudolikelihood estimation (MPLE):
+Evaluating the predictor and response matrix.
+Maximizing the pseudolikelihood.
+Finished MPLE.
+Starting Monte Carlo maximum likelihood estimation (MCMLE):
+Iteration 1 of at most 500:
+Optimizing with step length 0.00574419914642821.
+The log-likelihood improved by 1.346.
+Iteration 2 of at most 500:
+Optimizing with step length 0.0059596089855404.
+The log-likelihood improved by 1.578.
+Iteration 3 of at most 500:
+Optimizing with step length 0.00521767429151709.
+The log-likelihood improved by 1.115.
+Iteration 4 of at most 500:
+Optimizing with step length 0.00818302737079175.
+The log-likelihood improved by 1.23.
+Iteration 5 of at most 500:
+Optimizing with step length 0.00824715799555274.
+The log-likelihood improved by 1.436.
+Iteration 6 of at most 500:
+Optimizing with step length 0.00974810790642154.
+The log-likelihood improved by 1.897.
+Iteration 7 of at most 500:
+Optimizing with step length 0.0120448060293769.
+The log-likelihood improved by 1.387.
+Iteration 8 of at most 500:
+Optimizing with step length 0.0121177149947348.
+The log-likelihood improved by 1.383.
+Iteration 9 of at most 500:
+Optimizing with step length 0.0075760872535149.
+The log-likelihood improved by 1.758.
+Iteration 10 of at most 500:
+Optimizing with step length 0.0119764730245695.
+The log-likelihood improved by 1.618.
+Iteration 11 of at most 500:
+Optimizing with step length 0.00454455368061131.
+The log-likelihood improved by 1.317.
+Iteration 12 of at most 500:
+Optimizing with step length 0.00519819321636206.
+The log-likelihood improved by 1.237.
+Iteration 13 of at most 500:
+Optimizing with step length 0.00223174793055052.
+The log-likelihood improved by 1.045.
+Iteration 14 of at most 500:
+Optimizing with step length 0.00221424666585896.
+The log-likelihood improved by 1.561.
+Iteration 15 of at most 500:
+Optimizing with step length 0.000738055461569428.
+The log-likelihood improved by 0.4333.
+Iteration 16 of at most 500:
+Optimizing with step length 0.000735170241566654.
+The log-likelihood improved by 0.3445.
+Iteration 17 of at most 500:
+Optimizing with step length 0.000735164619655269.
+The log-likelihood improved by 0.5314.
+Iteration 18 of at most 500:
+Optimizing with step length 0.00147032921740179.
+The log-likelihood improved by 1.612.
+Iteration 19 of at most 500:
+Optimizing with step length 0.00220978897065872.
+The log-likelihood improved by 1.093.
+Iteration 20 of at most 500:
+Optimizing with step length 0.00147608453734923.
+The log-likelihood improved by 0.7305.
+Iteration 21 of at most 500:
+Optimizing with step length 0.00220982261245813.
+The log-likelihood improved by 0.8829.
+Iteration 22 of at most 500:
+Optimizing with step length 0.00369018953371638.
+The log-likelihood improved by 1.058.
+Iteration 23 of at most 500:
+Optimizing with step length 0.00370465484396821.
+The log-likelihood improved by 2.
+Iteration 24 of at most 500:
+Optimizing with step length 0.00296385537850813.
+The log-likelihood improved by 1.217.
+Iteration 25 of at most 500:
+Optimizing with step length 0.00517656487616352.
+The log-likelihood improved by 1.425.
+Iteration 26 of at most 500:
+Optimizing with step length 0.00595068433603106.
+The log-likelihood improved by 1.759.
+Iteration 27 of at most 500:
+Optimizing with step length 0.00447223701557498.
+The log-likelihood improved by 1.535.
+Iteration 28 of at most 500:
+Optimizing with step length 0.012622537187079.
+The log-likelihood improved by 1.763.
+Iteration 29 of at most 500:
+Optimizing with step length 0.0128944394409617.
+The log-likelihood improved by 1.839.
+Iteration 30 of at most 500:
+Optimizing with step length 0.0174566744874607.
+The log-likelihood improved by 1.46.
+Iteration 31 of at most 500:
+Optimizing with step length 0.0168984548402191.
+The log-likelihood improved by 1.569.
+Iteration 32 of at most 500:
+Optimizing with step length 0.00920705709294424.
+The log-likelihood improved by 2.178.
+Iteration 33 of at most 500:
+Optimizing with step length 0.00225574346669003.
+The log-likelihood improved by 1.735.
+Iteration 34 of at most 500:
+Optimizing with step length 0.000738136822578828.
+The log-likelihood improved by 0.734.
+Iteration 35 of at most 500:
+Optimizing with step length 0.00147034078238831.
+The log-likelihood improved by 1.383.
+Iteration 36 of at most 500:
+Optimizing with step length 0.00220978903825924.
+The log-likelihood improved by 1.546.
+Iteration 37 of at most 500:
+Optimizing with step length 0.00221411791218479.
+The log-likelihood improved by 0.7688.
+Iteration 38 of at most 500:
+Optimizing with step length 0.00221414329316202.
+The log-likelihood improved by 1.658.
+Iteration 39 of at most 500:
+Optimizing with step length 0.00221414344197664.
+The log-likelihood improved by 1.011.
+Iteration 40 of at most 500:
+Optimizing with step length 0.00221414344284925.
+The log-likelihood improved by 1.267.
+Iteration 41 of at most 500:
+Optimizing with step length 0.00442828688570869.
+The log-likelihood improved by 1.419.
+Iteration 42 of at most 500:
+Optimizing with step length 0.00742369049520664.
+The log-likelihood improved by 1.446.
+Iteration 43 of at most 500:
+Optimizing with step length 0.00598613664497432.
+The log-likelihood improved by 1.451.
+Iteration 44 of at most 500:
+Optimizing with step length 0.00894497810737009.
+The log-likelihood improved by 1.134.
+Iteration 45 of at most 500:
+Optimizing with step length 0.0127706499825534.
+The log-likelihood improved by 1.324.
+Iteration 46 of at most 500:
+Optimizing with step length 0.0128994635285176.
+The log-likelihood improved by 1.429.
+Iteration 47 of at most 500:
+Optimizing with step length 0.00759185079460913.
+The log-likelihood improved by 1.276.
+Iteration 48 of at most 500:
+Optimizing with step length 0.00299463041701233.
+The log-likelihood improved by 1.434.
+Iteration 49 of at most 500:
+Optimizing with step length 0.00073958787423545.
+The log-likelihood improved by 0.5569.
+Iteration 50 of at most 500:
+Optimizing with step length 0.000735173227532045.
+The log-likelihood improved by 0.4691.
+Iteration 51 of at most 500:
+Optimizing with step length 0.000735164625473452.
+The log-likelihood improved by 0.7062.
+Iteration 52 of at most 500:
+Optimizing with step length 0.000735164608712253.
+The log-likelihood improved by 1.575.
+Iteration 53 of at most 500:
+Optimizing with step length 0.000735164608679609.
+The log-likelihood improved by 1.088.
+Iteration 54 of at most 500:
+Optimizing with step length 0.
+The log-likelihood improved by < 0.0001.
+Iteration 55 of at most 500:
+Optimizing with step length 0.
+The log-likelihood improved by < 0.0001.
+Error in ergm.MCMLE(init, nw, model, initialfit = (initialfit <- NULL),  : 
+  MCMLE estimation stuck. There may be excessive correlation between model terms, suggesting a poor model for the observed data. If target.stats are specified, try increasing SAN parameters.
+Calls: ergm -> ergm.MCMLE
+In addition: Warning message:
+`set_attrs()` is deprecated as of rlang 0.3.0
+This warning is displayed once per session. 
+Execution halted

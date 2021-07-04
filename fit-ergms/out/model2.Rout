@@ -1,0 +1,1825 @@
+
+R version 3.6.1 (2019-07-05) -- "Action of the Toes"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Analyze synthetic dataset with 32K nodes 
+> # Fit ERGM with 5 dyadic independent terms
+> 
+> rm(list=ls())
+> 
+> 
+> # Libraries ----------
+> 
+> library(network)
+network: Classes for Relational Data
+Version 1.15 created on 2019-04-01.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+                    Skye Bender-deMoll, University of Washington
+ For citation information, type citation("network").
+ Type help("network-package") to get started.
+
+> library(ergm)
+
+ergm: version 3.10.4, created on 2019-06-10
+Copyright (c) 2019, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+                    with contributions from
+                    Li Wang
+                    Kirk Li, University of Washington
+                    Skye Bender-deMoll, University of Washington
+                    Chad Klumb
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm").
+
+NOTE: Versions before 3.6.1 had a bug in the implementation of the bd()
+constriant which distorted the sampled distribution somewhat. In
+addition, Sampson's Monks datasets had mislabeled vertices. See the
+NEWS and the documentation for more details.
+
+NOTE: Some common term arguments pertaining to vertex attribute and
+level selection have changed in 3.10.0. See terms help for more
+details. Use 'options(ergm.term=list(version="3.9.4"))' to use old
+behavior.
+
+> library(dplyr)
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+> library(ergm.userterms)
+
+ergm.userterms: version 3.10.0, created on 2019-05-15
+Copyright (c) 2019, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm.userterms").
+
+NOTE: If you use custom ERGM terms based on 'ergm.userterms' version
+prior to 3.1, you will need to perform a one-time update of the package
+boilerplate files (the files that you did not write or modify) from
+'ergm.userterms' 3.1 or later. See help('eut-upgrade') for
+instructions.
+
+> 
+> 
+> # Data ----------
+> 
+> load("meta-mixing-init-net.RData") # starting network from meta mixing data
+> 
+> inedges <- read.csv("../HepCEP_ERGM/pplrss.csv") #in- and out-edges
+> outedges <- read.csv("../HepCEP_ERGM/ppldss.csv")
+> # refer to "population_2014-08-17--11.00.43--analysis.R" for an example
+> 
+> 
+> # Recode to add new variables to dataset ----------
+> 
+> # young (< 26, to be set = 1) vs old (>= 26, to be set = 0) 
+> age.cat <- n0 %v% "age.cat"
+> age.cat.df <- as.data.frame(age.cat)
+> age.cat.df <-  
++   mutate(age.cat, young = ifelse(age.cat == 0, 1, 0), .data = age.cat.df)
+> xtabs(~age.cat+young, data = age.cat.df)
+       young
+age.cat     0     1
+      0     0  4971
+      1 12111     0
+      2  7030     0
+      3  7888     0
+> 
+> # recode race variable to set ordering of categories
+> race <- n0 %v% "race"
+> race.num <- recode(race, 
++                    white = 1, black = 2,
++                    hispanic = 3, other = 4)
+> 
+> # Initialize network and add attributes ----------
+> 
+> n0 %v% "young" <- age.cat.df$young
+> n0 %v% "race.num" <- race.num
+> 
+> # Generate target statistics from meta-mixing data ----------
+> 
+> ## gender 
+> ### mixing information from meta-analysis of sathcap AND socnet
+> edges.male.end <- mean(c(0.58, 0.59))
+> edges.female.end <- mean(c(0.40, 0.41))
+> 
+> male.pctmale <- 0.53 
+> male.pctfemale <- 0.47
+> female.pctmale <- 0.75
+> female.pctfemale <- 0.22
+> 
+> ### set gender targets 
+> tgt.male.pctmale <- edges_target*edges.male.end*male.pctmale
+> tgt.male.pctfemale <- edges_target*edges.male.end*male.pctfemale
+> tgt.female.pctmale <- edges_target*edges.female.end*female.pctmale  
+> tgt.female.pctfemale <- edges_target*edges.female.end*female.pctfemale
+> 
+> ## young (1=young; 0=old)
+> ### mixing information from meta-analysis of sathcap AND socnet
+> edges.young.end <- 0.10
+> edges.old.end <- 0.90
+>   
+> young.pctyoung <- 0.60
+> young.pctold <- 0.40
+> old.pctyoung <- 0.14
+> old.pctold <- 0.86
+>  
+> ## set young targets from meta data
+> tgt.young.pctyoung <- edges_target * edges.young.end * young.pctyoung
+> tgt.young.pctold <- edges_target * edges.young.end * young.pctold
+> tgt.old.pctyoung <- edges_target * edges.old.end * old.pctyoung
+> tgt.old.pctold <- edges_target * edges.old.end * old.pctold
+> 
+> 
+> ## chicago
+> ### mixing information from meta-analysis of sathcap AND socnet
+> 
+> edges.chicago.end <- 0.87
+> edges.nonchicago.end <- 0.13
+> 
+> chicago.pctchicago <- 0.67
+> chicago.pctnonchicago <- 0.30
+> nonchicago.pctchicago <- 0.60
+> nonchicago.pctnonchicago <- 0.40
+> 
+> 
+> # ### mixing from simulation
+> # chicago.mm <- mixingmatrix(sim, "chicago") #fem=1, chicago=2
+> # from.nonchicago <- sum(chicago.mm$matrix[,1])
+> # from.chicago <- sum(chicago.mm$matrix[,2])
+> # 
+> # ### set chicago targets from sathcap
+> # tgt.chicago.pctchicago <- from.chicago*chicago.pctchicago
+> # tgt.chicago.pctnonchicago <- from.chicago*chicago.pctnonchicago
+> # tgt.nonchicago.pctchicago <- from.nonchicago*chicago.pctchicago
+> # tgt.nonchicago.pctnonchicago <- from.nonchicago*chicago.pctnonchicago
+> 
+> 
+> ## race (1=Black, 2=hispani,3=other, 4=white)
+> 
+> table(n0 %v% "race.num") # will be sorted as per 1=W, 2=B, 3=H, 4=O
+
+    1     2     3     4 
+18660  6056  6291   993 
+> 
+> pct_to_white	<- mean(c(0.30, 0.31))
+> pct_to_black	<- mean(c(0.41,	0.42))
+> pct_to_hispanic	<- mean(c(0.21, 0.22))
+> pct_to_other	<- mean(c(0.04,	0.05))
+> 
+> race.w.w <- 0.73
+> race.b.w <- 0.10
+> race.h.w <- 0.12
+> race.o.w <- 0.04
+> race.w.b <- 0.10
+> race.b.b <- 0.83
+> race.h.b <- 0.06
+> race.o.b <- 0.01
+> race.w.h <- 0.21
+> race.b.h <- 0.15
+> race.h.h <- 0.62
+> race.o.h <- 0.02
+> race.w.o <- 0.43
+> race.b.o <- 0.21
+> race.h.o <- 0.22
+> race.o.o <- 0.14
+> 
+> target.w.w <- edges_target * pct_to_white * race.w.w
+> target.b.w <- edges_target * pct_to_white * race.b.w
+> target.h.w <- edges_target * pct_to_white * race.h.w
+> target.o.w <- edges_target * pct_to_white * race.o.w
+> 
+> target.w.b <- edges_target * pct_to_black * race.w.b
+> target.b.b <- edges_target * pct_to_black * race.b.b
+> target.h.b <- edges_target * pct_to_black * race.h.b
+> target.o.b <- edges_target * pct_to_black * race.o.b
+> 
+> target.w.h <- edges_target * pct_to_hispanic * race.w.h
+> target.b.h <- edges_target * pct_to_hispanic * race.b.h
+> target.h.h <- edges_target * pct_to_hispanic * race.h.h
+> target.o.h <- edges_target * pct_to_hispanic * race.o.h
+> 
+> target.w.o <- edges_target * pct_to_other * race.w.o
+> target.b.o <- edges_target * pct_to_other * race.b.o
+> target.h.o <- edges_target * pct_to_other * race.h.o
+> target.o.o <- edges_target * pct_to_other * race.o.o
+> 
+> ## degree distributions
+> inedges <- inedges %>% 
++   mutate(n_nodes = n*nbprob)
+> outedges <- outedges %>% 
++   mutate(n_nodes = n*nbprob)
+> 
+> 
+> # Fit ERGM (with SATHCAP mixing) ----------
+> 
+> deg.terms <- 1:3
+> 
+> # fit.metadata.mixing <- 
+> #   ergm(
+> #     n0 ~ 
+> #       edges +
+> #       idegree(c(deg.terms)) + 
+> #       #odegree(c(deg.terms))+
+> #       #nodemix("gender", base=1)+
+> #       #nodemix("young", base=1)+
+> #       nodematch("race.num", diff=T)+
+> #       nodeifactor("race.num", base=1),
+> #       #nodemix("race.num", base=1),
+> #       target.stats = c(edges_target),
+> #                      c(inedges$n_nodes[c(deg.terms+1)]), 
+> #                      #c(outedges$n_nodes[deg.terms+1]), 
+> #                      #c(tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale),
+> #                      #c(tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung),
+> #                      c(target.w.w, target.b.b, target.h.h, target.o.o),
+> #                      c(#sum(target.w.w, target.w.b, target.w.h, target.w.o),
+> #                        sum(target.b.w, target.b.b, target.b.h, target.b.o),
+> #                        sum(target.h.w, target.h.b, target.h.h, target.h.o),
+> #                        sum(target.o.w, target.o.b, target.o.h, target.o.o)
+> #                        ),
+> #                     #c(target.b.w, target.h.w, target.o.w,
+> #                     #target.w.b, target.b.b, target.h.b, target.o.b,
+> #                     #target.w.h, target.b.h, target.h.h, target.o.h,
+> #                     #target.w.o, target.b.o, target.h.o, target.o.o)
+> #                     #),
+> #     eval.loglik = FALSE,
+> #     control = control.ergm(MCMLE.maxit = 500,
+> #                            SAN.maxit = 100
+> #                            )
+> #   )
+> 
+> fit.metadata.mixing <-
++   ergm(
++     n0 ~
++       edges +
++       idegree(deg.terms) +
++       nodematch("race.num", diff=T)+
++       nodeifactor("race.num", base=1),
++       target.stats = c(edges_target,
++                      c(inedges$n_nodes[c(deg.terms+1)]),
++                      c(target.w.w, target.b.b, target.h.h, target.o.o),
++                      c(#sum(target.w.w, target.w.b, target.w.h, target.w.o),
++                      sum(target.b.w, target.b.b, target.b.h, target.b.o),
++                      sum(target.h.w, target.h.b, target.h.h, target.h.o),
++                      sum(target.o.w, target.o.b, target.o.h, target.o.o)
++                       )
++                      ),
++     eval.loglik = FALSE,
++     control = control.ergm(MCMLE.maxit = 500,
++                            SAN.maxit = 100
++                            )
++   )
+In term 'nodeifactor' in package 'ergm': Argument 'base' has been superseded by 'levels', and it is recommended to use the latter.  Note that its interpretation may be different.
+Unable to match target stats. Using MCMLE estimation.
+Starting maximum pseudolikelihood estimation (MPLE):
+Evaluating the predictor and response matrix.
+Maximizing the pseudolikelihood.
+Finished MPLE.
+Starting Monte Carlo maximum likelihood estimation (MCMLE):
+Iteration 1 of at most 500:
+Optimizing with step length 0.00848502297975173.
+The log-likelihood improved by 2.257.
+Iteration 2 of at most 500:
+Optimizing with step length 0.00975420949019251.
+The log-likelihood improved by 3.04.
+Iteration 3 of at most 500:
+Optimizing with step length 0.00828145246314894.
+The log-likelihood improved by 1.991.
+Iteration 4 of at most 500:
+Optimizing with step length 0.0149984278044495.
+The log-likelihood improved by 1.71.
+Iteration 5 of at most 500:
+Optimizing with step length 0.0129753944998691.
+The log-likelihood improved by 1.871.
+Iteration 6 of at most 500:
+Optimizing with step length 0.015183322162701.
+The log-likelihood improved by 1.659.
+Iteration 7 of at most 500:
+Optimizing with step length 0.013744992406279.
+The log-likelihood improved by 1.553.
+Iteration 8 of at most 500:
+Optimizing with step length 0.0129325887861644.
+The log-likelihood improved by 1.427.
+Iteration 9 of at most 500:
+Optimizing with step length 0.0250503302098853.
+The log-likelihood improved by 1.665.
+Iteration 10 of at most 500:
+Optimizing with step length 0.0195884128746864.
+The log-likelihood improved by 1.219.
+Iteration 11 of at most 500:
+Optimizing with step length 0.0185371058966503.
+The log-likelihood improved by 1.827.
+Iteration 12 of at most 500:
+Optimizing with step length 0.016946513138866.
+The log-likelihood improved by 1.701.
+Iteration 13 of at most 500:
+Optimizing with step length 0.0191758768891974.
+The log-likelihood improved by 1.383.
+Iteration 14 of at most 500:
+Optimizing with step length 0.0300844423509343.
+The log-likelihood improved by 1.37.
+Iteration 15 of at most 500:
+Optimizing with step length 0.0246059080039784.
+The log-likelihood improved by 1.461.
+Iteration 16 of at most 500:
+Optimizing with step length 0.0351983747341498.
+The log-likelihood improved by 1.837.
+Iteration 17 of at most 500:
+Optimizing with step length 0.0465992512051547.
+The log-likelihood improved by 2.409.
+Iteration 18 of at most 500:
+Optimizing with step length 0.0487982615014242.
+The log-likelihood improved by 2.241.
+Iteration 19 of at most 500:
+Optimizing with step length 0.0648166595517786.
+The log-likelihood improved by 1.835.
+Iteration 20 of at most 500:
+Optimizing with step length 0.0623228356779214.
+The log-likelihood improved by 1.968.
+Iteration 21 of at most 500:
+Optimizing with step length 0.0884315590410653.
+The log-likelihood improved by 2.046.
+Iteration 22 of at most 500:
+Optimizing with step length 0.0725832467271213.
+The log-likelihood improved by 1.875.
+Iteration 23 of at most 500:
+Optimizing with step length 0.108200603427493.
+The log-likelihood improved by 1.379.
+Iteration 24 of at most 500:
+Optimizing with step length 0.0962006880056194.
+The log-likelihood improved by 1.965.
+Iteration 25 of at most 500:
+Optimizing with step length 0.187361015900318.
+The log-likelihood improved by 2.478.
+Iteration 26 of at most 500:
+Optimizing with step length 0.0851967300528421.
+The log-likelihood improved by 2.243.
+Iteration 27 of at most 500:
+Optimizing with step length 0.0836434512111321.
+The log-likelihood improved by 1.5.
+Iteration 28 of at most 500:
+Optimizing with step length 0.165681021709815.
+The log-likelihood improved by 1.407.
+Iteration 29 of at most 500:
+Optimizing with step length 0.216462463086267.
+The log-likelihood improved by 1.671.
+Iteration 30 of at most 500:
+Optimizing with step length 0.396698163465743.
+The log-likelihood improved by 1.929.
+Iteration 31 of at most 500:
+Optimizing with step length 0.158911981564059.
+The log-likelihood improved by 2.195.
+Iteration 32 of at most 500:
+Optimizing with step length 0.140126618884235.
+The log-likelihood improved by 2.559.
+Iteration 33 of at most 500:
+Optimizing with step length 0.230746770631894.
+The log-likelihood improved by 2.106.
+Iteration 34 of at most 500:
+Optimizing with step length 0.23911267523143.
+The log-likelihood improved by 2.132.
+Iteration 35 of at most 500:
+Optimizing with step length 0.0894190292073931.
+The log-likelihood improved by 1.815.
+Iteration 36 of at most 500:
+Optimizing with step length 0.145477375672116.
+The log-likelihood improved by 2.971.
+Iteration 37 of at most 500:
+Optimizing with step length 0.234835630115839.
+The log-likelihood improved by 1.488.
+Iteration 38 of at most 500:
+Optimizing with step length 0.288948318728674.
+The log-likelihood improved by 1.574.
+Iteration 39 of at most 500:
+Optimizing with step length 0.0693241117801059.
+The log-likelihood improved by 1.261.
+Iteration 40 of at most 500:
+Optimizing with step length 0.0387139132703577.
+The log-likelihood improved by 1.404.
+Iteration 41 of at most 500:
+Optimizing with step length 0.283028386024239.
+The log-likelihood improved by 1.489.
+Iteration 42 of at most 500:
+Optimizing with step length 0.294297064115829.
+The log-likelihood improved by 1.395.
+Iteration 43 of at most 500:
+Optimizing with step length 0.163447980415351.
+The log-likelihood improved by 2.085.
+Iteration 44 of at most 500:
+Optimizing with step length 0.119839015494965.
+The log-likelihood improved by 2.294.
+Iteration 45 of at most 500:
+Optimizing with step length 0.150990811373888.
+The log-likelihood improved by 1.559.
+Iteration 46 of at most 500:
+Optimizing with step length 0.074253280609482.
+The log-likelihood improved by 1.654.
+Iteration 47 of at most 500:
+Optimizing with step length 0.190258425644814.
+The log-likelihood improved by 1.725.
+Iteration 48 of at most 500:
+Optimizing with step length 0.200024452022248.
+The log-likelihood improved by 2.104.
+Iteration 49 of at most 500:
+Optimizing with step length 0.177705920567056.
+The log-likelihood improved by 1.86.
+Iteration 50 of at most 500:
+Optimizing with step length 0.205046239460835.
+The log-likelihood improved by 1.63.
+Iteration 51 of at most 500:
+Optimizing with step length 0.158799244415511.
+The log-likelihood improved by 1.835.
+Iteration 52 of at most 500:
+Optimizing with step length 0.353757310712728.
+The log-likelihood improved by 2.335.
+Iteration 53 of at most 500:
+Optimizing with step length 0.259643406176293.
+The log-likelihood improved by 1.692.
+Iteration 54 of at most 500:
+Optimizing with step length 0.0757387875822937.
+The log-likelihood improved by 1.55.
+Iteration 55 of at most 500:
+Optimizing with step length 0.0781682179511423.
+The log-likelihood improved by 1.398.
+Iteration 56 of at most 500:
+Optimizing with step length 0.142774450932979.
+The log-likelihood improved by 1.67.
+Iteration 57 of at most 500:
+Optimizing with step length 0.22937817655159.
+The log-likelihood improved by 1.512.
+Iteration 58 of at most 500:
+Optimizing with step length 0.340161448230377.
+The log-likelihood improved by 1.582.
+Iteration 59 of at most 500:
+Optimizing with step length 0.126475348660661.
+The log-likelihood improved by 2.218.
+Iteration 60 of at most 500:
+Optimizing with step length 0.10272916763685.
+The log-likelihood improved by 1.645.
+Iteration 61 of at most 500:
+Optimizing with step length 0.109750319776901.
+The log-likelihood improved by 1.514.
+Iteration 62 of at most 500:
+Optimizing with step length 0.134282950152861.
+The log-likelihood improved by 2.097.
+Iteration 63 of at most 500:
+Optimizing with step length 0.169961124952638.
+The log-likelihood improved by 1.546.
+Iteration 64 of at most 500:
+Optimizing with step length 0.143470354714685.
+The log-likelihood improved by 1.655.
+Iteration 65 of at most 500:
+Optimizing with step length 0.1022632170733.
+The log-likelihood improved by 1.891.
+Iteration 66 of at most 500:
+Optimizing with step length 0.127290875770028.
+The log-likelihood improved by 1.346.
+Iteration 67 of at most 500:
+Optimizing with step length 0.0912064661759527.
+The log-likelihood improved by 1.732.
+Iteration 68 of at most 500:
+Optimizing with step length 0.0803789537257504.
+The log-likelihood improved by 2.17.
+Iteration 69 of at most 500:
+Optimizing with step length 0.227257141550211.
+The log-likelihood improved by 2.478.
+Iteration 70 of at most 500:
+Optimizing with step length 0.087531959709185.
+The log-likelihood improved by 2.131.
+Iteration 71 of at most 500:
+Optimizing with step length 0.0868403706525085.
+The log-likelihood improved by 1.656.
+Iteration 72 of at most 500:
+Optimizing with step length 0.111916927533504.
+The log-likelihood improved by 2.125.
+Iteration 73 of at most 500:
+Optimizing with step length 0.165491292258346.
+The log-likelihood improved by 1.339.
+Iteration 74 of at most 500:
+Optimizing with step length 0.11100119649176.
+The log-likelihood improved by 1.958.
+Iteration 75 of at most 500:
+Optimizing with step length 0.318019159647891.
+The log-likelihood improved by 2.229.
+Iteration 76 of at most 500:
+Optimizing with step length 0.121132398920955.
+The log-likelihood improved by 2.378.
+Iteration 77 of at most 500:
+Optimizing with step length 0.0644568977769285.
+The log-likelihood improved by 1.956.
+Iteration 78 of at most 500:
+Optimizing with step length 0.102692922692775.
+The log-likelihood improved by 2.948.
+Iteration 79 of at most 500:
+Optimizing with step length 0.0976621459735043.
+The log-likelihood improved by 1.678.
+Iteration 80 of at most 500:
+Optimizing with step length 0.0641790954817298.
+The log-likelihood improved by 1.214.
+Iteration 81 of at most 500:
+Optimizing with step length 0.0750852819082881.
+The log-likelihood improved by 1.813.
+Iteration 82 of at most 500:
+Optimizing with step length 0.154464013000454.
+The log-likelihood improved by 1.613.
+Iteration 83 of at most 500:
+Optimizing with step length 0.307657893582298.
+The log-likelihood improved by 1.895.
+Iteration 84 of at most 500:
+Optimizing with step length 0.174937143094987.
+The log-likelihood improved by 1.583.
+Iteration 85 of at most 500:
+Optimizing with step length 0.16161842963366.
+The log-likelihood improved by 1.888.
+Iteration 86 of at most 500:
+Optimizing with step length 0.131226756775629.
+The log-likelihood improved by 1.389.
+Iteration 87 of at most 500:
+Optimizing with step length 0.0812529096706049.
+The log-likelihood improved by 2.264.
+Iteration 88 of at most 500:
+Optimizing with step length 0.0961683949822015.
+The log-likelihood improved by 1.286.
+Iteration 89 of at most 500:
+Optimizing with step length 0.0942514369740651.
+The log-likelihood improved by 1.733.
+Iteration 90 of at most 500:
+Optimizing with step length 0.0938017251656326.
+The log-likelihood improved by 1.924.
+Iteration 91 of at most 500:
+Optimizing with step length 0.100086530596168.
+The log-likelihood improved by 2.117.
+Iteration 92 of at most 500:
+Optimizing with step length 0.10904553035921.
+The log-likelihood improved by 2.102.
+Iteration 93 of at most 500:
+Optimizing with step length 0.0547302639865215.
+The log-likelihood improved by 1.437.
+Iteration 94 of at most 500:
+Optimizing with step length 0.0321808586401491.
+The log-likelihood improved by 2.134.
+Iteration 95 of at most 500:
+Optimizing with step length 0.110825312183497.
+The log-likelihood improved by 1.873.
+Iteration 96 of at most 500:
+Optimizing with step length 0.159345583394675.
+The log-likelihood improved by 1.82.
+Iteration 97 of at most 500:
+Optimizing with step length 0.228782844757732.
+The log-likelihood improved by 1.327.
+Iteration 98 of at most 500:
+Optimizing with step length 0.266539106649044.
+The log-likelihood improved by 1.374.
+Iteration 99 of at most 500:
+Optimizing with step length 0.143899992661294.
+The log-likelihood improved by 1.755.
+Iteration 100 of at most 500:
+Optimizing with step length 0.235136923248376.
+The log-likelihood improved by 2.898.
+Iteration 101 of at most 500:
+Optimizing with step length 0.108632330072861.
+The log-likelihood improved by 1.597.
+Iteration 102 of at most 500:
+Optimizing with step length 0.248796108545431.
+The log-likelihood improved by 1.574.
+Iteration 103 of at most 500:
+Optimizing with step length 0.346146140690018.
+The log-likelihood improved by 1.927.
+Iteration 104 of at most 500:
+Optimizing with step length 0.217896606982866.
+The log-likelihood improved by 1.905.
+Iteration 105 of at most 500:
+Optimizing with step length 0.119465551967217.
+The log-likelihood improved by 1.598.
+Iteration 106 of at most 500:
+Optimizing with step length 0.200706671787055.
+The log-likelihood improved by 1.542.
+Iteration 107 of at most 500:
+Optimizing with step length 0.308191932990569.
+The log-likelihood improved by 1.805.
+Iteration 108 of at most 500:
+Optimizing with step length 0.164243392888394.
+The log-likelihood improved by 1.657.
+Iteration 109 of at most 500:
+Optimizing with step length 0.0797769558704333.
+The log-likelihood improved by 2.03.
+Iteration 110 of at most 500:
+Optimizing with step length 0.168939576131744.
+The log-likelihood improved by 1.76.
+Iteration 111 of at most 500:
+Optimizing with step length 0.111483852367424.
+The log-likelihood improved by 1.881.
+Iteration 112 of at most 500:
+Optimizing with step length 0.148126775619815.
+The log-likelihood improved by 1.905.
+Iteration 113 of at most 500:
+Optimizing with step length 0.113186568441862.
+The log-likelihood improved by 1.096.
+Iteration 114 of at most 500:
+Optimizing with step length 0.0582560018422115.
+The log-likelihood improved by 1.71.
+Iteration 115 of at most 500:
+Optimizing with step length 0.401451771755885.
+The log-likelihood improved by 1.816.
+Iteration 116 of at most 500:
+Optimizing with step length 0.342430932695235.
+The log-likelihood improved by 2.194.
+Iteration 117 of at most 500:
+Optimizing with step length 0.474741528128733.
+The log-likelihood improved by 1.634.
+Iteration 118 of at most 500:
+Optimizing with step length 0.149028822020397.
+The log-likelihood improved by 1.874.
+Iteration 119 of at most 500:
+Optimizing with step length 0.199155543966071.
+The log-likelihood improved by 2.05.
+Iteration 120 of at most 500:
+Optimizing with step length 0.0968580124808455.
+The log-likelihood improved by 1.65.
+Iteration 121 of at most 500:
+Optimizing with step length 0.0732667262441223.
+The log-likelihood improved by 1.647.
+Iteration 122 of at most 500:
+Optimizing with step length 0.0619396731902989.
+The log-likelihood improved by 1.331.
+Iteration 123 of at most 500:
+Optimizing with step length 0.0806490713029761.
+The log-likelihood improved by 1.822.
+Iteration 124 of at most 500:
+Optimizing with step length 0.196565349568153.
+The log-likelihood improved by 1.673.
+Iteration 125 of at most 500:
+Optimizing with step length 0.227953977819638.
+The log-likelihood improved by 1.643.
+Iteration 126 of at most 500:
+Optimizing with step length 0.135985696468318.
+The log-likelihood improved by 1.414.
+Iteration 127 of at most 500:
+Optimizing with step length 0.0686847876544206.
+The log-likelihood improved by 1.346.
+Iteration 128 of at most 500:
+Optimizing with step length 0.0776663121311683.
+The log-likelihood improved by 1.394.
+Iteration 129 of at most 500:
+Optimizing with step length 0.289027505693032.
+The log-likelihood improved by 2.124.
+Iteration 130 of at most 500:
+Optimizing with step length 0.328886237131461.
+The log-likelihood improved by 2.459.
+Iteration 131 of at most 500:
+Optimizing with step length 0.120520268990666.
+The log-likelihood improved by 1.964.
+Iteration 132 of at most 500:
+Optimizing with step length 0.0623911360836833.
+The log-likelihood improved by 2.294.
+Iteration 133 of at most 500:
+Optimizing with step length 0.10650685783775.
+The log-likelihood improved by 1.627.
+Iteration 134 of at most 500:
+Optimizing with step length 0.100471933686832.
+The log-likelihood improved by 1.766.
+Iteration 135 of at most 500:
+Optimizing with step length 0.0655934354672148.
+The log-likelihood improved by 1.546.
+Iteration 136 of at most 500:
+Optimizing with step length 0.139744799327167.
+The log-likelihood improved by 1.833.
+Iteration 137 of at most 500:
+Optimizing with step length 0.303646571201384.
+The log-likelihood improved by 2.62.
+Iteration 138 of at most 500:
+Optimizing with step length 0.187067575917395.
+The log-likelihood improved by 1.739.
+Iteration 139 of at most 500:
+Optimizing with step length 0.09753877731602.
+The log-likelihood improved by 1.833.
+Iteration 140 of at most 500:
+Optimizing with step length 0.121268882876476.
+The log-likelihood improved by 2.012.
+Iteration 141 of at most 500:
+Optimizing with step length 0.0839710563535787.
+The log-likelihood improved by 2.602.
+Iteration 142 of at most 500:
+Optimizing with step length 0.172316588509213.
+The log-likelihood improved by 2.242.
+Iteration 143 of at most 500:
+Optimizing with step length 0.0919976821707169.
+The log-likelihood improved by 1.759.
+Iteration 144 of at most 500:
+Optimizing with step length 0.0878197868635727.
+The log-likelihood improved by 2.077.
+Iteration 145 of at most 500:
+Optimizing with step length 0.0561855582139197.
+The log-likelihood improved by 1.58.
+Iteration 146 of at most 500:
+Optimizing with step length 0.132533569359425.
+The log-likelihood improved by 1.368.
+Iteration 147 of at most 500:
+Optimizing with step length 0.20274151843873.
+The log-likelihood improved by 1.136.
+Iteration 148 of at most 500:
+Optimizing with step length 0.0966829445728407.
+The log-likelihood improved by 1.606.
+Iteration 149 of at most 500:
+Optimizing with step length 0.227380374621964.
+The log-likelihood improved by 1.273.
+Iteration 150 of at most 500:
+Optimizing with step length 0.38790630615399.
+The log-likelihood improved by 1.579.
+Iteration 151 of at most 500:
+Optimizing with step length 0.262636486531945.
+The log-likelihood improved by 2.019.
+Iteration 152 of at most 500:
+Optimizing with step length 0.169978238113264.
+The log-likelihood improved by 1.7.
+Iteration 153 of at most 500:
+Optimizing with step length 0.130857200732864.
+The log-likelihood improved by 1.525.
+Iteration 154 of at most 500:
+Optimizing with step length 0.0950236496610692.
+The log-likelihood improved by 1.888.
+Iteration 155 of at most 500:
+Optimizing with step length 0.0866612803130732.
+The log-likelihood improved by 1.802.
+Iteration 156 of at most 500:
+Optimizing with step length 0.194159670114177.
+The log-likelihood improved by 1.703.
+Iteration 157 of at most 500:
+Optimizing with step length 0.072311027563831.
+The log-likelihood improved by 1.998.
+Iteration 158 of at most 500:
+Optimizing with step length 0.13646087201119.
+The log-likelihood improved by 1.397.
+Iteration 159 of at most 500:
+Optimizing with step length 0.219748417390752.
+The log-likelihood improved by 2.93.
+Iteration 160 of at most 500:
+Optimizing with step length 0.0978664462456575.
+The log-likelihood improved by 2.478.
+Iteration 161 of at most 500:
+Optimizing with step length 0.179385870661519.
+The log-likelihood improved by 2.249.
+Iteration 162 of at most 500:
+Optimizing with step length 0.121112051825311.
+The log-likelihood improved by 1.613.
+Iteration 163 of at most 500:
+Optimizing with step length 0.120592863561806.
+The log-likelihood improved by 1.972.
+Iteration 164 of at most 500:
+Optimizing with step length 0.149320644452414.
+The log-likelihood improved by 1.177.
+Iteration 165 of at most 500:
+Optimizing with step length 0.123190508385455.
+The log-likelihood improved by 1.922.
+Iteration 166 of at most 500:
+Optimizing with step length 0.0989668893563764.
+The log-likelihood improved by 1.653.
+Iteration 167 of at most 500:
+Optimizing with step length 0.187483601689589.
+The log-likelihood improved by 1.948.
+Iteration 168 of at most 500:
+Optimizing with step length 0.255692238126741.
+The log-likelihood improved by 2.222.
+Iteration 169 of at most 500:
+Optimizing with step length 0.130147011280429.
+The log-likelihood improved by 1.241.
+Iteration 170 of at most 500:
+Optimizing with step length 0.0889314968838636.
+The log-likelihood improved by 1.614.
+Iteration 171 of at most 500:
+Optimizing with step length 0.146238845071528.
+The log-likelihood improved by 2.085.
+Iteration 172 of at most 500:
+Optimizing with step length 0.196935829001787.
+The log-likelihood improved by 2.483.
+Iteration 173 of at most 500:
+Optimizing with step length 0.0776362958213584.
+The log-likelihood improved by 1.455.
+Iteration 174 of at most 500:
+Optimizing with step length 0.113052226683518.
+The log-likelihood improved by 1.549.
+Iteration 175 of at most 500:
+Optimizing with step length 0.0620849084453773.
+The log-likelihood improved by 1.844.
+Iteration 176 of at most 500:
+Optimizing with step length 0.151977177956902.
+The log-likelihood improved by 1.468.
+Iteration 177 of at most 500:
+Optimizing with step length 0.219055868176427.
+The log-likelihood improved by 2.199.
+Iteration 178 of at most 500:
+Optimizing with step length 0.0569371632140295.
+The log-likelihood improved by 1.426.
+Iteration 179 of at most 500:
+Optimizing with step length 0.120617445006111.
+The log-likelihood improved by 1.93.
+Iteration 180 of at most 500:
+Optimizing with step length 0.157064961610324.
+The log-likelihood improved by 1.674.
+Iteration 181 of at most 500:
+Optimizing with step length 0.17946026431515.
+The log-likelihood improved by 2.028.
+Iteration 182 of at most 500:
+Optimizing with step length 0.141014642297786.
+The log-likelihood improved by 1.988.
+Iteration 183 of at most 500:
+Optimizing with step length 0.14359274922983.
+The log-likelihood improved by 1.436.
+Iteration 184 of at most 500:
+Optimizing with step length 0.0860542561481662.
+The log-likelihood improved by 0.9894.
+Iteration 185 of at most 500:
+Optimizing with step length 0.275364174148429.
+The log-likelihood improved by 2.027.
+Iteration 186 of at most 500:
+Optimizing with step length 0.330600990613979.
+The log-likelihood improved by 1.365.
+Iteration 187 of at most 500:
+Optimizing with step length 0.272404667655755.
+The log-likelihood improved by 1.988.
+Iteration 188 of at most 500:
+Optimizing with step length 0.27901731851653.
+The log-likelihood improved by 1.631.
+Iteration 189 of at most 500:
+Optimizing with step length 0.422351166720935.
+The log-likelihood improved by 2.714.
+Iteration 190 of at most 500:
+Optimizing with step length 0.421100252054438.
+The log-likelihood improved by 1.233.
+Iteration 191 of at most 500:
+Optimizing with step length 0.0921850684928524.
+The log-likelihood improved by 1.941.
+Iteration 192 of at most 500:
+Optimizing with step length 0.0577625948506586.
+The log-likelihood improved by 1.431.
+Iteration 193 of at most 500:
+Optimizing with step length 0.120842275392732.
+The log-likelihood improved by 1.996.
+Iteration 194 of at most 500:
+Optimizing with step length 0.275153124165516.
+The log-likelihood improved by 1.989.
+Iteration 195 of at most 500:
+Optimizing with step length 0.184371943009926.
+The log-likelihood improved by 1.614.
+Iteration 196 of at most 500:
+Optimizing with step length 0.115050093844166.
+The log-likelihood improved by 1.401.
+Iteration 197 of at most 500:
+Optimizing with step length 0.191960000855676.
+The log-likelihood improved by 1.966.
+Iteration 198 of at most 500:
+Optimizing with step length 0.307249962899644.
+The log-likelihood improved by 1.542.
+Iteration 199 of at most 500:
+Optimizing with step length 0.095650696178868.
+The log-likelihood improved by 2.377.
+Iteration 200 of at most 500:
+Optimizing with step length 0.0536815706450099.
+The log-likelihood improved by 1.731.
+Iteration 201 of at most 500:
+Optimizing with step length 0.118878325792162.
+The log-likelihood improved by 1.397.
+Iteration 202 of at most 500:
+Optimizing with step length 0.162247467392008.
+The log-likelihood improved by 1.973.
+Iteration 203 of at most 500:
+Optimizing with step length 0.107959627125091.
+The log-likelihood improved by 1.711.
+Iteration 204 of at most 500:
+Optimizing with step length 0.072598594794468.
+The log-likelihood improved by 1.827.
+Iteration 205 of at most 500:
+Optimizing with step length 0.0889160403803155.
+The log-likelihood improved by 1.837.
+Iteration 206 of at most 500:
+Optimizing with step length 0.0599846709227038.
+The log-likelihood improved by 1.747.
+Iteration 207 of at most 500:
+Optimizing with step length 0.0964779328645826.
+The log-likelihood improved by 1.493.
+Iteration 208 of at most 500:
+Optimizing with step length 0.0934065956685853.
+The log-likelihood improved by 1.937.
+Iteration 209 of at most 500:
+Optimizing with step length 0.104551587107994.
+The log-likelihood improved by 2.762.
+Iteration 210 of at most 500:
+Optimizing with step length 0.110239808547456.
+The log-likelihood improved by 2.027.
+Iteration 211 of at most 500:
+Optimizing with step length 0.235016176823008.
+The log-likelihood improved by 1.749.
+Iteration 212 of at most 500:
+Optimizing with step length 0.141599274278622.
+The log-likelihood improved by 1.621.
+Iteration 213 of at most 500:
+Optimizing with step length 0.0748922532503806.
+The log-likelihood improved by 2.044.
+Iteration 214 of at most 500:
+Optimizing with step length 0.100852976379487.
+The log-likelihood improved by 2.072.
+Iteration 215 of at most 500:
+Optimizing with step length 0.136174767841657.
+The log-likelihood improved by 1.826.
+Iteration 216 of at most 500:
+Optimizing with step length 0.18766802623.
+The log-likelihood improved by 2.423.
+Iteration 217 of at most 500:
+Optimizing with step length 0.232293741625623.
+The log-likelihood improved by 1.232.
+Iteration 218 of at most 500:
+Optimizing with step length 0.0856687102401389.
+The log-likelihood improved by 1.167.
+Iteration 219 of at most 500:
+Optimizing with step length 0.0828450512999813.
+The log-likelihood improved by 2.229.
+Iteration 220 of at most 500:
+Optimizing with step length 0.209048298193236.
+The log-likelihood improved by 1.55.
+Iteration 221 of at most 500:
+Optimizing with step length 0.349698694476226.
+The log-likelihood improved by 2.489.
+Iteration 222 of at most 500:
+Optimizing with step length 0.487029894610254.
+The log-likelihood improved by 1.903.
+Iteration 223 of at most 500:
+Optimizing with step length 0.0986319181839516.
+The log-likelihood improved by 1.754.
+Iteration 224 of at most 500:
+Optimizing with step length 0.0939118591707324.
+The log-likelihood improved by 1.776.
+Iteration 225 of at most 500:
+Optimizing with step length 0.311273837357358.
+The log-likelihood improved by 1.606.
+Iteration 226 of at most 500:
+Optimizing with step length 0.308015144583524.
+The log-likelihood improved by 1.458.
+Iteration 227 of at most 500:
+Optimizing with step length 0.391259634983704.
+The log-likelihood improved by 2.441.
+Iteration 228 of at most 500:
+Optimizing with step length 0.0938251973054879.
+The log-likelihood improved by 1.911.
+Iteration 229 of at most 500:
+Optimizing with step length 0.148777029173008.
+The log-likelihood improved by 1.917.
+Iteration 230 of at most 500:
+Optimizing with step length 0.106754801994488.
+The log-likelihood improved by 1.596.
+Iteration 231 of at most 500:
+Optimizing with step length 0.126769158964889.
+The log-likelihood improved by 1.236.
+Iteration 232 of at most 500:
+Optimizing with step length 0.0920608992673518.
+The log-likelihood improved by 1.261.
+Iteration 233 of at most 500:
+Optimizing with step length 0.104209486889067.
+The log-likelihood improved by 3.072.
+Iteration 234 of at most 500:
+Optimizing with step length 0.15417201112341.
+The log-likelihood improved by 1.655.
+Iteration 235 of at most 500:
+Optimizing with step length 0.151252293544243.
+The log-likelihood improved by 1.687.
+Iteration 236 of at most 500:
+Optimizing with step length 0.169484069970709.
+The log-likelihood improved by 1.129.
+Iteration 237 of at most 500:
+Optimizing with step length 0.309638091007757.
+The log-likelihood improved by 1.607.
+Iteration 238 of at most 500:
+Optimizing with step length 0.227163902617885.
+The log-likelihood improved by 1.667.
+Iteration 239 of at most 500:
+Optimizing with step length 0.41044335724447.
+The log-likelihood improved by 2.03.
+Iteration 240 of at most 500:
+Optimizing with step length 0.0856730572681419.
+The log-likelihood improved by 1.511.
+Iteration 241 of at most 500:
+Optimizing with step length 0.160831713091273.
+The log-likelihood improved by 1.55.
+Iteration 242 of at most 500:
+Optimizing with step length 0.209531544107779.
+The log-likelihood improved by 1.436.
+Iteration 243 of at most 500:
+Optimizing with step length 0.243305065055981.
+The log-likelihood improved by 1.217.
+Iteration 244 of at most 500:
+Optimizing with step length 0.180092555054789.
+The log-likelihood improved by 1.333.
+Iteration 245 of at most 500:
+Optimizing with step length 0.134807157435621.
+The log-likelihood improved by 2.106.
+Iteration 246 of at most 500:
+Optimizing with step length 0.216952472988435.
+The log-likelihood improved by 2.248.
+Iteration 247 of at most 500:
+Optimizing with step length 0.306518173500461.
+The log-likelihood improved by 1.972.
+Iteration 248 of at most 500:
+Optimizing with step length 0.155177589296799.
+The log-likelihood improved by 1.401.
+Iteration 249 of at most 500:
+Optimizing with step length 0.126048571331146.
+The log-likelihood improved by 1.53.
+Iteration 250 of at most 500:
+Optimizing with step length 0.121087466030677.
+The log-likelihood improved by 2.173.
+Iteration 251 of at most 500:
+Optimizing with step length 0.143697493818382.
+The log-likelihood improved by 1.474.
+Iteration 252 of at most 500:
+Optimizing with step length 0.274205209812055.
+The log-likelihood improved by 1.83.
+Iteration 253 of at most 500:
+Optimizing with step length 0.0779222140722163.
+The log-likelihood improved by 1.236.
+Iteration 254 of at most 500:
+Optimizing with step length 0.080365152879901.
+The log-likelihood improved by 1.45.
+Iteration 255 of at most 500:
+Optimizing with step length 0.22575155699331.
+The log-likelihood improved by 1.653.
+Iteration 256 of at most 500:
+Optimizing with step length 0.459176006260683.
+The log-likelihood improved by 1.908.
+Iteration 257 of at most 500:
+Optimizing with step length 0.270322691532664.
+The log-likelihood improved by 1.879.
+Iteration 258 of at most 500:
+Optimizing with step length 0.255229497101035.
+The log-likelihood improved by 1.727.
+Iteration 259 of at most 500:
+Optimizing with step length 0.202228601637415.
+The log-likelihood improved by 1.85.
+Iteration 260 of at most 500:
+Optimizing with step length 0.15436151407721.
+The log-likelihood improved by 2.056.
+Iteration 261 of at most 500:
+Optimizing with step length 0.199407004373679.
+The log-likelihood improved by 1.881.
+Iteration 262 of at most 500:
+Optimizing with step length 0.257494476931773.
+The log-likelihood improved by 1.495.
+Iteration 263 of at most 500:
+Optimizing with step length 0.127598269786025.
+The log-likelihood improved by 1.87.
+Iteration 264 of at most 500:
+Optimizing with step length 0.190151672601879.
+The log-likelihood improved by 1.957.
+Iteration 265 of at most 500:
+Optimizing with step length 0.319690426926359.
+The log-likelihood improved by 1.935.
+Iteration 266 of at most 500:
+Optimizing with step length 0.188230530786454.
+The log-likelihood improved by 1.363.
+Iteration 267 of at most 500:
+Optimizing with step length 0.237463872039834.
+The log-likelihood improved by 1.81.
+Iteration 268 of at most 500:
+Optimizing with step length 0.245501303125637.
+The log-likelihood improved by 2.269.
+Iteration 269 of at most 500:
+Optimizing with step length 0.177523169305089.
+The log-likelihood improved by 2.012.
+Iteration 270 of at most 500:
+Optimizing with step length 0.144588425911728.
+The log-likelihood improved by 1.764.
+Iteration 271 of at most 500:
+Optimizing with step length 0.13780384284155.
+The log-likelihood improved by 1.778.
+Iteration 272 of at most 500:
+Optimizing with step length 0.0598396864599027.
+The log-likelihood improved by 2.37.
+Iteration 273 of at most 500:
+Optimizing with step length 0.117945422140112.
+The log-likelihood improved by 1.546.
+Iteration 274 of at most 500:
+Optimizing with step length 0.141689095096137.
+The log-likelihood improved by 1.587.
+Iteration 275 of at most 500:
+Optimizing with step length 0.0656700546553955.
+The log-likelihood improved by 1.683.
+Iteration 276 of at most 500:
+Optimizing with step length 0.0322813459050424.
+The log-likelihood improved by 2.492.
+Iteration 277 of at most 500:
+Optimizing with step length 0.103455894175519.
+The log-likelihood improved by 1.658.
+Iteration 278 of at most 500:
+Optimizing with step length 0.0959874086150686.
+The log-likelihood improved by 1.897.
+Iteration 279 of at most 500:
+Optimizing with step length 0.0675795108866079.
+The log-likelihood improved by 1.228.
+Iteration 280 of at most 500:
+Optimizing with step length 0.170118916511164.
+The log-likelihood improved by 1.88.
+Iteration 281 of at most 500:
+Optimizing with step length 0.161856058216198.
+The log-likelihood improved by 1.712.
+Iteration 282 of at most 500:
+Optimizing with step length 0.344889049102064.
+The log-likelihood improved by 1.797.
+Iteration 283 of at most 500:
+Optimizing with step length 0.257654127702473.
+The log-likelihood improved by 1.704.
+Iteration 284 of at most 500:
+Optimizing with step length 0.0884773860465802.
+The log-likelihood improved by 1.392.
+Iteration 285 of at most 500:
+Optimizing with step length 0.0996904291007472.
+The log-likelihood improved by 1.865.
+Iteration 286 of at most 500:
+Optimizing with step length 0.188732720683423.
+The log-likelihood improved by 2.131.
+Iteration 287 of at most 500:
+Optimizing with step length 0.0979929678546739.
+The log-likelihood improved by 2.409.
+Iteration 288 of at most 500:
+Optimizing with step length 0.0530941380107796.
+The log-likelihood improved by 1.37.
+Iteration 289 of at most 500:
+Optimizing with step length 0.0831247231000833.
+The log-likelihood improved by 1.636.
+Iteration 290 of at most 500:
+Optimizing with step length 0.102869705031412.
+The log-likelihood improved by 1.264.
+Iteration 291 of at most 500:
+Optimizing with step length 0.271625716073816.
+The log-likelihood improved by 2.116.
+Iteration 292 of at most 500:
+Optimizing with step length 0.347759740681631.
+The log-likelihood improved by 1.754.
+Iteration 293 of at most 500:
+Optimizing with step length 0.145689973897001.
+The log-likelihood improved by 1.651.
+Iteration 294 of at most 500:
+Optimizing with step length 0.0705716138260751.
+The log-likelihood improved by 1.651.
+Iteration 295 of at most 500:
+Optimizing with step length 0.163855656041352.
+The log-likelihood improved by 1.963.
+Iteration 296 of at most 500:
+Optimizing with step length 0.15272944306359.
+The log-likelihood improved by 1.782.
+Iteration 297 of at most 500:
+Optimizing with step length 0.100649088213826.
+The log-likelihood improved by 1.587.
+Iteration 298 of at most 500:
+Optimizing with step length 0.105492840868985.
+The log-likelihood improved by 1.491.
+Iteration 299 of at most 500:
+Optimizing with step length 0.0833837128127331.
+The log-likelihood improved by 1.717.
+Iteration 300 of at most 500:
+Optimizing with step length 0.160036576409966.
+The log-likelihood improved by 1.867.
+Iteration 301 of at most 500:
+Optimizing with step length 0.317802486479916.
+The log-likelihood improved by 1.782.
+Iteration 302 of at most 500:
+Optimizing with step length 0.198112205279544.
+The log-likelihood improved by 1.679.
+Iteration 303 of at most 500:
+Optimizing with step length 0.0784968844203613.
+The log-likelihood improved by 1.672.
+Iteration 304 of at most 500:
+Optimizing with step length 0.125779639919511.
+The log-likelihood improved by 1.244.
+Iteration 305 of at most 500:
+Optimizing with step length 0.246454410018131.
+The log-likelihood improved by 2.199.
+Iteration 306 of at most 500:
+Optimizing with step length 0.273516525003602.
+The log-likelihood improved by 1.842.
+Iteration 307 of at most 500:
+Optimizing with step length 0.248058302073607.
+The log-likelihood improved by 1.689.
+Iteration 308 of at most 500:
+Optimizing with step length 0.265121168560609.
+The log-likelihood improved by 2.437.
+Iteration 309 of at most 500:
+Optimizing with step length 0.0982047560850346.
+The log-likelihood improved by 1.934.
+Iteration 310 of at most 500:
+Optimizing with step length 0.0661248552480415.
+The log-likelihood improved by 1.032.
+Iteration 311 of at most 500:
+Optimizing with step length 0.16504603833827.
+The log-likelihood improved by 1.857.
+Iteration 312 of at most 500:
+Optimizing with step length 0.209341582725576.
+The log-likelihood improved by 1.971.
+Iteration 313 of at most 500:
+Optimizing with step length 0.299217436619984.
+The log-likelihood improved by 2.244.
+Iteration 314 of at most 500:
+Optimizing with step length 0.119456594758506.
+The log-likelihood improved by 1.962.
+Iteration 315 of at most 500:
+Optimizing with step length 0.106673589507529.
+The log-likelihood improved by 2.119.
+Iteration 316 of at most 500:
+Optimizing with step length 0.143676256628741.
+The log-likelihood improved by 1.341.
+Iteration 317 of at most 500:
+Optimizing with step length 0.21838014266227.
+The log-likelihood improved by 1.854.
+Iteration 318 of at most 500:
+Optimizing with step length 0.226594626257969.
+The log-likelihood improved by 2.028.
+Iteration 319 of at most 500:
+Optimizing with step length 0.0835681762858302.
+The log-likelihood improved by 2.063.
+Iteration 320 of at most 500:
+Optimizing with step length 0.134494331403264.
+The log-likelihood improved by 2.092.
+Iteration 321 of at most 500:
+Optimizing with step length 0.127576183198324.
+The log-likelihood improved by 1.852.
+Iteration 322 of at most 500:
+Optimizing with step length 0.068593431120847.
+The log-likelihood improved by 2.225.
+Iteration 323 of at most 500:
+Optimizing with step length 0.101957711306607.
+The log-likelihood improved by 1.57.
+Iteration 324 of at most 500:
+Optimizing with step length 0.07425097366934.
+The log-likelihood improved by 2.139.
+Iteration 325 of at most 500:
+Optimizing with step length 0.152370621006255.
+The log-likelihood improved by 1.97.
+Iteration 326 of at most 500:
+Optimizing with step length 0.134841997369146.
+The log-likelihood improved by 2.067.
+Iteration 327 of at most 500:
+Optimizing with step length 0.232962054576103.
+The log-likelihood improved by 1.516.
+Iteration 328 of at most 500:
+Optimizing with step length 0.239129162580747.
+The log-likelihood improved by 1.868.
+Iteration 329 of at most 500:
+Optimizing with step length 0.408871105841683.
+The log-likelihood improved by 1.683.
+Iteration 330 of at most 500:
+Optimizing with step length 0.256823559573731.
+The log-likelihood improved by 2.028.
+Iteration 331 of at most 500:
+Optimizing with step length 0.511261825331534.
+The log-likelihood improved by 1.629.
+Iteration 332 of at most 500:
+Optimizing with step length 0.119550300380763.
+The log-likelihood improved by 1.782.
+Iteration 333 of at most 500:
+Optimizing with step length 0.122052611042191.
+The log-likelihood improved by 1.731.
+Iteration 334 of at most 500:
+Optimizing with step length 0.172184885958811.
+The log-likelihood improved by 1.738.
+Iteration 335 of at most 500:
+Optimizing with step length 0.09413603919673.
+The log-likelihood improved by 1.811.
+Iteration 336 of at most 500:
+Optimizing with step length 0.160065773960918.
+The log-likelihood improved by 1.994.
+Iteration 337 of at most 500:
+Optimizing with step length 0.260188970426402.
+The log-likelihood improved by 2.383.
+Iteration 338 of at most 500:
+Optimizing with step length 0.202856595354569.
+The log-likelihood improved by 2.011.
+Iteration 339 of at most 500:
+Optimizing with step length 0.0855488325573887.
+The log-likelihood improved by 1.759.
+Iteration 340 of at most 500:
+Optimizing with step length 0.104372963951787.
+The log-likelihood improved by 1.994.
+Iteration 341 of at most 500:
+Optimizing with step length 0.134476351514616.
+The log-likelihood improved by 2.152.
+Iteration 342 of at most 500:
+Optimizing with step length 0.158149392379474.
+The log-likelihood improved by 2.114.
+Iteration 343 of at most 500:
+Optimizing with step length 0.0645170125412794.
+The log-likelihood improved by 1.699.
+Iteration 344 of at most 500:
+Optimizing with step length 0.10097798926485.
+The log-likelihood improved by 1.777.
+Iteration 345 of at most 500:
+Optimizing with step length 0.20483743944288.
+The log-likelihood improved by 1.92.
+Iteration 346 of at most 500:
+Optimizing with step length 0.315273016459432.
+The log-likelihood improved by 1.538.
+Iteration 347 of at most 500:
+Optimizing with step length 0.0884245004091405.
+The log-likelihood improved by 1.24.
+Iteration 348 of at most 500:
+Optimizing with step length 0.104196432846589.
+The log-likelihood improved by 1.496.
+Iteration 349 of at most 500:
+Optimizing with step length 0.168400819959955.
+The log-likelihood improved by 1.649.
+Iteration 350 of at most 500:
+Optimizing with step length 0.114507303510868.
+The log-likelihood improved by 1.78.
+Iteration 351 of at most 500:
+Optimizing with step length 0.10155572826255.
+The log-likelihood improved by 1.682.
+Iteration 352 of at most 500:
+Optimizing with step length 0.159857239565947.
+The log-likelihood improved by 2.558.
+Iteration 353 of at most 500:
+Optimizing with step length 0.253039570271543.
+The log-likelihood improved by 1.761.
+Iteration 354 of at most 500:
+Optimizing with step length 0.146757209174407.
+The log-likelihood improved by 1.502.
+Iteration 355 of at most 500:
+Optimizing with step length 0.264831943819946.
+The log-likelihood improved by 1.924.
+Iteration 356 of at most 500:
+Optimizing with step length 0.318015357200774.
+The log-likelihood improved by 1.797.
+Iteration 357 of at most 500:
+Optimizing with step length 0.13551293394725.
+The log-likelihood improved by 1.129.
+Iteration 358 of at most 500:
+Optimizing with step length 0.215221214038258.
+The log-likelihood improved by 1.407.
+Iteration 359 of at most 500:
+Optimizing with step length 0.171919130272582.
+The log-likelihood improved by 1.046.
+Iteration 360 of at most 500:
+Optimizing with step length 0.108082807901785.
+The log-likelihood improved by 1.584.
+Iteration 361 of at most 500:
+Optimizing with step length 0.215797817178961.
+The log-likelihood improved by 1.863.
+Iteration 362 of at most 500:
+Optimizing with step length 0.33008699232481.
+The log-likelihood improved by 1.913.
+Iteration 363 of at most 500:
+Optimizing with step length 0.142759410674475.
+The log-likelihood improved by 1.448.
+Iteration 364 of at most 500:
+Optimizing with step length 0.0465821436918373.
+The log-likelihood improved by 1.694.
+Iteration 365 of at most 500:
+Optimizing with step length 0.0918091907379109.
+The log-likelihood improved by 1.778.
+Iteration 366 of at most 500:
+Optimizing with step length 0.0713986168046004.
+The log-likelihood improved by 1.477.
+Iteration 367 of at most 500:
+Optimizing with step length 0.0860385298718857.
+The log-likelihood improved by 1.689.
+Iteration 368 of at most 500:
+Optimizing with step length 0.272078587138724.
+The log-likelihood improved by 1.773.
+Iteration 369 of at most 500:
+Optimizing with step length 0.255019464119978.
+The log-likelihood improved by 2.314.
+Iteration 370 of at most 500:
+Optimizing with step length 0.330599422209366.
+The log-likelihood improved by 1.78.
+Iteration 371 of at most 500:
+Optimizing with step length 0.194404796144011.
+The log-likelihood improved by 2.039.
+Iteration 372 of at most 500:
+Optimizing with step length 0.0484092546014154.
+The log-likelihood improved by 1.626.
+Iteration 373 of at most 500:
+Optimizing with step length 0.105633231068495.
+The log-likelihood improved by 2.371.
+Iteration 374 of at most 500:
+Optimizing with step length 0.131118546384607.
+The log-likelihood improved by 1.788.
+Iteration 375 of at most 500:
+Optimizing with step length 0.145147579606536.
+The log-likelihood improved by 1.453.
+Iteration 376 of at most 500:
+Optimizing with step length 0.0699464608538977.
+The log-likelihood improved by 2.072.
+Iteration 377 of at most 500:
+Optimizing with step length 0.160907677626225.
+The log-likelihood improved by 1.482.
+Iteration 378 of at most 500:
+Optimizing with step length 0.174323851740718.
+The log-likelihood improved by 1.612.
+Iteration 379 of at most 500:
+Optimizing with step length 0.139737129843856.
+The log-likelihood improved by 1.38.
+Iteration 380 of at most 500:
+Optimizing with step length 0.110282946451302.
+The log-likelihood improved by 1.69.
+Iteration 381 of at most 500:
+Optimizing with step length 0.119341422427838.
+The log-likelihood improved by 2.165.
+Iteration 382 of at most 500:
+Optimizing with step length 0.0680374847580331.
+The log-likelihood improved by 2.083.
+Iteration 383 of at most 500:
+Optimizing with step length 0.0740811442220731.
+The log-likelihood improved by 1.899.
+Iteration 384 of at most 500:
+Optimizing with step length 0.094505430896185.
+The log-likelihood improved by 1.171.
+Iteration 385 of at most 500:
+Optimizing with step length 0.0966033747792248.
+The log-likelihood improved by 1.281.
+Iteration 386 of at most 500:
+Optimizing with step length 0.440533633260394.
+The log-likelihood improved by 2.118.
+Iteration 387 of at most 500:
+Optimizing with step length 0.299505861811294.
+The log-likelihood improved by 1.726.
+Iteration 388 of at most 500:
+Optimizing with step length 0.147314496792587.
+The log-likelihood improved by 1.565.
+Iteration 389 of at most 500:
+Optimizing with step length 0.11649861833618.
+The log-likelihood improved by 1.6.
+Iteration 390 of at most 500:
+Optimizing with step length 0.279558189337997.
+The log-likelihood improved by 2.22.
+Iteration 391 of at most 500:
+Optimizing with step length 0.159632041534988.
+The log-likelihood improved by 1.869.
+Iteration 392 of at most 500:
+Optimizing with step length 0.121260250966304.
+The log-likelihood improved by 1.775.
+Iteration 393 of at most 500:
+Optimizing with step length 0.0791146841980138.
+The log-likelihood improved by 2.033.
+Iteration 394 of at most 500:
+Optimizing with step length 0.0956685049270244.
+The log-likelihood improved by 2.124.
+Iteration 395 of at most 500:
+Optimizing with step length 0.240684606797518.
+The log-likelihood improved by 2.495.
+Iteration 396 of at most 500:
+Optimizing with step length 0.149204171391585.
+The log-likelihood improved by 1.521.
+Iteration 397 of at most 500:
+Optimizing with step length 0.0847889593519585.
+The log-likelihood improved by 2.168.
+Iteration 398 of at most 500:
+Optimizing with step length 0.172615270404432.
+The log-likelihood improved by 1.596.
+Iteration 399 of at most 500:
+Optimizing with step length 0.176992550376284.
+The log-likelihood improved by 1.769.
+Iteration 400 of at most 500:
+Optimizing with step length 0.150767437019834.
+The log-likelihood improved by 1.916.
+Iteration 401 of at most 500:
+Optimizing with step length 0.161684912862731.
+The log-likelihood improved by 2.07.
+Iteration 402 of at most 500:
+Optimizing with step length 0.0861474217839105.
+The log-likelihood improved by 2.324.
+Iteration 403 of at most 500:
+Optimizing with step length 0.0640538940556536.
+The log-likelihood improved by 1.534.
+Iteration 404 of at most 500:
+Optimizing with step length 0.0982778033978592.
+The log-likelihood improved by 1.648.
+Iteration 405 of at most 500:
+Optimizing with step length 0.131657978980416.
+The log-likelihood improved by 1.988.
+Iteration 406 of at most 500:
+Optimizing with step length 0.294724196715671.
+The log-likelihood improved by 1.703.
+Iteration 407 of at most 500:
+Optimizing with step length 0.191202781317478.
+The log-likelihood improved by 1.551.
+Iteration 408 of at most 500:
+Optimizing with step length 0.0803872476240614.
+The log-likelihood improved by 1.59.
+Iteration 409 of at most 500:
+Optimizing with step length 0.0906330974907971.
+The log-likelihood improved by 1.973.
+Iteration 410 of at most 500:
+Optimizing with step length 0.227732272484311.
+The log-likelihood improved by 2.016.
+Iteration 411 of at most 500:
+Optimizing with step length 0.216591798179661.
+The log-likelihood improved by 1.645.
+Iteration 412 of at most 500:
+Optimizing with step length 0.0999910241580392.
+The log-likelihood improved by 1.998.
+Iteration 413 of at most 500:
+Optimizing with step length 0.0524492538306889.
+The log-likelihood improved by 1.53.
+Iteration 414 of at most 500:
+Optimizing with step length 0.1444954548192.
+The log-likelihood improved by 2.272.
+Iteration 415 of at most 500:
+Optimizing with step length 0.245446768022145.
+The log-likelihood improved by 2.139.
+Iteration 416 of at most 500:
+Optimizing with step length 0.371341150379081.
+The log-likelihood improved by 1.607.
+Iteration 417 of at most 500:
+Optimizing with step length 0.148796606355271.
+The log-likelihood improved by 1.505.
+Iteration 418 of at most 500:
+Optimizing with step length 0.163471813645661.
+The log-likelihood improved by 1.7.
+Iteration 419 of at most 500:
+Optimizing with step length 0.182607995947065.
+The log-likelihood improved by 2.172.
+Iteration 420 of at most 500:
+Optimizing with step length 0.26694721117956.
+The log-likelihood improved by 2.239.
+Iteration 421 of at most 500:
+Optimizing with step length 0.217023596401744.
+The log-likelihood improved by 1.682.
+Iteration 422 of at most 500:
+Optimizing with step length 0.0743425380257724.
+The log-likelihood improved by 1.582.
+Iteration 423 of at most 500:
+Optimizing with step length 0.0892966491627911.
+The log-likelihood improved by 2.108.
+Iteration 424 of at most 500:
+Optimizing with step length 0.0971756963551623.
+The log-likelihood improved by 1.673.
+Iteration 425 of at most 500:
+Optimizing with step length 0.146168173874094.
+The log-likelihood improved by 1.146.
+Iteration 426 of at most 500:
+Optimizing with step length 0.132295442723609.
+The log-likelihood improved by 2.367.
+Iteration 427 of at most 500:
+Optimizing with step length 0.16722472622698.
+The log-likelihood improved by 2.575.
+Iteration 428 of at most 500:
+Optimizing with step length 0.129946047584303.
+The log-likelihood improved by 1.9.
+Iteration 429 of at most 500:
+Optimizing with step length 0.089871026999755.
+The log-likelihood improved by 1.643.
+Iteration 430 of at most 500:
+Optimizing with step length 0.114545217463341.
+The log-likelihood improved by 1.85.
+Iteration 431 of at most 500:
+Optimizing with step length 0.0671571726481648.
+The log-likelihood improved by 1.474.
+Iteration 432 of at most 500:
+Optimizing with step length 0.257747982373851.
+The log-likelihood improved by 2.171.
+Iteration 433 of at most 500:
+Optimizing with step length 0.207026569614621.
+The log-likelihood improved by 1.941.
+Iteration 434 of at most 500:
+Optimizing with step length 0.120555071582962.
+The log-likelihood improved by 1.292.
+Iteration 435 of at most 500:
+Optimizing with step length 0.108892056912164.
+The log-likelihood improved by 1.981.
+Iteration 436 of at most 500:
+Optimizing with step length 0.146304140409178.
+The log-likelihood improved by 1.595.
+Iteration 437 of at most 500:
+Optimizing with step length 0.2991530348193.
+The log-likelihood improved by 1.843.
+Iteration 438 of at most 500:
+Optimizing with step length 0.0845884564654356.
+The log-likelihood improved by 2.075.
+Iteration 439 of at most 500:
+Optimizing with step length 0.0826198649143426.
+The log-likelihood improved by 1.554.
+Iteration 440 of at most 500:
+Optimizing with step length 0.118874853462878.
+The log-likelihood improved by 2.114.
+Iteration 441 of at most 500:
+Optimizing with step length 0.0901889811669364.
+The log-likelihood improved by 1.671.
+Iteration 442 of at most 500:
+Optimizing with step length 0.13470221074537.
+The log-likelihood improved by 1.907.
+Iteration 443 of at most 500:
+Optimizing with step length 0.48431342383045.
+The log-likelihood improved by 1.552.
+Iteration 444 of at most 500:
+Optimizing with step length 0.200374873163148.
+The log-likelihood improved by 1.957.
+Iteration 445 of at most 500:
+Optimizing with step length 0.107568500115959.
+The log-likelihood improved by 1.922.
+Iteration 446 of at most 500:
+Optimizing with step length 0.356970552382956.
+The log-likelihood improved by 1.587.
+Iteration 447 of at most 500:
+Optimizing with step length 0.115219508553608.
+The log-likelihood improved by 2.201.
+Iteration 448 of at most 500:
+Optimizing with step length 0.158034955223266.
+The log-likelihood improved by 2.17.
+Iteration 449 of at most 500:
+Optimizing with step length 0.258612728610193.
+The log-likelihood improved by 1.585.
+Iteration 450 of at most 500:
+Optimizing with step length 0.152739413507921.
+The log-likelihood improved by 1.866.
+Iteration 451 of at most 500:
+Optimizing with step length 0.11402347489562.
+The log-likelihood improved by 1.694.
+Iteration 452 of at most 500:
+Optimizing with step length 0.189581869614415.
+The log-likelihood improved by 2.637.
+Iteration 453 of at most 500:
+Optimizing with step length 0.130999787412227.
+The log-likelihood improved by 1.534.
+Iteration 454 of at most 500:
+Optimizing with step length 0.159839400494724.
+The log-likelihood improved by 2.161.
+Iteration 455 of at most 500:
+Optimizing with step length 0.120287224797478.
+The log-likelihood improved by 1.829.
+Iteration 456 of at most 500:
+Optimizing with step length 0.0876224898931464.
+The log-likelihood improved by 1.941.
+Iteration 457 of at most 500:
+Optimizing with step length 0.113934844057446.
+The log-likelihood improved by 1.719.
+Iteration 458 of at most 500:
+Optimizing with step length 0.164305849280097.
+The log-likelihood improved by 1.653.
+Iteration 459 of at most 500:
+Optimizing with step length 0.0705874009938844.
+The log-likelihood improved by 1.555.
+Iteration 460 of at most 500:
+Optimizing with step length 0.0754263808020166.
+The log-likelihood improved by 1.726.
+Iteration 461 of at most 500:
+Optimizing with step length 0.368136853957601.
+The log-likelihood improved by 1.817.
+Iteration 462 of at most 500:
+Optimizing with step length 0.447983567398591.
+The log-likelihood improved by 1.856.
+Iteration 463 of at most 500:
+Optimizing with step length 0.0947444243110004.
+The log-likelihood improved by 1.441.
+Iteration 464 of at most 500:
+Optimizing with step length 0.13519223532817.
+The log-likelihood improved by 1.968.
+Iteration 465 of at most 500:
+Optimizing with step length 0.132729397453118.
+The log-likelihood improved by 1.547.
+Iteration 466 of at most 500:
+Optimizing with step length 0.0655503152707315.
+The log-likelihood improved by 1.613.
+Iteration 467 of at most 500:
+Optimizing with step length 0.080506734257521.
+The log-likelihood improved by 1.86.
+Iteration 468 of at most 500:
+Optimizing with step length 0.122770192994241.
+The log-likelihood improved by 2.525.
+Iteration 469 of at most 500:
+Optimizing with step length 0.187200292658557.
+The log-likelihood improved by 1.931.
+Iteration 470 of at most 500:
+Optimizing with step length 0.102609615004961.
+The log-likelihood improved by 2.696.
+Iteration 471 of at most 500:
+Optimizing with step length 0.0734449312235344.
+The log-likelihood improved by 1.631.
+Iteration 472 of at most 500:
+Optimizing with step length 0.116361623487869.
+The log-likelihood improved by 2.296.
+Iteration 473 of at most 500:
+Optimizing with step length 0.0915179923687934.
+The log-likelihood improved by 2.24.
+Iteration 474 of at most 500:
+Optimizing with step length 0.170384296058436.
+The log-likelihood improved by 2.068.
+Iteration 475 of at most 500:
+Optimizing with step length 0.112443432287492.
+The log-likelihood improved by 1.972.
+Iteration 476 of at most 500:
+Optimizing with step length 0.0533180490711454.
+The log-likelihood improved by 2.017.
+Iteration 477 of at most 500:
+Optimizing with step length 0.0915918227095993.
+The log-likelihood improved by 1.765.
+Iteration 478 of at most 500:
+Optimizing with step length 0.150813353700708.
+The log-likelihood improved by 1.368.
+Iteration 479 of at most 500:
+Optimizing with step length 0.271834094148904.
+The log-likelihood improved by 2.181.
+Iteration 480 of at most 500:
+Optimizing with step length 0.309714044473118.
+The log-likelihood improved by 2.067.
+Iteration 481 of at most 500:
+Optimizing with step length 0.13586004345074.
+The log-likelihood improved by 1.725.
+Iteration 482 of at most 500:
+Optimizing with step length 0.222047873509464.
+The log-likelihood improved by 1.919.
+Iteration 483 of at most 500:
+Optimizing with step length 0.292615609312485.
+The log-likelihood improved by 1.747.
+Iteration 484 of at most 500:
+Optimizing with step length 0.160700789464236.
+The log-likelihood improved by 1.656.
+Iteration 485 of at most 500:
+Optimizing with step length 0.073090302128156.
+The log-likelihood improved by 1.728.
+Iteration 486 of at most 500:
+Optimizing with step length 0.107449803468268.
+The log-likelihood improved by 2.39.
+Iteration 487 of at most 500:
+Optimizing with step length 0.167686786429797.
+The log-likelihood improved by 1.685.
+Iteration 488 of at most 500:
+Optimizing with step length 0.240258984679571.
+The log-likelihood improved by 1.441.
+Iteration 489 of at most 500:
+Optimizing with step length 0.635989564497877.
+The log-likelihood improved by 1.609.
+Iteration 490 of at most 500:
+Optimizing with step length 0.202825090071501.
+The log-likelihood improved by 1.946.
+Iteration 491 of at most 500:
+Optimizing with step length 0.120328376288395.
+The log-likelihood improved by 1.426.
+Iteration 492 of at most 500:
+Optimizing with step length 0.259191046119389.
+The log-likelihood improved by 2.479.
+Iteration 493 of at most 500:
+Optimizing with step length 0.0854423425782191.
+The log-likelihood improved by 2.108.
+Iteration 494 of at most 500:
+Optimizing with step length 0.396743150309422.
+The log-likelihood improved by 1.44.
+Iteration 495 of at most 500:
+Optimizing with step length 0.154458926778304.
+The log-likelihood improved by 1.547.
+Iteration 496 of at most 500:
+Optimizing with step length 0.122746017807855.
+The log-likelihood improved by 1.838.
+Iteration 497 of at most 500:
+Optimizing with step length 0.112388071713264.
+The log-likelihood improved by 1.918.
+Iteration 498 of at most 500:
+Optimizing with step length 0.133218479479804.
+The log-likelihood improved by 1.844.
+Iteration 499 of at most 500:
+Optimizing with step length 0.0401500051355069.
+The log-likelihood improved by 2.699.
+Iteration 500 of at most 500:
+Optimizing with step length 0.063442826295385.
+The log-likelihood improved by 2.005.
+MCMLE estimation did not converge after 500 iterations. The estimated coefficients may not be accurate. Estimation may be resumed by passing the coefficients as initial values; see 'init' under ?control.ergm for details.
+Finished MCMLE.
+This model was fit using MCMC.  To examine model diagnostics and check
+for degeneracy, use the mcmc.diagnostics() function.
+Warning message:
+`set_attrs()` is deprecated as of rlang 0.3.0
+This warning is displayed once per session. 
+> 
+> save.image("out/model2.RData")
+> 
+> proc.time()
+   user  system elapsed 
+564.022 128.306 694.793 

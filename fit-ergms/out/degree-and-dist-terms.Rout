@@ -1,0 +1,345 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> # Analyze synthetic dataset with 32K nodes 
+> # Fit ERGM with 5 dyadic independent terms
+> 
+> rm(list=ls())
+> # Libraries ----------
+> 
+> library(network)
+network: Classes for Relational Data
+Version 1.13.0.1 created on 2015-08-31.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+                    Skye Bender-deMoll, University of Washington
+ For citation information, type citation("network").
+ Type help("network-package") to get started.
+
+> library(ergm)
+Loading required package: statnet.common
+
+Attaching package: 'statnet.common'
+
+The following object is masked from 'package:base':
+
+    order
+
+
+ergm: version 3.8.0, created on 2017-08-18
+Copyright (c) 2017, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+                    with contributions from
+                    Li Wang
+                    Kirk Li, University of Washington
+                    Skye Bender-deMoll, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm").
+
+NOTE: Versions before 3.6.1 had a bug in the implementation of the bd()
+constriant which distorted the sampled distribution somewhat. In
+addition, Sampson's Monks datasets had mislabeled vertices. See the
+NEWS and the documentation for more details.
+
+
+Attaching package: 'ergm'
+
+The following objects are masked from 'package:statnet.common':
+
+    colMeans.mcmc.list, sweep.mcmc.list
+
+> library(dplyr)
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+> library(ergm.userterms)
+
+ergm.userterms: version 3.1.1, created on 2013-04-26
+Copyright (c) 2013, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm.userterms").
+
+NOTE: If you use custom ERGM terms based on 'ergm.userterms' version
+prior to 3.1, you will need to perform a one-time update of the package
+boilerplate files (the files that you did not write or modify) from
+'ergm.userterms' 3.1 or later. See help('eut-upgrade') for
+instructions.
+
+Warning messages:
+1: replacing previous import 'statnet.common::colMeans.mcmc.list' by 'ergm::colMeans.mcmc.list' when loading 'ergm.userterms' 
+2: replacing previous import 'statnet.common::sweep.mcmc.list' by 'ergm::sweep.mcmc.list' when loading 'ergm.userterms' 
+> 
+> # Data ----------
+> 
+> data <- read.csv("/project/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon.csv", header = T)
+> dim(data)
+[1] 32001    18
+> glimpse(data)
+Observations: 32,001
+Variables: 18
+$ Agent                     <int> 217257330, 1802083445, 1991156285, 699762...
+$ Age                       <dbl> 26.99726, 45.41370, 39.99726, 20.98904, 5...
+$ Gender                    <fct> Male, Male, Male, Female, Male, Male, Mal...
+$ Race                      <fct> Hispanic, Hispanic, Hispanic, NHWhite, NH...
+$ Zip                       <int> 60647, 60647, 60647, 60647, 60647, 60647,...
+$ Syringe_source            <fct> HR, nonHR, HR, HR, HR, nonHR, nonHR, nonH...
+$ HCV                       <fct> recovered, chronic, susceptible, chronic,...
+$ Age_Started               <dbl> 19.00000, 19.74888, 30.00000, 19.00000, 1...
+$ Drug_in_degree            <int> 0, 1, 0, 0, 0, 2, 1, 0, 1, 1, 0, 0, 0, 1,...
+$ Drug_out_degree           <int> 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 5, 5, 1,...
+$ Num.Buddies               <int> 0, 1, 0, 0, 1, 2, 1, 0, 2, 1, 0, 5, 5, 2,...
+$ Daily_injection_intensity <dbl> 5.0000000, 1.0987697, 3.0000000, 2.666666...
+$ Fraction_recept_sharing   <dbl> 0.00000000, 0.65743348, 0.00000000, 0.000...
+$ zz                        <int> 60647, 60647, 60647, 60647, 60647, 60647,...
+$ azi                       <int> 22539, 22539, 22539, 22539, 22539, 22539,...
+$ Zip.1                     <int> 60647, 60647, 60647, 60647, 60647, 60647,...
+$ lon                       <dbl> -87.69647, -87.71312, -87.68772, -87.7007...
+$ lat                       <dbl> 41.91257, 41.91705, 41.92312, 41.92791, 4...
+> 
+> 
+> # Summary Statistics ----------
+> 
+> indeg <- data$Drug_in_degree
+> outdeg <- data$Drug_out_degree
+> 
+> indeg_tbl <- as.numeric(table(indeg))
+> outdeg_tbl <- as.numeric(table(outdeg))
+> 
+> summary(indeg)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    0.00    0.00    0.49    1.00   32.00 
+> summary(outdeg)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0000  0.0000  0.0000  0.4506  1.0000 32.0000 
+> 
+> hist(indeg, breaks = 32)
+> hist(outdeg, breaks = 32)
+> 
+> nedges <- max(c(sum(indeg)),
++               sum((outdeg))
++               )
+>                 
+> mdeg <- nedges/nrow(data)
+> sum(indeg)
+[1] 15682
+> sum(outdeg)
+[1] 14420
+> 
+> dist.prop.distribution <- c(30, 12, 12, 15, 15, 10)
+> dist.nedge.distribution <- nedges*dist.prop.distribution
+> 
+>     
+> # Fit ERGM ----------
+> 
+> n0 <- network.initialize(n = nrow(data))
+> n0 %v% "lat" <- data$lat
+> n0 %v% "lon" <- data$lon
+> 
+> ##  fit <- ergm(n0 ~ edges + odegree(0) + idegree(0),
+> ##             target.stats = c(nedges, outdeg_tbl[1], indeg_tbl[1]),
+> ##             eval.loglik = FALSE,
+> ##             control = control.ergm(MCMLE.maxit = 100)
+> ##             )
+> 
+> ## sim <- simulate(fit)
+> ## sim
+> 
+> ## fit.add.degrees <-
+> ##   ergm(
+> ##     n0 ~ edges + odegree(c(0, 2)) + idegree(c(0,2)),
+> ##     target.stats = c(nedges, outdeg_tbl[c(1,3)], indeg_tbl[c(1,3)]),
+> ##     eval.loglik = FALSE,
+> ##     control = control.ergm(MCMLE.maxit = 100)
+> ##   )
+> 
+> ## summary(fit.add.degrees)
+> ## sim.fit.add.degrees <- simulate(fit.add.degrees)
+> 
+> fit.add.degrees.dist <-
++   ergm(
++     n0 ~ edges + odegree(c(0, 2)) + idegree(c(0,2))+
++     dist(1:6),
++     target.stats = c(nedges, outdeg_tbl[c(1,3)], indeg_tbl[c(1,3)],
++                      dist.nedge.distribution),
++     eval.loglik = FALSE,
++     control = control.ergm(MCMLE.maxit = 100)
++   )
+Unable to match target stats. Using MCMLE estimation.
+Starting maximum likelihood estimation via MCMLE:
+Iteration 1 of at most 100:
+Optimizing with step length 0.000369932771454251.
+The log-likelihood improved by 4.057.
+Iteration 2 of at most 100:
+Optimizing with step length 0.00036722674645586.
+The log-likelihood improved by 12.94.
+Iteration 3 of at most 100:
+Optimizing with step length 0.00036722411207106.
+The log-likelihood improved by 12.45.
+Iteration 4 of at most 100:
+Optimizing with step length 0.000367224109506408.
+The log-likelihood improved by 7.781.
+Iteration 5 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 2.561.
+Iteration 6 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 5.421.
+Iteration 7 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 4.184.
+Iteration 8 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 5.102.
+Iteration 9 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 5.02.
+Iteration 10 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 6.766.
+Iteration 11 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 2.972.
+Iteration 12 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 1.381.
+Iteration 13 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 1.118.
+Iteration 14 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 2.024.
+Iteration 15 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 2.4.
+Iteration 16 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 3.828.
+Iteration 17 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 0.7887.
+Iteration 18 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 6.169.
+Iteration 19 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 0.9629.
+Iteration 20 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 0.6446.
+Iteration 21 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 22 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 15.66.
+Iteration 23 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 24 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 25 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 26 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 27 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 28 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 29 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 30 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 31 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 32 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 33 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 34 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 35 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 36 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 37 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 38 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 39 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 40 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 41 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 42 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 43 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood did not improve.
+Iteration 44 of at most 100:
+Optimizing with step length 0.000367224109503903.
+The log-likelihood improved by 18.24.
+Iteration 45 of at most 100:
+Error in ergm.MCMLE(init, nw, model, initialfit = (initialfit <- NULL),  : 
+  Number of edges in a simulated network exceeds that in the observed by a factor of more than 20. This is a strong indicator of model degeneracy or a very poor starting parameter configuration. If you are reasonably certain that neither of these is the case, increase the MCMLE.density.guard control.ergm() parameter.
+Calls: ergm -> ergm.MCMLE
+In addition: Warning message:
+In ergm.mple(Clist, Clist.miss, m, MPLEtype = MPLEtype, init = init,  :
+  glm.fit: fitted probabilities numerically 0 or 1 occurred
+Execution halted

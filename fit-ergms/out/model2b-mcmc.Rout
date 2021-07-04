@@ -1,0 +1,661 @@
+
+R version 3.6.1 (2019-07-05) -- "Action of the Toes"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Simulate network (n=32K) from ERGM fit 
+> # parameterized with meta data  
+> 
+> 
+> rm(list=ls())
+> 
+> 
+> # Libraries ----------
+> 
+> library(network)
+network: Classes for Relational Data
+Version 1.15 created on 2019-04-01.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+                    Skye Bender-deMoll, University of Washington
+ For citation information, type citation("network").
+ Type help("network-package") to get started.
+
+> library(ergm)
+
+ergm: version 3.10.4, created on 2019-06-10
+Copyright (c) 2019, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+                    with contributions from
+                    Li Wang
+                    Kirk Li, University of Washington
+                    Skye Bender-deMoll, University of Washington
+                    Chad Klumb
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm").
+
+NOTE: Versions before 3.6.1 had a bug in the implementation of the bd()
+constriant which distorted the sampled distribution somewhat. In
+addition, Sampson's Monks datasets had mislabeled vertices. See the
+NEWS and the documentation for more details.
+
+NOTE: Some common term arguments pertaining to vertex attribute and
+level selection have changed in 3.10.0. See terms help for more
+details. Use ‘options(ergm.term=list(version="3.9.4"))’ to use old
+behavior.
+
+> library(dplyr)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+> library(ergm.userterms)
+Loading required package: statnet.common
+
+Attaching package: ‘statnet.common’
+
+The following object is masked from ‘package:base’:
+
+    order
+
+
+ergm.userterms: version 3.1.1, created on 2020-02-01
+Copyright (c) 2020, Jonathan Ozik
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm.userterms").
+
+NOTE: If you use custom ERGM terms based on ‘ergm.userterms’ version
+prior to 3.1, you will need to perform a one-time update of the package
+boilerplate files (the files that you did not write or modify) from
+‘ergm.userterms’ 3.1 or later. See help('eut-upgrade') for
+instructions.
+
+> 
+> 
+> # Data ----------
+> 
+> #load("out/model1-increase-MCMC-params.RData") # model 1a
+> #load("out/model6-w-racenodemix-outdeg0-3only-increase-MCMC-params.RData") #model 1b
+> #load("out/model6-w-racenodemix-ideg0-3only-increase-MCMC-params.RData")
+> #load("out/racemix-plus-dist-2.RData") #model 2a
+> load("out/racemix-plus-dist-plus-odeg.RData") #model 2b
+> 
+> # Model summary
+> summary(fit.metadata.mixing)
+
+==========================
+Summary of model fit
+==========================
+
+Formula:   TARGET_STATS ~ edges + nodemix("gender", base = 1) + nodemix("young", 
+    base = 1) + nodemix("race.num", base = 1) + odegree(deg.terms) + 
+    dist(dist.terms)
+<environment: 0x94bccd8>
+
+Iterations:  5 out of 500 
+
+Monte Carlo MLE Results:
+                        Estimate Std. Error MCMC %  z value Pr(>|z|)    
+edges                  -11.26086    0.04162      0 -270.553  < 1e-04 ***
+mix.gender.male.female   0.41287    0.02179      0   18.946  < 1e-04 ***
+mix.gender.female.male   0.20152    0.02326      0    8.666  < 1e-04 ***
+mix.gender.male.male    -0.32045    0.02183      0  -14.677  < 1e-04 ***
+mix.young.1.0            0.03679    0.01814      0    2.028  0.04261 *  
+mix.young.0.1           -0.98074    0.03316      0  -29.580  < 1e-04 ***
+mix.young.1.1            1.07118    0.02664      0   40.204  < 1e-04 ***
+mix.race.num.2.1        -1.26397    0.03877      0  -32.603  < 1e-04 ***
+mix.race.num.3.1        -0.91943    0.03461      0  -26.563  < 1e-04 ***
+mix.race.num.4.1        -0.14899    0.05468      0   -2.725  0.00643 ** 
+mix.race.num.1.2        -0.68879    0.03404      0  -20.235  < 1e-04 ***
+mix.race.num.2.2         2.23774    0.01688      0  132.572  < 1e-04 ***
+mix.race.num.3.2        -0.26642    0.04192      0   -6.356  < 1e-04 ***
+mix.race.num.4.2        -0.17308    0.09694      0   -1.786  0.07417 .  
+mix.race.num.1.3        -0.59601    0.03279      0  -18.177  < 1e-04 ***
+mix.race.num.2.3        -0.16043    0.03786      0   -4.238  < 1e-04 ***
+mix.race.num.3.3         1.45981    0.02025      0   72.104  < 1e-04 ***
+mix.race.num.4.3        -0.10143    0.09670      0   -1.049  0.29422    
+mix.race.num.1.4         0.42876    0.04742      0    9.043  < 1e-04 ***
+mix.race.num.2.4         0.49950    0.06684      0    7.473  < 1e-04 ***
+mix.race.num.3.4         0.73959    0.06559      0   11.276  < 1e-04 ***
+mix.race.num.4.4         2.21606    0.08111      0   27.321  < 1e-04 ***
+odegree0                -1.89174    0.13640      0  -13.869  < 1e-04 ***
+odegree1                -2.53753    0.10555      0  -24.041  < 1e-04 ***
+odegree2                -2.14157    0.07702      0  -27.805  < 1e-04 ***
+odegree3                -1.46033    0.05300      0  -27.551  < 1e-04 ***
+dist1                    7.38499    0.02074      0  356.014  < 1e-04 ***
+dist2                    4.07934    0.01620      0  251.755  < 1e-04 ***
+dist3                   -0.60930    0.01740      0  -35.019  < 1e-04 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Log-likelihood was not estimated for this fit.
+To get deviances, AIC, and/or BIC from fit `fit.metadata.mixing` run 
+  > fit.metadata.mixing<-logLik(fit.metadata.mixing, add=TRUE)
+to add it to the object or rerun this function with eval.loglik=TRUE.
+> 
+> 
+> # MCMC diagnostics
+> #jpeg(file="out/model1-mcmc-diags.jpg") #naming convention as per email to statnet on 04/20
+> mcmc.diagnostics(fit.metadata.mixing)
+Sample statistics summary:
+
+Iterations = 1600000:40001500000
+Thinning interval = 1e+05 
+Number of chains = 1 
+Sample size per chain = 4e+05 
+
+1. Empirical mean and standard deviation for each variable,
+   plus standard error of the mean:
+
+                           Mean     SD Naive SE Time-series SE
+edges                   58.9850 183.26  0.28976         3.1088
+mix.gender.male.female  22.6057  93.14  0.14727         1.5907
+mix.gender.female.male  22.8421  89.49  0.14150         1.3905
+mix.gender.male.male    13.8338  96.62  0.15277         1.5704
+mix.young.1.0           22.6952  61.28  0.09689         0.9053
+mix.young.0.1            2.0472  31.59  0.04995         0.3748
+mix.young.1.1           12.3052  40.89  0.06466         0.7512
+mix.race.num.2.1         1.2635  27.55  0.04356         0.2608
+mix.race.num.3.1         1.2638  31.20  0.04933         0.3539
+mix.race.num.4.1         1.1322  19.03  0.03009         0.2666
+mix.race.num.1.2        -0.9596  32.89  0.05201         0.3763
+mix.race.num.2.2        37.2891 101.42  0.16036         1.9763
+mix.race.num.3.2         3.2132  25.15  0.03976         0.3083
+mix.race.num.4.2         0.4028  10.49  0.01659         0.1409
+mix.race.num.1.3        -0.9165  34.31  0.05425         0.3967
+mix.race.num.2.3         1.1073  28.40  0.04490         0.3409
+mix.race.num.3.3         5.3076  63.44  0.10031         1.2527
+mix.race.num.4.3         0.7645  10.63  0.01680         0.1384
+mix.race.num.1.4         0.3534  22.28  0.03523         0.3343
+mix.race.num.2.4        -1.2184  15.31  0.02420         0.2250
+mix.race.num.3.4         2.2390  15.58  0.02463         0.2374
+mix.race.num.4.4         2.8406  12.69  0.02007         0.2598
+odegree0               -13.3565  76.72  0.12131         0.7923
+odegree1                -4.2196  66.61  0.10532         0.3252
+odegree2                 1.5250  47.74  0.07548         0.2662
+odegree3                 4.7024  35.74  0.05651         0.2014
+dist1                   36.8484  62.01  0.09805         3.3970
+dist2                   16.3256  98.05  0.15504         1.8843
+dist3                    4.8879  82.48  0.13042         0.3481
+
+2. Quantiles for each variable:
+
+                          2.5%     25%      50%     75%  97.5%
+edges                  -301.54 -63.543  58.4568 182.457 418.46
+mix.gender.male.female -158.45 -40.424  22.5763  85.576 205.58
+mix.gender.female.male -152.36 -37.357  22.6431  83.643 197.64
+mix.gender.male.male   -176.13 -51.126  13.8741  78.874 202.87
+mix.young.1.0           -98.04 -19.042  22.9576  63.958 141.96
+mix.young.0.1           -59.98 -18.982   2.0183  23.018  64.02
+mix.young.1.1           -68.97 -14.973  13.0274  40.027  92.03
+mix.race.num.2.1        -53.16 -17.161   1.8389  19.839  54.84
+mix.race.num.3.1        -60.79 -19.793   1.2067  22.207  61.21
+mix.race.num.4.1        -37.26 -11.264   1.7356  13.736  37.74
+mix.race.num.1.2        -66.01 -23.006  -1.0060  20.994  62.99
+mix.race.num.2.2       -160.15 -31.150  36.8498 105.850 235.85
+mix.race.num.3.2        -46.20 -13.204   3.7964  19.796  51.80
+mix.race.num.4.2        -20.70  -6.701   0.2994   7.299  20.30
+mix.race.num.1.3        -69.03 -24.032  -1.0319  21.968  65.97
+mix.race.num.2.3        -55.02 -18.023   0.9772  19.977  55.98
+mix.race.num.3.3       -120.09 -37.094   5.9059  47.906 128.91
+mix.race.num.4.3        -21.00  -6.003   0.9970   7.997  21.00
+mix.race.num.1.4        -44.01 -14.014   0.9863  15.986  42.99
+mix.race.num.2.4        -32.05 -11.053  -1.0532   8.947  27.95
+mix.race.num.3.4        -28.96  -7.960   2.0395  13.040  32.04
+mix.race.num.4.4        -22.70  -5.702   3.2979  11.298  27.30
+odegree0               -163.60 -64.603 -13.6032  38.397 137.40
+odegree1               -135.31 -49.311  -4.3107  40.689 125.69
+odegree2                -91.98 -30.982   2.0179  34.018  95.02
+odegree3                -65.46 -19.464   4.5363  28.536  74.54
+dist1                   -85.88  -3.878  38.1217  79.122 157.12
+dist2                  -176.69 -49.690  16.3103  83.310 207.31
+dist3                  -157.24 -51.240   4.7601  60.760 165.76
+
+
+Sample statistics cross-correlations:
+                             edges mix.gender.male.female
+edges                   1.00000000             0.60222268
+mix.gender.male.female  0.60222268             1.00000000
+mix.gender.female.male  0.52778411             0.00259763
+mix.gender.male.male    0.61574230             0.16895852
+mix.young.1.0           0.36454149             0.19226925
+mix.young.0.1           0.24849045             0.17885065
+mix.young.1.1           0.27144685             0.18819431
+mix.race.num.2.1        0.18965892             0.10100847
+mix.race.num.3.1        0.21917912             0.14891804
+mix.race.num.4.1        0.12711231             0.08916684
+mix.race.num.1.2        0.24099104             0.15684165
+mix.race.num.2.2        0.57274162             0.36169170
+mix.race.num.3.2        0.19947656             0.14691810
+mix.race.num.4.2        0.07504107             0.06003204
+mix.race.num.1.3        0.26336897             0.13408272
+mix.race.num.2.3        0.19278051             0.10247374
+mix.race.num.3.3        0.38989132             0.21176018
+mix.race.num.4.3        0.10297224             0.06768605
+mix.race.num.1.4        0.15788093             0.07393364
+mix.race.num.2.4        0.09848540             0.04456199
+mix.race.num.3.4        0.12334882             0.06552199
+mix.race.num.4.4        0.09101992             0.06328412
+odegree0               -0.73663718            -0.45988483
+odegree1                0.10466519             0.07866078
+odegree2                0.25562104             0.16406073
+odegree3                0.30549241             0.19013841
+dist1                   0.41861181             0.26053908
+dist2                   0.62242975             0.36883840
+dist3                   0.55965367             0.33893857
+                       mix.gender.female.male mix.gender.male.male
+edges                             0.527784108          0.615742304
+mix.gender.male.female            0.002597630          0.168958517
+mix.gender.female.male            1.000000000         -0.004486846
+mix.gender.male.male             -0.004486846          1.000000000
+mix.young.1.0                     0.229707104          0.203862757
+mix.young.0.1                     0.109491365          0.140232049
+mix.young.1.1                     0.131044142          0.152799220
+mix.race.num.2.1                  0.120037055          0.106487829
+mix.race.num.3.1                  0.108675725          0.138776891
+mix.race.num.4.1                  0.052017538          0.085237304
+mix.race.num.1.2                  0.122725451          0.136201948
+mix.race.num.2.2                  0.302461611          0.289885766
+mix.race.num.3.2                  0.083052211          0.126950253
+mix.race.num.4.2                  0.014713254          0.054670753
+mix.race.num.1.3                  0.149664397          0.178791392
+mix.race.num.2.3                  0.138916638          0.106638332
+mix.race.num.3.3                  0.189785548          0.305107586
+mix.race.num.4.3                  0.045399246          0.069895547
+mix.race.num.1.4                  0.108514389          0.113610158
+mix.race.num.2.4                  0.070684148          0.070904296
+mix.race.num.3.4                  0.058500636          0.092295646
+mix.race.num.4.4                  0.044926349          0.066572101
+odegree0                         -0.362590578         -0.479743698
+odegree1                          0.028490647          0.089334043
+odegree2                          0.121334025          0.173846193
+odegree3                          0.154560197          0.195413988
+dist1                             0.192868038          0.279417819
+dist2                             0.311021517          0.406006773
+dist3                             0.312216585          0.328135332
+                       mix.young.1.0 mix.young.0.1 mix.young.1.1
+edges                     0.36454149    0.24849045   0.271446850
+mix.gender.male.female    0.19226925    0.17885065   0.188194308
+mix.gender.female.male    0.22970710    0.10949136   0.131044142
+mix.gender.male.male      0.20386276    0.14023205   0.152799220
+mix.young.1.0             1.00000000    0.01206527   0.159956235
+mix.young.0.1             0.01206527    1.00000000   0.012435976
+mix.young.1.1             0.15995624    0.01243598   1.000000000
+mix.race.num.2.1          0.03381261    0.06773756   0.033150309
+mix.race.num.3.1          0.05711117    0.08717325   0.052405878
+mix.race.num.4.1          0.05571458    0.05618084   0.046211716
+mix.race.num.1.2          0.15001764    0.05660647   0.057017360
+mix.race.num.2.2          0.11560211    0.09752184   0.028272026
+mix.race.num.3.2          0.04873653    0.04483104   0.008799385
+mix.race.num.4.2          0.03143253    0.01526605  -0.000908897
+mix.race.num.1.3          0.15582275    0.06028802   0.097995474
+mix.race.num.2.3          0.03729534    0.03388338   0.011568736
+mix.race.num.3.3          0.07899444    0.06798923   0.038419797
+mix.race.num.4.3          0.03956515    0.02586554   0.024140599
+mix.race.num.1.4          0.09117154    0.05926684   0.090384712
+mix.race.num.2.4          0.01977762    0.03056662   0.011507342
+mix.race.num.3.4          0.03962121    0.03460386   0.021117596
+mix.race.num.4.4          0.05359480    0.03379969   0.043016248
+odegree0                 -0.24897386   -0.20592915  -0.200108280
+odegree1                  0.01704671    0.04953780   0.024247214
+odegree2                  0.07976318    0.07802989   0.068677651
+odegree3                  0.10978137    0.08085509   0.089874361
+dist1                     0.15588095    0.13027430   0.124654821
+dist2                     0.21887689    0.15312689   0.159850583
+dist3                     0.20622664    0.13473904   0.156853501
+                       mix.race.num.2.1 mix.race.num.3.1 mix.race.num.4.1
+edges                      0.1896589157     2.191791e-01      0.127112308
+mix.gender.male.female     0.1010084689     1.489180e-01      0.089166843
+mix.gender.female.male     0.1200370547     1.086757e-01      0.052017538
+mix.gender.male.male       0.1064878291     1.387769e-01      0.085237304
+mix.young.1.0              0.0338126149     5.711117e-02      0.055714584
+mix.young.0.1              0.0677375569     8.717325e-02      0.056180842
+mix.young.1.1              0.0331503087     5.240588e-02      0.046211716
+mix.race.num.2.1           1.0000000000    -5.495813e-03      0.008612304
+mix.race.num.3.1          -0.0054958129     1.000000e+00     -0.012955798
+mix.race.num.4.1           0.0086123038    -1.295580e-02      1.000000000
+mix.race.num.1.2           0.0046373733    -1.235108e-02     -0.004149205
+mix.race.num.2.2           0.0551994330    -3.585447e-05      0.004026077
+mix.race.num.3.2           0.0099822275     5.494114e-02      0.006560779
+mix.race.num.4.2           0.0009809512    -4.801516e-03      0.104312831
+mix.race.num.1.3          -0.0046949673     1.695515e-03     -0.003937987
+mix.race.num.2.3           0.0110747160    -3.133616e-03     -0.007083298
+mix.race.num.3.3          -0.0006697096     1.147543e-01      0.019086197
+mix.race.num.4.3           0.0026847306     7.878460e-03      0.126669094
+mix.race.num.1.4          -0.0025620234    -7.775486e-03     -0.003174469
+mix.race.num.2.4           0.0205530436    -1.834456e-03     -0.001914952
+mix.race.num.3.4           0.0141980813     4.205203e-02      0.008443886
+mix.race.num.4.4           0.0023191030    -1.361095e-02      0.126354233
+odegree0                  -0.0974107411    -1.662673e-01     -0.107810478
+odegree1                  -0.0176565599     1.987580e-02      0.023358550
+odegree2                   0.0157661623     6.493698e-02      0.044670125
+odegree3                   0.0446971216     7.719861e-02      0.045811101
+dist1                      0.0840390822     1.060526e-01      0.053698728
+dist2                      0.1008753947     1.343170e-01      0.077848284
+dist3                      0.1077123837     1.211759e-01      0.073500427
+                       mix.race.num.1.2 mix.race.num.2.2 mix.race.num.3.2
+edges                      0.2409910399     5.727416e-01     0.1994765641
+mix.gender.male.female     0.1568416522     3.616917e-01     0.1469181038
+mix.gender.female.male     0.1227254509     3.024616e-01     0.0830522108
+mix.gender.male.male       0.1362019479     2.898858e-01     0.1269502533
+mix.young.1.0              0.1500176430     1.156021e-01     0.0487365306
+mix.young.0.1              0.0566064747     9.752184e-02     0.0448310370
+mix.young.1.1              0.0570173599     2.827203e-02     0.0087993846
+mix.race.num.2.1           0.0046373733     5.519943e-02     0.0099822275
+mix.race.num.3.1          -0.0123510811    -3.585447e-05     0.0549411432
+mix.race.num.4.1          -0.0041492054     4.026077e-03     0.0065607791
+mix.race.num.1.2           1.0000000000    -8.634250e-03    -0.0098370407
+mix.race.num.2.2          -0.0086342500     1.000000e+00     0.0226838587
+mix.race.num.3.2          -0.0098370407     2.268386e-02     1.0000000000
+mix.race.num.4.2           0.0029600587     1.060354e-02     0.0094046517
+mix.race.num.1.3           0.0419563136     1.208462e-02    -0.0041519210
+mix.race.num.2.3           0.0004879780     5.936282e-02     0.0065302872
+mix.race.num.3.3          -0.0037442851     3.933813e-03     0.1108328255
+mix.race.num.4.3           0.0106496301     2.967637e-03     0.0166726637
+mix.race.num.1.4           0.0410296978    -3.877512e-02    -0.0010970048
+mix.race.num.2.4           0.0125434532     1.467833e-02     0.0087075226
+mix.race.num.3.4          -0.0042275361     1.308419e-02     0.0272476050
+mix.race.num.4.4          -0.0009633523     1.723691e-03     0.0006722587
+odegree0                  -0.2412783991    -2.871855e-01    -0.1493862952
+odegree1                   0.0892455955    -6.336926e-02     0.0183528625
+odegree2                   0.1090034522     4.194957e-02     0.0562895297
+odegree3                   0.0858810379     1.342365e-01     0.0672312644
+dist1                      0.1170128470     1.499244e-01     0.1089184927
+dist2                      0.1615358509     3.346110e-01     0.1244734100
+dist3                      0.1266053384     3.464130e-01     0.1062711147
+                       mix.race.num.4.2 mix.race.num.1.3 mix.race.num.2.3
+edges                      0.0750410653     0.2633689676      0.192780508
+mix.gender.male.female     0.0600320415     0.1340827169      0.102473743
+mix.gender.female.male     0.0147132535     0.1496643970      0.138916638
+mix.gender.male.male       0.0546707525     0.1787913924      0.106638332
+mix.young.1.0              0.0314325311     0.1558227482      0.037295345
+mix.young.0.1              0.0152660453     0.0602880179      0.033883384
+mix.young.1.1             -0.0009088970     0.0979954738      0.011568736
+mix.race.num.2.1           0.0009809512    -0.0046949673      0.011074716
+mix.race.num.3.1          -0.0048015165     0.0016955150     -0.003133616
+mix.race.num.4.1           0.1043128308    -0.0039379871     -0.007083298
+mix.race.num.1.2           0.0029600587     0.0419563136      0.000487978
+mix.race.num.2.2           0.0106035408     0.0120846217      0.059362818
+mix.race.num.3.2           0.0094046517    -0.0041519210      0.006530287
+mix.race.num.4.2           1.0000000000    -0.0061174848      0.011800762
+mix.race.num.1.3          -0.0061174848     1.0000000000      0.008067675
+mix.race.num.2.3           0.0118007623     0.0080676747      1.000000000
+mix.race.num.3.3           0.0123803397     0.0007358220     -0.001912626
+mix.race.num.4.3           0.0724321420     0.0009837212     -0.010651230
+mix.race.num.1.4          -0.0107707443     0.0431236039      0.009473071
+mix.race.num.2.4          -0.0055325995    -0.0059146623      0.007971259
+mix.race.num.3.4          -0.0232374229    -0.0151907442     -0.008893607
+mix.race.num.4.4           0.0899545047    -0.0060680522      0.001161806
+odegree0                  -0.0650411642    -0.2496447317     -0.100128070
+odegree1                   0.0162535388     0.0837483266     -0.014616375
+odegree2                   0.0247103506     0.1065289441      0.015910257
+odegree3                   0.0294243102     0.0912838375      0.045657051
+dist1                      0.0046852513     0.1521845603      0.080525049
+dist2                      0.0594620318     0.1689429616      0.100110363
+dist3                      0.0448046885     0.1338217714      0.113495061
+                       mix.race.num.3.3 mix.race.num.4.3 mix.race.num.1.4
+edges                      0.3898913157     0.1029722397      0.157880931
+mix.gender.male.female     0.2117601767     0.0676860496      0.073933636
+mix.gender.female.male     0.1897855480     0.0453992461      0.108514389
+mix.gender.male.male       0.3051075864     0.0698955469      0.113610158
+mix.young.1.0              0.0789944419     0.0395651506      0.091171535
+mix.young.0.1              0.0679892316     0.0258655432      0.059266840
+mix.young.1.1              0.0384197970     0.0241405993      0.090384712
+mix.race.num.2.1          -0.0006697096     0.0026847306     -0.002562023
+mix.race.num.3.1           0.1147542842     0.0078784597     -0.007775486
+mix.race.num.4.1           0.0190861967     0.1266690936     -0.003174469
+mix.race.num.1.2          -0.0037442851     0.0106496301      0.041029698
+mix.race.num.2.2           0.0039338128     0.0029676367     -0.038775123
+mix.race.num.3.2           0.1108328255     0.0166726637     -0.001097005
+mix.race.num.4.2           0.0123803397     0.0724321420     -0.010770744
+mix.race.num.1.3           0.0007358220     0.0009837212      0.043123604
+mix.race.num.2.3          -0.0019126263    -0.0106512302      0.009473071
+mix.race.num.3.3           1.0000000000     0.0140676254      0.019593644
+mix.race.num.4.3           0.0140676254     1.0000000000     -0.004238746
+mix.race.num.1.4           0.0195936440    -0.0042387460      1.000000000
+mix.race.num.2.4          -0.0035181671     0.0237596113     -0.007400821
+mix.race.num.3.4           0.0603440060    -0.0075432494      0.011567184
+mix.race.num.4.4           0.0106315947     0.1290562921     -0.041883249
+odegree0                  -0.3007626373    -0.0771498010     -0.155864679
+odegree1                   0.0404489554     0.0100174058      0.051571808
+odegree2                   0.1180085044     0.0292243132      0.071009126
+odegree3                   0.1393185324     0.0343367035      0.059424230
+dist1                      0.1308182144     0.0492942191      0.090763187
+dist2                      0.2688544457     0.0840271757      0.093829295
+dist3                      0.2245089055     0.0453720145      0.086967076
+                       mix.race.num.2.4 mix.race.num.3.4 mix.race.num.4.4
+edges                      0.0984853988      0.123348824     0.0910199151
+mix.gender.male.female     0.0445619889      0.065521992     0.0632841176
+mix.gender.female.male     0.0706841480      0.058500636     0.0449263492
+mix.gender.male.male       0.0709042960      0.092295646     0.0665721009
+mix.young.1.0              0.0197776231      0.039621207     0.0535948007
+mix.young.0.1              0.0305666175      0.034603862     0.0337996863
+mix.young.1.1              0.0115073423      0.021117596     0.0430162479
+mix.race.num.2.1           0.0205530436      0.014198081     0.0023191030
+mix.race.num.3.1          -0.0018344565      0.042052027    -0.0136109529
+mix.race.num.4.1          -0.0019149520      0.008443886     0.1263542334
+mix.race.num.1.2           0.0125434532     -0.004227536    -0.0009633523
+mix.race.num.2.2           0.0146783270      0.013084187     0.0017236909
+mix.race.num.3.2           0.0087075226      0.027247605     0.0006722587
+mix.race.num.4.2          -0.0055325995     -0.023237423     0.0899545047
+mix.race.num.1.3          -0.0059146623     -0.015190744    -0.0060680522
+mix.race.num.2.3           0.0079712587     -0.008893607     0.0011618056
+mix.race.num.3.3          -0.0035181671      0.060344006     0.0106315947
+mix.race.num.4.3           0.0237596113     -0.007543249     0.1290562921
+mix.race.num.1.4          -0.0074008215      0.011567184    -0.0418832491
+mix.race.num.2.4           1.0000000000      0.002617100     0.0057750536
+mix.race.num.3.4           0.0026171004      1.000000000     0.0138479762
+mix.race.num.4.4           0.0057750536      0.013847976     1.0000000000
+odegree0                  -0.0470027940     -0.090217774    -0.0746669043
+odegree1                  -0.0090409043      0.007143240     0.0133217319
+odegree2                   0.0001875971      0.036499126     0.0310556223
+odegree3                   0.0173681064      0.041472856     0.0330046456
+dist1                      0.0424022661      0.081327446     0.0276306343
+dist2                      0.0501111016      0.063645281     0.0607151946
+dist3                      0.0575250280      0.069462393     0.0565337122
+                          odegree0     odegree1      odegree2    odegree3
+edges                  -0.73663718  0.104665186  0.2556210421  0.30549241
+mix.gender.male.female -0.45988483  0.078660778  0.1640607250  0.19013841
+mix.gender.female.male -0.36259058  0.028490647  0.1213340250  0.15456020
+mix.gender.male.male   -0.47974370  0.089334043  0.1738461933  0.19541399
+mix.young.1.0          -0.24897386  0.017046712  0.0797631809  0.10978137
+mix.young.0.1          -0.20592915  0.049537805  0.0780298928  0.08085509
+mix.young.1.1          -0.20010828  0.024247214  0.0686776505  0.08987436
+mix.race.num.2.1       -0.09741074 -0.017656560  0.0157661623  0.04469712
+mix.race.num.3.1       -0.16626732  0.019875803  0.0649369771  0.07719861
+mix.race.num.4.1       -0.10781048  0.023358550  0.0446701253  0.04581110
+mix.race.num.1.2       -0.24127840  0.089245595  0.1090034522  0.08588104
+mix.race.num.2.2       -0.28718551 -0.063369257  0.0419495725  0.13423650
+mix.race.num.3.2       -0.14938630  0.018352863  0.0562895297  0.06723126
+mix.race.num.4.2       -0.06504116  0.016253539  0.0247103506  0.02942431
+mix.race.num.1.3       -0.24964473  0.083748327  0.1065289441  0.09128384
+mix.race.num.2.3       -0.10012807 -0.014616375  0.0159102574  0.04565705
+mix.race.num.3.3       -0.30076264  0.040448955  0.1180085044  0.13931853
+mix.race.num.4.3       -0.07714980  0.010017406  0.0292243132  0.03433670
+mix.race.num.1.4       -0.15586468  0.051571808  0.0710091256  0.05942423
+mix.race.num.2.4       -0.04700279 -0.009040904  0.0001875971  0.01736811
+mix.race.num.3.4       -0.09021777  0.007143240  0.0364991257  0.04147286
+mix.race.num.4.4       -0.07466690  0.013321732  0.0310556223  0.03300465
+odegree0                1.00000000 -0.660180912 -0.3625463535 -0.20587147
+odegree1               -0.66018091  1.000000000 -0.1475182871 -0.10678314
+odegree2               -0.36254635 -0.147518287  1.0000000000 -0.10662929
+odegree3               -0.20587147 -0.106783139 -0.1066292883  1.00000000
+dist1                  -0.27312395  0.012459254  0.0834630672  0.11017571
+dist2                  -0.37685606 -0.006260112  0.0911414538  0.16058794
+dist3                  -0.44908242  0.090278583  0.1725170349  0.18586362
+                              dist1        dist2       dist3
+edges                   0.418611812  0.622429747  0.55965367
+mix.gender.male.female  0.260539077  0.368838396  0.33893857
+mix.gender.female.male  0.192868038  0.311021517  0.31221659
+mix.gender.male.male    0.279417819  0.406006773  0.32813533
+mix.young.1.0           0.155880945  0.218876886  0.20622664
+mix.young.0.1           0.130274298  0.153126887  0.13473904
+mix.young.1.1           0.124654821  0.159850583  0.15685350
+mix.race.num.2.1        0.084039082  0.100875395  0.10771238
+mix.race.num.3.1        0.106052619  0.134317039  0.12117586
+mix.race.num.4.1        0.053698728  0.077848284  0.07350043
+mix.race.num.1.2        0.117012847  0.161535851  0.12660534
+mix.race.num.2.2        0.149924405  0.334610998  0.34641301
+mix.race.num.3.2        0.108918493  0.124473410  0.10627111
+mix.race.num.4.2        0.004685251  0.059462032  0.04480469
+mix.race.num.1.3        0.152184560  0.168942962  0.13382177
+mix.race.num.2.3        0.080525049  0.100110363  0.11349506
+mix.race.num.3.3        0.130818214  0.268854446  0.22450891
+mix.race.num.4.3        0.049294219  0.084027176  0.04537201
+mix.race.num.1.4        0.090763187  0.093829295  0.08696708
+mix.race.num.2.4        0.042402266  0.050111102  0.05752503
+mix.race.num.3.4        0.081327446  0.063645281  0.06946239
+mix.race.num.4.4        0.027630634  0.060715195  0.05653371
+odegree0               -0.273123954 -0.376856060 -0.44908242
+odegree1                0.012459254 -0.006260112  0.09027858
+odegree2                0.083463067  0.091141454  0.17251703
+odegree3                0.110175710  0.160587944  0.18586362
+dist1                   1.000000000  0.072540671  0.05607449
+dist2                   0.072540671  1.000000000  0.08681487
+dist3                   0.056074492  0.086814869  1.00000000
+
+Sample statistics auto-correlation:
+Chain 1 
+              edges mix.gender.male.female mix.gender.female.male
+Lag 0     1.0000000              1.0000000              1.0000000
+Lag 1e+05 0.7534142              0.7482622              0.7338944
+Lag 2e+05 0.6638474              0.6622982              0.6391719
+Lag 3e+05 0.6156827              0.6150415              0.5887250
+Lag 4e+05 0.5829585              0.5814267              0.5536026
+Lag 5e+05 0.5582318              0.5559937              0.5275728
+          mix.gender.male.male mix.young.1.0 mix.young.0.1 mix.young.1.1
+Lag 0                1.0000000     1.0000000     1.0000000     1.0000000
+Lag 1e+05            0.6995399     0.6949656     0.5853799     0.7304600
+Lag 2e+05            0.6079463     0.6022066     0.4822487     0.6374182
+Lag 3e+05            0.5617749     0.5576247     0.4372344     0.5949261
+Lag 4e+05            0.5327769     0.5293266     0.4081024     0.5710502
+Lag 5e+05            0.5105750     0.5063944     0.3860168     0.5536749
+          mix.race.num.2.1 mix.race.num.3.1 mix.race.num.4.1 mix.race.num.1.2
+Lag 0            1.0000000        1.0000000        1.0000000        1.0000000
+Lag 1e+05        0.5214088        0.5830662        0.6401180        0.5788522
+Lag 2e+05        0.4244303        0.4901374        0.5543788        0.4926406
+Lag 3e+05        0.3831869        0.4523578        0.5208581        0.4572391
+Lag 4e+05        0.3534580        0.4252376        0.4984645        0.4327852
+Lag 5e+05        0.3302907        0.4048274        0.4838278        0.4119589
+          mix.race.num.2.2 mix.race.num.3.2 mix.race.num.4.2 mix.race.num.1.3
+Lag 0            1.0000000        1.0000000        1.0000000        1.0000000
+Lag 1e+05        0.8686725        0.5947171        0.6155817        0.5833691
+Lag 2e+05        0.7820213        0.5118623        0.5352012        0.4972114
+Lag 3e+05        0.7183225        0.4832288        0.5068941        0.4626112
+Lag 4e+05        0.6688232        0.4633259        0.4883958        0.4377597
+Lag 5e+05        0.6296494        0.4474770        0.4731563        0.4159875
+          mix.race.num.2.3 mix.race.num.3.3 mix.race.num.4.3 mix.race.num.1.4
+Lag 0            1.0000000        1.0000000        1.0000000        1.0000000
+Lag 1e+05        0.5731570        0.7621390        0.6106942        0.6313426
+Lag 2e+05        0.4841071        0.6632172        0.5290751        0.5475217
+Lag 3e+05        0.4532303        0.6106334        0.4990854        0.5182749
+Lag 4e+05        0.4349504        0.5798466        0.4804618        0.5006887
+Lag 5e+05        0.4212779        0.5598169        0.4656473        0.4881468
+          mix.race.num.2.4 mix.race.num.3.4 mix.race.num.4.4  odegree0
+Lag 0            1.0000000        1.0000000        1.0000000 1.0000000
+Lag 1e+05        0.6273354        0.6480374        0.8079259 0.5222353
+Lag 2e+05        0.5272702        0.5561677        0.7094586 0.4080354
+Lag 3e+05        0.4903678        0.5217422        0.6489605 0.3605234
+Lag 4e+05        0.4704160        0.5027493        0.6084895 0.3319864
+Lag 5e+05        0.4579191        0.4897456        0.5794531 0.3131957
+           odegree1  odegree2  odegree3     dist1     dist2     dist3
+Lag 0     1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000
+Lag 1e+05 0.2752805 0.3003221 0.2700603 0.9983352 0.9654135 0.4170046
+Lag 2e+05 0.1784669 0.2057289 0.1895469 0.9966731 0.9346788 0.2532476
+Lag 3e+05 0.1444913 0.1696173 0.1586993 0.9950216 0.9071941 0.1812249
+Lag 4e+05 0.1286775 0.1468081 0.1364356 0.9933690 0.8820475 0.1383071
+Lag 5e+05 0.1161037 0.1329767 0.1245020 0.9917195 0.8587692 0.1114432
+
+Sample statistics burn-in diagnostic (Geweke):
+Chain 1 
+
+Fraction in 1st window = 0.1
+Fraction in 2nd window = 0.5 
+
+                 edges mix.gender.male.female mix.gender.female.male 
+               0.84912                2.48233                2.41391 
+  mix.gender.male.male          mix.young.1.0          mix.young.0.1 
+              -1.54188                3.95178                1.69072 
+         mix.young.1.1       mix.race.num.2.1       mix.race.num.3.1 
+              -1.34484                4.37575                0.46970 
+      mix.race.num.4.1       mix.race.num.1.2       mix.race.num.2.2 
+               2.18614               -2.42040                1.00130 
+      mix.race.num.3.2       mix.race.num.4.2       mix.race.num.1.3 
+               0.82487                1.46874               -1.11498 
+      mix.race.num.2.3       mix.race.num.3.3       mix.race.num.4.3 
+               0.18788                0.54598                3.37079 
+      mix.race.num.1.4       mix.race.num.2.4       mix.race.num.3.4 
+              -4.15260               -0.32268                0.88346 
+      mix.race.num.4.4               odegree0               odegree1 
+               4.50085               -1.20053                0.05066 
+              odegree2               odegree3                  dist1 
+               0.93555                2.15483               -0.23921 
+                 dist2                  dist3 
+               1.00820                3.25917 
+
+Individual P-values (lower = worse):
+                 edges mix.gender.male.female mix.gender.female.male 
+          3.958124e-01           1.305248e-02           1.578220e-02 
+  mix.gender.male.male          mix.young.1.0          mix.young.0.1 
+          1.231018e-01           7.757084e-05           9.088947e-02 
+         mix.young.1.1       mix.race.num.2.1       mix.race.num.3.1 
+          1.786775e-01           1.210139e-05           6.385698e-01 
+      mix.race.num.4.1       mix.race.num.1.2       mix.race.num.2.2 
+          2.880538e-02           1.550334e-02           3.166839e-01 
+      mix.race.num.3.2       mix.race.num.4.2       mix.race.num.1.3 
+          4.094463e-01           1.419046e-01           2.648596e-01 
+      mix.race.num.2.3       mix.race.num.3.3       mix.race.num.4.3 
+          8.509684e-01           5.850825e-01           7.495347e-04 
+      mix.race.num.1.4       mix.race.num.2.4       mix.race.num.3.4 
+          3.287183e-05           7.469406e-01           3.769881e-01 
+      mix.race.num.4.4               odegree0               odegree1 
+          6.768109e-06           2.299318e-01           9.595974e-01 
+              odegree2               odegree3                  dist1 
+          3.495035e-01           3.117541e-02           8.109416e-01 
+                 dist2                  dist3 
+          3.133605e-01           1.117382e-03 
+Joint P-value (lower = worse):  1.381686e-25 .
+
+MCMC diagnostics shown here are from the last round of simulation, prior to computation of final parameter estimates. Because the final estimates are refinements of those used for this simulation run, these diagnostics may understate model performance. To directly assess the performance of the final model on in-model statistics, please use the GOF command: gof(ergmFitObject, GOF=~model).
+> #dev.off()
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+305.435  20.983 328.030 

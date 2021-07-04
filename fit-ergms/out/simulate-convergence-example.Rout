@@ -1,0 +1,162 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Analyze synthetic dataset with 32K nodes 
+> # Fit ERGM with 5 dyadic independent terms
+> 
+> rm(list=ls())
+> 
+> # Libraries ----------
+> 
+> library(network)
+network: Classes for Relational Data
+Version 1.13.0.1 created on 2015-08-31.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+                    Skye Bender-deMoll, University of Washington
+ For citation information, type citation("network").
+ Type help("network-package") to get started.
+
+> library(ergm)
+
+ergm: version 3.9.4, created on 2018-08-15
+Copyright (c) 2018, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+                    with contributions from
+                    Li Wang
+                    Kirk Li, University of Washington
+                    Skye Bender-deMoll, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm").
+
+NOTE: Versions before 3.6.1 had a bug in the implementation of the bd()
+constriant which distorted the sampled distribution somewhat. In
+addition, Sampson's Monks datasets had mislabeled vertices. See the
+NEWS and the documentation for more details.
+
+> library(dplyr)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+> library(ergm.userterms)
+Loading required package: statnet.common
+
+Attaching package: ‘statnet.common’
+
+The following objects are masked from ‘package:ergm’:
+
+    colMeans.mcmc.list, sweep.mcmc.list
+
+The following object is masked from ‘package:base’:
+
+    order
+
+
+ergm.userterms: version 3.1.1, created on 2013-04-26
+Copyright (c) 2013, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm.userterms").
+
+NOTE: If you use custom ERGM terms based on ‘ergm.userterms’ version
+prior to 3.1, you will need to perform a one-time update of the package
+boilerplate files (the files that you did not write or modify) from
+‘ergm.userterms’ 3.1 or later. See help('eut-upgrade') for
+instructions.
+
+Warning messages:
+1: replacing previous import ‘statnet.common::sweep.mcmc.list’ by ‘ergm::sweep.mcmc.list’ when loading ‘ergm.userterms’ 
+2: replacing previous import ‘statnet.common::colMeans.mcmc.list’ by ‘ergm::colMeans.mcmc.list’ when loading ‘ergm.userterms’ 
+> 
+> # Data ----------
+> 
+> load("large-net-dist-term.RData") 
+> # refer to "population_2014-08-17--11.00.43--analysis.R" for details
+> 
+> 
+> # Recode to add new variables to dataset ----------
+> 
+> # young (< 26, coded 1) vs old (>= 26, coded 0) (from SATHCAP)
+> data <-  
++   mutate(data, young = ifelse(Age < 26, 1, 0))
+> 
+> 
+> # Initialize network and add attributes ----------
+> 
+> n0 %v% "young" <- data$young
+> 
+> 
+> # Generate target statistics from SATHCAP mixing data ----------
+> 
+> ## gender 
+> ### mixing information from sathcap
+> male.pctmale <- 0.5842
+> male.pctfemale <- 0.4158
+> female.pctmale <- 0.6523
+> female.pctfemale <- 0.3477
+> 
+> ### mixing from simulation
+> gender.mm <- mixingmatrix(sim, "gender") #fem=1, male=2
+> from.female <- sum(gender.mm$matrix[,1])
+> from.male <- sum(gender.mm$matrix[,2])
+> 
+> ### set gender targets from sathcap
+> tgt.male.pctmale <- from.male*male.pctmale
+> tgt.male.pctfemale <- from.male*male.pctfemale
+> tgt.female.pctmale <- from.female*male.pctmale  
+> tgt.female.pctfemale <- from.female*male.pctfemale
+> 
+> 
+> # Fit ERGM (with SATHCAP mixing) ----------
+> 
+> fit.sathcap.mixing <- 
++   ergm(
++     n0 ~ 
++       edges +
++       odegree(c(0, 2, 3)) + idegree(c(0, 2, 3))+
++       nodematch("gender", base=1),
++     target.stats = c(nedges,
++                      outdeg_tbl[c(1, 3, 4)], indeg_tbl[c(1, 3, 4)],
++                      c(tgt.female.pctfemale, tgt.male.pctmale)                     
++                      ),
++     eval.loglik = FALSE,
++     control = control.ergm(MCMLE.maxit = 500)
++   )
+Error: In term ‘nodematch’ in package ‘ergm’: Model term does not recognize ‘base’ argument.
+Execution halted
