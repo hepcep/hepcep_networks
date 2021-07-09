@@ -15,14 +15,14 @@ library(ergm.userterms)
 
 # Data ----------
 
-load("out/racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
+load("out/racemix-plus-dist-plus-negbin-indeg0-2-orignialdata.RData")
 
 # Model summary
 summary(fit.metadata.mixing)
 
 
 # MCMC diagnostics
-pdf(file="out/racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.pdf") 
+pdf(file="out/racemix-plus-dist-plus-negbin-indeg0-2-orignialdata.RData") 
 mcmc.diagnostics(fit.metadata.mixing)
 dev.off()
 
@@ -155,5 +155,5 @@ young <- unlist(lapply(sim_results,
 summary(sim_results[[10]] ~ nodemix("young"))
 round(c(tgt.old.pctold, tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung))
 
-save.image("out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
+save.image("out/racemix-plus-dist-plus-negbin-indeg0-2-orignialdata.RData")
 
