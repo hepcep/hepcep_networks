@@ -23,8 +23,8 @@ negbin_outdeg <- read.csv("../../data/negbin-outdeg.csv")
 
 # refer to "population_2014-08-17--11.00.43--analysis.R" for an example
 
-data <- read.csv("/project2/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon.csv", header = T)
-
+#data <- read.csv("/project2/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon.csv", header = T)
+data <- read.csv("/project2/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon_original_zips.csv", header = T)
 
 # Recode to add new variables to dataset ----------
 
@@ -173,6 +173,7 @@ dist.nedge.distribution <- edges_target*dist.prop.distribution
 
 
 deg.terms <- 0:3
+indeg.terms <- 0:1
 dist.terms <- 1:3 #fourth is left out
 
 fit.metadata.mixing <-
@@ -182,7 +183,7 @@ fit.metadata.mixing <-
       nodemix("gender", base=1)+
       nodemix("young", base=1)+
       nodemix("race.num", base=1)+
-      #idegree(deg.terms)+
+      idegree(indeg.terms)+
       odegree(deg.terms)+
       dist(dist.terms),
     target.stats = c(edges_target,
@@ -192,7 +193,7 @@ fit.metadata.mixing <-
                                    target.w.b, target.b.b, target.h.b, target.o.b,
                                    target.w.h, target.b.h, target.h.h, target.o.h,
                                    target.w.o, target.b.o, target.h.o, target.o.o),
-                     #c(negbin_inedges$n_nodes[c(deg.terms+1)]),
+                     c(negbin_inedges$n_nodes[c(indeg.terms+1)]),
                      c(outedges$n_nodes[c(deg.terms+1)]),
                      c(dist.nedge.distribution[dist.terms])
                      
@@ -210,4 +211,4 @@ fit.metadata.mixing <-
     )
   )
 
-save.image("out/racemix-plus-dist-plus-negbin-indeg.RData")
+save.image("out/racemix-plus-dist-plus-negbin-indeg0-1-orignialdata.RData")
