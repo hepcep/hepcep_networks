@@ -35,16 +35,17 @@ vertex.att.1[1]
 vertex.att.all <- vector(mode = "list", length = length(sim_results))  
 
 for(j in 1:length(sim_results)){
-  for (i in 1:length(vertex.att.all)){
+  for (i in 1:length(vertex.att.list)){
     vertex.att.all[[j]][[i]] <- get.vertex.attribute(sim_results[[j]],
                                                    vertex.att.list[i]
                                                    )
   }
 }
 
-lapply(vertex.att.all, function(x)
-  names(x) <- vertex.att.list
-)
+for (i in 1:length(vertex.att.all)){
+  # assign attribute names in elements corresponding to the 100 networks
+  names(vertex.att.all[[i]]) <- vertex.att.list
+}
 
 # Compare agent ordering above to network object ---------
 
