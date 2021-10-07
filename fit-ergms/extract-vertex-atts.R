@@ -8,8 +8,8 @@ library(network)
 
 # Load data ----------
 
-load("out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
-data <- read.csv("/project2/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon.csv", header = T)
+load("out/simulate-racemix-plus-dist-plus-negbin-indeg0-2-orignialdata.RData")
+data <- read.csv("/project2/ahotton/khanna7/HepCep/data/pwids_with_lat_lon_original_zips.csv", header = T) #updated on july 3 2021
 
 # Check network list ---------
 
@@ -48,8 +48,8 @@ lapply(vertex.att.all, function(x)
 
 # Compare agent ordering above to network object ---------
 
-data <- data[-32001,] #the dataset consists of 32001 agents but the networks only contain 32K nodes
-dim(data)
+#data <- data[-32001,] #the dataset consists of 32001 agents but the networks only contain 32K nodes
+#dim(data)
 
 identical(sim_results[[1]] %v% "lat", data$lat)
 identical(sim_results[[1]] %v% "lon", data$lon)
@@ -64,5 +64,5 @@ pwid_w_vertex_names <- cbind(vertex.names,
 
 # Save data
 
-saveRDS(vertex.att.all, file = "out/vertex_att_all.RDS")
-saveRDS(pwid_w_vertex_names, file="out/pwid_w_vertex_names.RDS")
+saveRDS(vertex.att.all, file = "out/vertex_att_all_oct72021.RDS")
+saveRDS(pwid_w_vertex_names, file="out/pwid_w_vertex_names_oct72021.RDS")
