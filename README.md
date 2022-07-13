@@ -11,7 +11,7 @@ To test the `ergm.userterms` package:
     - The package can then be installed via `R CMD INSTALL  ergm.userterms`
     - See sample test code below
 
-        ```R
+        R
         library(network)
 
         # Test of dist metric 
@@ -22,6 +22,6 @@ To test the `ergm.userterms` package:
         ggg %v% "lon" <- rep(-87.6964695120882,times = nw.size)
         summary(ggg ~ dist(1:7))
 
-```
 
-## Running the 
+## Doing the analysis
+   - 
