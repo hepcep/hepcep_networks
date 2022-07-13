@@ -3,7 +3,7 @@
 
 rm(list=ls())
 
-
+  
 # Libraries ----------
 
 library(network)
@@ -12,21 +12,25 @@ library(dplyr)
 library(ergm.userterms)
 
 
-# Data ----------
+# Input Network Data ------------------------------
 
-load("meta-mixing-init-net.RData") # starting network from meta mixing data
+load("../../hepcep_networks-from-midway/fit-ergms/meta-mixing-init-net.RData") # starting network from meta mixing data
 
-inedges <- read.csv("../HepCEP_ERGM/pplrss.csv") #in- and out-edges
-outedges <- read.csv("../HepCEP_ERGM/ppldss.csv")
-negbin_indeg <- read.csv("../../data/negbin-indeg.csv")
-negbin_outdeg <- read.csv("../../data/negbin-outdeg.csv")
+inedges <- read.csv("../data/pplrss.csv") #in- and out-edges
+outedges <- read.csv("../data/ppldss.csv")
+negbin_indeg <- read.csv("../data/negbin-indeg.csv")
+negbin_outdeg <- read.csv("../data/negbin-outdeg.csv")
 
-# refer to "population_2014-08-17--11.00.43--analysis.R" for an example
 
-#data <- read.csv("/project2/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon.csv", header = T)
-data <- read.csv("/project2/khanna7/Projects/midway2/HepCep/data/pwids_with_lat_lon_original_zips.csv", header = T)
+# Read Latitude/Longidtude Data ------------------------------ 
 
-# Recode to add new variables to dataset ----------
+data_old <- read.csv("../data/pwids_with_lat_lon_original_zips.csv", header = TRUE)
+data <- read.csv("../data/synthpop-2022-06-27 13_29_03.csv")
+
+glimpse(data_old)
+glimpse(data)
+
+# Recode to add new variables to dataset ------------------------------
 
 # young (< 26, to be set = 1) vs old (>= 26, to be set = 0) 
 age.cat <- n0 %v% "age.cat"
