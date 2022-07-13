@@ -39,10 +39,10 @@ To test the `ergm.userterms` package:
 
    - I'm working with an older version of ergm (v 3.11.0) to preserve compatibility with the old code.
 
-   - I installed `ergm 3.11.0 was installed via:
+   - I installed `ergm_ergm_3.10.4.tar.gz` was installed via:
 
 ```
-packageurl <- "https://cran.r-project.org/src/contrib/Archive/ergm/ergm_3.11.0.tar.gz"
+packageurl <- "https://cran.r-project.org/src/contrib/Archive/ergm/ergm_3.10.4.tar.gz"
 install.packages(packageurl, repos=NULL, type="source")
 ```
 
