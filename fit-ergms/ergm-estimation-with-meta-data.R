@@ -14,7 +14,9 @@ library(ergm.userterms)
 
 # Input Network Data ------------------------------
 
-load("../../hepcep_networks-from-midway/fit-ergms/meta-mixing-init-net.RData") # starting network from meta mixing data
+
+#load("../../hepcep_networks-from-midway/fit-ergms/meta-mixing-init-net.RData") # starting network from meta mixing data on Aditya's local machine
+load("../../hepcep_networks_OLD/fit-ergms/meta-mixing-init-net.RData") #path for Aditya's midway system
 
 inedges <- read.csv("../data/pplrss.csv") #in- and out-edges
 outedges <- read.csv("../data/ppldss.csv")
