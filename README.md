@@ -37,9 +37,9 @@ To test the `ergm.userterms` package:
         [fit-ergms/generate-starting-network-meta-data.R](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/generate-starting-network-meta-data.R)
       * Update lat/lon data as needed (see section `Read lat/lon data ------------------------------ `)
 
-   - I'm working with an older version of ergm (v 3.11.0) to preserve compatibility with the old code.
+   - I'm working with an older version of ergm (v 3.10.4) to preserve compatibility with the old code.
 
-   - I installed `ergm_ergm_3.10.4.tar.gz` was installed via:
+   - I installed `ergm_ergm_3.10.4.tar.gz` on my home system via:
 
 ```
 packageurl <- "https://cran.r-project.org/src/contrib/Archive/ergm/ergm_3.10.4.tar.gz"
@@ -68,7 +68,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ergm_3.11.0    dplyr_1.0.7    network_1.17.1
+[1] ergm_3.10.4    dplyr_1.0.7    network_1.17.1
 
 loaded via a namespace (and not attached):
  [1] magrittr_2.0.1       MASS_7.3-54          tidyselect_1.1.1     lattice_0.20-44     
@@ -80,3 +80,5 @@ loaded via a namespace (and not attached):
 [25] robustbase_0.93-9    glue_1.4.2           statnet.common_4.5.0 DEoptimR_1.0-9      
 [29] compiler_4.1.0       pillar_1.6.1         generics_0.1.0       pkgconfig_2.0.3    
 ```
+
+- Model fitting can be done via a [batch script](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/ergm-estimation-with-meta-mixing-data.sh)
