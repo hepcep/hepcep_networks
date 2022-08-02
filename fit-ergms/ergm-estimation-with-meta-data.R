@@ -16,7 +16,7 @@ library(ergm.userterms)
 
 
 #load("../../hepcep_networks-from-midway/fit-ergms/meta-mixing-init-net.RData") # starting network from meta mixing data on Aditya's local machine
-load("../../hepcep_networks_OLD/fit-ergms/meta-mixing-init-net.RData") #path for Aditya's midway system
+load("out/meta-mixing-init-net.RData") #path for updated meta mixing with synthpop 
 
 inedges <- read.csv("../data/pplrss.csv") #in- and out-edges
 outedges <- read.csv("../data/ppldss.csv")
@@ -27,7 +27,7 @@ negbin_outdeg <- read.csv("../data/negbin-outdeg.csv")
 # Read Latitude/Longidtude Data ------------------------------ 
 
 data_old <- read.csv("../data/pwids_with_lat_lon_original_zips.csv", header = TRUE)
-data <- read.csv("../data/synthpop-2022-06-27 13_29_03.csv")
+data <- read.csv("../data/synthpop-2022-07-25 13_21_04.csv")
 
 glimpse(data_old)
 glimpse(data)

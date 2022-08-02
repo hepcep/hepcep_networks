@@ -76,5 +76,5 @@ table(n0 %v% "age.cat")
 
 # Save RData ----------
 
-save.image(file="meta-mixing-init-net.RData")
+save.image(file="out/meta-mixing-init-net.RData")
 
