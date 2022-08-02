@@ -63,3 +63,30 @@ expect_equal(prop_white_in_network, expected_white_prop, tolerance=0.01)
 expect_equal(prop_black_in_network, expected_black_prop, tolerance=0.01)
 expect_equal(prop_hispanic_in_network, expected_hispanic_prop, tolerance=0.01)
 expect_equal(prop_other_in_network, expected_other_prop, tolerance=0.01)
+
+
+# Test: age cat  ----------
+
+table(n0%v%"age.cat")
+
+prop_18_24_in_network <- as.numeric(table(n0%v%"age.cat")["0"]/(network.size(n0)))
+prop_25_34_in_network <- as.numeric(table(n0%v%"age.cat")["1"]/(network.size(n0)))
+prop_35_44_in_network <- as.numeric(table(n0%v%"age.cat")["2"]/(network.size(n0)))
+prop_45_plus_in_network <- as.numeric(table(n0%v%"age.cat")["3"]/(network.size(n0)))
+
+expected_18_24 <- which(demog_data$agecat == "18-24")
+expected_18_24_prop <- length(expected_18_24)/nrow(demog_data)
+
+expected_25_34 <- which(demog_data$agecat == "25-34")
+expected_25_34_prop <- length(expected_25_34)/nrow(demog_data)
+
+expected_35_44 <- which(demog_data$agecat == "35-44")
+expected_35_44_prop <- length(expected_35_44)/nrow(demog_data)
+
+expected_45_plus <- which(demog_data$agecat == "45+")
+expected_45_plus_prop <- length(expected_45_plus)/nrow(demog_data)
+
+expect_equal(prop_18_24_in_network, expected_18_24_prop, tolerance=0.005)
+expect_equal(prop_25_34_in_network, expected_25_34_prop, tolerance=0.005)
+expect_equal(prop_35_44_in_network, expected_35_44_prop, tolerance=0.005)
+expect_equal(prop_45_plus_in_network, expected_45_plus_prop, tolerance=0.005)
