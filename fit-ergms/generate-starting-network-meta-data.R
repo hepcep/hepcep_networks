@@ -5,7 +5,7 @@ rm(list=ls())
 
 # Libraries ----------
 
-library(readxl) #not able to directly sftp the csv datasets
+
 library(network)
 library(ergm)
 library(dplyr)
@@ -14,11 +14,13 @@ library(dplyr)
 # Data ----------
 
 # demography
-demog.data <- read_excel("../HepCEP_ERGM/demog_prop_est.xlsx") 
+demog.data <- read.csv("../data/demog_dt_props.csv") #updated proportion from synthpop August 2022
+
 
 # edge data
-inedges.data <- read.csv(file = "../HepCEP_ERGM/inedges_data.csv", header = TRUE)
-outedges.data <- read.csv(file = "../HepCEP_ERGM/outedges_data.csv", header = TRUE)
+inedges.data <- read.csv(file = "../data/inedges_data.csv", header = TRUE)
+outedges.data <- read.csv(file = "../data/outedges_data.csv", header = TRUE)
+
 
 # Initialize network ----------
 
@@ -75,3 +77,4 @@ table(n0 %v% "age.cat")
 # Save RData ----------
 
 save.image(file="meta-mixing-init-net.RData")
+
