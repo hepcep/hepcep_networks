@@ -8,6 +8,7 @@ library(testthat) #using v2.3.2 for compatibility with my rlang
 library(network)
 library(dplyr)
 
+
 # Data ----------
 
 load(file="../meta-mixing-init-net.RData")
@@ -65,7 +66,7 @@ expect_equal(prop_hispanic_in_network, expected_hispanic_prop, tolerance=0.01)
 expect_equal(prop_other_in_network, expected_other_prop, tolerance=0.01)
 
 
-# Test: age cat  ----------
+# Test 3: age cat  ----------
 
 table(n0%v%"age.cat")
 
