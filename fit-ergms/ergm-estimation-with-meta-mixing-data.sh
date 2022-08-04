@@ -1,8 +1,8 @@
 #!/bin/sh
 
-#SBATCH --account=pi-khanna7
-#SBATCH --job-name="racemix-plus-dist-plus-negbin-indeg0-1-only-OL-data"
-#SBATCH --output=out/racemix-plus-dist-plus-negbin-indeg0-1-only-OL
+#SBATCH --account=pi-jozik
+#SBATCH --job-name="new-synthpop-data-fit"
+#SBATCH --output=out/new-synthpop-data-fit
 #SBATCH --partition=broadwl
 #SBATCH --time=36:00:00
 #SBATCH --mem=15000
@@ -13,4 +13,4 @@
 
 module load R
 
-R CMD BATCH --no-restore ergm-estimation-with-meta-data.R out/racemix-plus-dist-plus-negbin-indeg0-1-OL.Rout
+R CMD BATCH --no-restore ergm-estimation-with-meta-data.R out/new-synthpop-data-fit
