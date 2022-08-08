@@ -15,16 +15,11 @@ library(ergm.userterms)
 
 # Data ----------
 
-load("out/racemix-plus-dist-plus-negbin-indeg0-2-orignialdata.RData")
+load("../fit-ergms/out/racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
+
 
 # Model summary
 summary(fit.metadata.mixing)
-
-
-# MCMC diagnostics
-pdf(file="out/mcmcdiags-racemix-plus-dist-plus-negbin-indeg0-2-orignialdata.pdf") 
-mcmc.diagnostics(fit.metadata.mixing)
-dev.off()
 
 
 # Simulate 1 network ----------
