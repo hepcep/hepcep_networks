@@ -12,8 +12,8 @@ library(ergm.userterms)
 
 # Data ----------
 
-load("out/sims-racemix-plus-dist-plus-negbin-indeg0-1-outdeg0-3.RData")
 
+load("out/simulate-racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
 
 # Compute summaries and IQRs ----------
 
