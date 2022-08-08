@@ -367,49 +367,64 @@ Optimizing with step length 0.0437994230193292.
 The log-likelihood improved by 5.281.
 Iteration 3 of at most 500:
 Optimizing with step length 0.0484498638093342.
-The log-likelihood improved by 5.647.
+The log-likelihood improved by 5.207.
 Iteration 4 of at most 500:
-Optimizing with step length 0.0564787251346305.
-The log-likelihood improved by 5.029.
+Optimizing with step length 0.0548233057260461.
+The log-likelihood improved by 5.212.
 Iteration 5 of at most 500:
-Optimizing with step length 0.0610140805085191.
-The log-likelihood improved by 5.393.
+Optimizing with step length 0.0624386060511515.
+The log-likelihood improved by 5.752.
 Iteration 6 of at most 500:
-Optimizing with step length 0.0702368645209167.
-The log-likelihood improved by 5.799.
+Optimizing with step length 0.0687791061760456.
+The log-likelihood improved by 5.389.
 Iteration 7 of at most 500:
-Optimizing with step length 0.0788365386744514.
-The log-likelihood improved by 5.82.
+Optimizing with step length 0.0776845595259732.
+The log-likelihood improved by 5.355.
 Iteration 8 of at most 500:
-Optimizing with step length 0.0911733940871456.
-The log-likelihood improved by 4.939.
+Optimizing with step length 0.0909158952347942.
+The log-likelihood improved by 5.367.
 Iteration 9 of at most 500:
-Optimizing with step length 0.0967176259568266.
-The log-likelihood improved by 5.101.
+Optimizing with step length 0.103011313122765.
+The log-likelihood improved by 5.146.
 Iteration 10 of at most 500:
-Optimizing with step length 0.121954497078182.
-The log-likelihood improved by 5.521.
+Optimizing with step length 0.110755815438018.
+The log-likelihood improved by 4.643.
 Iteration 11 of at most 500:
-Optimizing with step length 0.136265070011192.
-The log-likelihood improved by 5.135.
+Optimizing with step length 0.135546726145296.
+The log-likelihood improved by 4.836.
 Iteration 12 of at most 500:
-Optimizing with step length 0.172712978637923.
-The log-likelihood improved by 5.25.
+Optimizing with step length 0.150624222176716.
+The log-likelihood improved by 5.144.
 Iteration 13 of at most 500:
-Optimizing with step length 0.199636608961861.
-The log-likelihood improved by 5.202.
+Optimizing with step length 0.182459537628554.
+The log-likelihood improved by 5.164.
 Iteration 14 of at most 500:
-Optimizing with step length 0.252063506225475.
-The log-likelihood improved by 4.87.
+Optimizing with step length 0.24491223941248.
+The log-likelihood improved by 5.029.
 Iteration 15 of at most 500:
-Optimizing with step length 0.366797904740737.
-The log-likelihood improved by 5.66.
+Optimizing with step length 0.343101072017888.
+The log-likelihood improved by 5.754.
 Iteration 16 of at most 500:
-Optimizing with step length 0.564495096439154.
-The log-likelihood improved by 5.094.
+Optimizing with step length 0.503668636941899.
+The log-likelihood improved by 5.513.
 Iteration 17 of at most 500:
 Optimizing with step length 1.
-The log-likelihood improved by 3.746.
+The log-likelihood improved by 3.302.
 Step length converged once. Increasing MCMC sample size.
 Iteration 18 of at most 500:
-slurmstepd-midway2-0104: error: *** JOB 21891665 ON midway2-0104 CANCELLED AT 2022-08-05T20:31:14 DUE TO TIME LIMIT ***
+Optimizing with step length 1.
+The log-likelihood improved by 0.1738.
+Step length converged twice. Stopping.
+Finished MCMLE.
+This model was fit using MCMC.  To examine model diagnostics and check
+for degeneracy, use the mcmc.diagnostics() function.
+Warning message:
+`set_attrs()` is deprecated as of rlang 0.3.0
+This warning is displayed once per session. 
+> 
+> #save.image("out/racemix-plus-dist-plus-negbin-indeg0-1-orignialdata.RData")
+> save.image("out/racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
+> 
+> proc.time()
+      user     system    elapsed 
+134016.085   1232.809 135325.708 
