@@ -150,5 +150,5 @@ young <- unlist(lapply(sim_results,
 summary(sim_results[[10]] ~ nodemix("young"))
 round(c(tgt.old.pctold, tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung))
 
-save.image("out/simulate-racemix-plus-dist-plus-negbin-indeg0-2-orignialdata.RData")
+save.image("out/simulate-racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
 
