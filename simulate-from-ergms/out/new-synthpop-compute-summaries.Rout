@@ -349,20 +349,20 @@ Warning message:
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
    6056    6162    6236    6251    6338    6537 
 > 
-> summary(unlist(lapply(sim.dist, function (x) x["dist1"])), probs = c(2.5/100, 97.5/100))
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   3911    3929    3938    3940    3950    3970 
-> summary(unlist(lapply(sim.dist, function (x) x["dist2"])), probs = c(2.5/100, 97.5/100))
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   8665    8746    8785    8781    8813    8883 
-> summary(unlist(lapply(sim.dist, function (x) x["dist3"])), probs = c(2.5/100, 97.5/100))
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   5779    5922    5974    5985    6039    6223 
-> summary(unlist(lapply(sim.dist, function (x) x["dist4"])), probs = c(2.5/100, 97.5/100))
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   6056    6162    6236    6251    6338    6537 
+> quantile(unlist(lapply(sim.dist, function (x) x["dist1"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+3920.475 3963.000 
+> quantile(unlist(lapply(sim.dist, function (x) x["dist2"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+8685.95 8875.10 
+> quantile(unlist(lapply(sim.dist, function (x) x["dist3"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+5830.000 6177.225 
+> quantile(unlist(lapply(sim.dist, function (x) x["dist4"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+6087.225 6460.725 
 > 
 > 
 > proc.time()
    user  system elapsed 
-212.988   6.736 223.895 
+207.992   5.942 214.237 
