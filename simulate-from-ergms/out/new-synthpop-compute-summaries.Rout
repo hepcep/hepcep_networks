@@ -102,156 +102,267 @@ instructions.
 > 
 > edgecount.sim.data <- (unlist(lapply(sim_results, function (x) network.edgecount(x)))) #edge count summary
 > mean(edgecount.sim.data)
-[1] 24922.91
+[1] 24957.02
 > quantile(edgecount.sim.data, probs = c(2.5/100, 97.5/100))
     2.5%    97.5% 
-24606.70 25236.72 
+24627.38 25247.10 
 > 
-> summary(outdeg0)
+> summary(outdeg0); quantile(outdeg0, probs = c(2.5/100, 97.5/100))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  20098   20273   20314   20317   20355   20501 
-> summary(outdeg1) 
+  20149   20249   20296   20297   20341   20460 
+    2.5%    97.5% 
+20178.47 20442.25 
+> summary(outdeg1); quantile(outdeg1, probs = c(2.5/100, 97.5/100)) 
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   5224    5328    5362    5366    5406    5536 
-> summary(outdeg2)
+   5225    5322    5366    5369    5412    5533 
+   2.5%   97.5% 
+5245.45 5496.15 
+> summary(outdeg2); quantile(outdeg2, probs = c(2.5/100, 97.5/100))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   2434    2543    2575    2579    2614    2699 
-> summary(outdeg3)
+   2473    2563    2593    2593    2620    2711 
+    2.5%    97.5% 
+2507.425 2684.150 
+> summary(outdeg3); quantile(outdeg3, probs = c(2.5/100, 97.5/100))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1353    1410    1430    1433    1452    1528 
-> summary(outdeg4)
+   1338    1413    1432    1436    1460    1534 
+    2.5%    97.5% 
+1371.375 1509.625 
+> summary(outdeg4); quantile(outdeg4, probs = c(2.5/100, 97.5/100))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1586    1653    1678    1675    1698    1779 
+   1606    1666    1678    1680    1699    1758 
+    2.5%    97.5% 
+1621.275 1740.525 
 > 
-> summary(indeg0)
+> summary(indeg0); quantile(indeg0, probs = c(2.5/100, 97.5/100))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  23043   23110   23144   23155   23198   23336 
-> summary(indeg1) 
+  22990   23102   23143   23143   23187   23356 
+    2.5%    97.5% 
+23008.47 23262.62 
+> summary(indeg1); quantile(indeg1, probs = c(2.5/100, 97.5/100)) 
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   3958    4098    4132    4134    4170    4258 
-> summary(indeg2)
+   3928    4089    4139    4140    4181    4292 
+    2.5%    97.5% 
+4044.850 4270.875 
+> summary(indeg2); quantile(indeg2, probs = c(2.5/100, 97.5/100))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  956.0   993.8  1014.0  1014.4  1030.5  1103.0 
-> summary(indeg3)
+  939.0   994.8  1019.5  1017.9  1040.8  1101.0 
+    2.5%    97.5% 
+ 957.425 1078.050 
+> summary(indeg3); quantile(indeg3, probs = c(2.5/100, 97.5/100))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  906.0   959.8   976.0   976.1   995.0  1039.0 
-> summary(indeg4)
+  919.0   958.0   974.0   977.3   994.0  1058.0 
+    2.5%    97.5% 
+ 929.000 1040.625 
+> summary(indeg4); quantile(indeg4, probs = c(2.5/100, 97.5/100))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  736.0   813.5   830.0   828.5   841.2   893.0 
+  737.0   807.0   830.0   828.8   850.2   891.0 
+   2.5%   97.5% 
+772.325 882.050 
 > 
 > indeg.gr.0.1 <- n - (indeg0 + indeg1)
 > summary(indeg.gr.0.1)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   4613    4680    4710    4711    4742    4829 
+   4606    4687    4719    4716    4748    4808 
 > quantile(indeg.gr.0.1, probs = c(2.5/100, 97.5/100))
-   2.5%   97.5% 
-4625.95 4788.40 
+    2.5%    97.5% 
+4636.275 4783.150 
 > 
 > outdeg.gr.0.3 <- n - (outdeg0 + outdeg1 + outdeg2 + outdeg3)
 > summary(outdeg.gr.0.3)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   2216    2283    2305    2305    2329    2416 
+   2224    2281    2304    2304    2326    2414 
 > quantile(outdeg.gr.0.3, probs = c(2.5/100, 97.5/100))
     2.5%    97.5% 
-2239.325 2370.625 
+2241.425 2361.000 
 > 
 > sim.race.num <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ nodemix("race.num")))
 Warning message:
 `set_attrs()` is deprecated as of rlang 0.3.0
-This warning is displayed once per session. 
+[90mThis warning is displayed once per session.[39m 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.1"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   5765    5916    5966    5960    6006    6113 
+   5766    5923    5967    5970    6016    6201 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.1"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  684.0   730.0   743.5   744.2   756.5   798.0 
+  689.0   733.8   751.5   750.2   764.2   811.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.1"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  798.0   851.0   868.0   866.9   882.0   925.0 
+  810.0   850.8   870.0   868.9   884.0   942.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.1"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  258.0   277.8   286.5   287.6   297.2   322.0 
+  249.0   276.0   289.0   289.1   301.0   320.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.2"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1006    1056    1076    1073    1088    1146 
+    991    1057    1077    1075    1094    1152 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.2"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   8300    8628    8679    8676    8726    8950 
+   8459    8624    8676    8680    8743    8967 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.2"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  581.0   621.0   633.0   633.1   644.0   681.0 
+  574.0   618.8   635.5   634.1   652.0   699.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.2"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  88.00   99.75  105.00  105.39  112.00  126.00 
+   84.0   101.0   105.5   105.1   111.0   127.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.3"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1054    1104    1124    1128    1154    1198 
+   1028    1105    1132    1130    1156    1205 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.3"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  747.0   782.0   800.5   799.8   812.2   855.0 
+  724.0   776.8   796.5   795.5   811.8   853.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.3"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   3333    3396    3431    3432    3467    3564 
+   3340    3395    3428    3437    3470    3625 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.3"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   88.0   105.0   110.0   110.9   117.0   135.0 
+   97.0   107.5   112.5   113.2   118.2   132.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.4"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  408.0   452.5   469.0   467.4   483.5   536.0 
+  424.0   454.0   467.0   468.4   484.0   514.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.4"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  212.0   227.0   236.0   236.7   246.0   268.0 
+  196.0   226.0   236.0   236.8   247.2   276.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.4"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  221.0   253.0   261.0   260.1   268.0   292.0 
+  225.0   253.0   261.0   261.2   270.0   312.0 
 > summary(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.4"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  117.0   135.0   141.0   141.2   148.0   162.0 
+  120.0   135.8   142.0   142.6   150.2   167.0 
+> 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.1"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+5835.95 6100.15 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.1"])), probs = c(2.5/100, 97.5/100))
+ 2.5% 97.5% 
+700.5 801.1 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.1"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+824.000 914.575 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.1"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+260.850 316.525 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.2"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+1012.950 1124.625 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.2"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+8503.925 8882.550 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.2"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+588.425 678.150 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.2"])), probs = c(2.5/100, 97.5/100))
+  2.5%  97.5% 
+ 88.95 122.05 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.3"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+1058.65 1191.00 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.3"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+749.275 839.575 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.3"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+3350.425 3574.100 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.3"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+ 98.475 129.525 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.1.4"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+428.325 501.050 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.2.4"])), probs = c(2.5/100, 97.5/100))
+  2.5%  97.5% 
+208.90 267.15 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.3.4"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+235.475 284.525 
+> quantile(unlist(lapply(sim.race.num, function (x) x["mix.race.num.4.4"])), probs = c(2.5/100, 97.5/100))
+   2.5%   97.5% 
+124.475 160.525 
+> 
+> 
 > 
 > sim.gender <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ nodemix("gender")))
 > summary(unlist(lapply(sim.gender, function (x) x["mix.gender.female.female"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   2635    2739    2774    2770    2796    2883 
+   2638    2741    2760    2767    2806    2865 
 > summary(unlist(lapply(sim.gender, function (x) x["mix.gender.male.female"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   7454    7584    7644    7646    7701    7878 
+   7455    7618    7670    7666    7718    7861 
 > summary(unlist(lapply(sim.gender, function (x) x["mix.gender.female.male"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   6585    6730    6777    6784    6853    6974 
+   6566    6742    6792    6805    6873    6998 
 > summary(unlist(lapply(sim.gender, function (x) x["mix.gender.male.male"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   7566    7663    7726    7723    7778    7904 
+   7526    7662    7717    7719    7767    7925 
+> 
+> quantile(unlist(lapply(sim.gender, function (x) x["mix.gender.female.female"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+2672.375 2850.775 
+> quantile(unlist(lapply(sim.gender, function (x) x["mix.gender.male.female"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+7511.900 7792.725 
+> quantile(unlist(lapply(sim.gender, function (x) x["mix.gender.female.male"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+6659.800 6959.525 
+> quantile(unlist(lapply(sim.gender, function (x) x["mix.gender.male.male"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+7585.375 7871.925 
+> 
 > 
 > sim.young <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ nodemix("young")))
 > summary(unlist(lapply(sim.young, function (x) x["mix.young.0.0"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  18904   19261   19353   19341   19415   19715 
+  19014   19282   19356   19362   19464   19694 
 > summary(unlist(lapply(sim.young, function (x) x["mix.young.1.0"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   3008    3108    3128    3135    3168    3325 
+   3007    3120    3143    3145    3169    3267 
 > summary(unlist(lapply(sim.young, function (x) x["mix.young.0.1"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  891.0   957.0   972.5   975.5   996.5  1074.0 
+  910.0   957.8   976.0   978.4  1002.0  1054.0 
 > summary(unlist(lapply(sim.young, function (x) x["mix.young.1.1"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1406    1447    1470    1472    1497    1553 
+   1365    1447    1471    1472    1496    1585 
+> 
+> quantile(unlist(lapply(sim.young, function (x) x["mix.young.0.0"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+19066.50 19645.38 
+> quantile(unlist(lapply(sim.young, function (x) x["mix.young.1.0"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+3049.225 3238.200 
+> quantile(unlist(lapply(sim.young, function (x) x["mix.young.0.1"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+ 922.900 1033.525 
+> quantile(unlist(lapply(sim.young, function (x) x["mix.young.1.1"])), probs = c(2.5/100, 97.5/100))
+    2.5%    97.5% 
+1403.375 1555.050 
+> 
 > 
 > sim.dist <- lapply(nsim.vec, function (x) summary(sim_results[[x]] ~ dist(1:4)))
 > summary(unlist(lapply(sim.dist, function (x) x["dist1"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   3911    3934    3939    3939    3944    3962 
+   3911    3929    3938    3940    3950    3970 
 > summary(unlist(lapply(sim.dist, function (x) x["dist2"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   8648    8732    8773    8772    8805    8894 
+   8665    8746    8785    8781    8813    8883 
 > summary(unlist(lapply(sim.dist, function (x) x["dist3"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   5744    5938    5998    5988    6045    6194 
+   5779    5922    5974    5985    6039    6223 
 > summary(unlist(lapply(sim.dist, function (x) x["dist4"])))
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   5906    6148    6219    6224    6297    6490 
+   6056    6162    6236    6251    6338    6537 
 > 
+> summary(unlist(lapply(sim.dist, function (x) x["dist1"])), probs = c(2.5/100, 97.5/100))
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   3911    3929    3938    3940    3950    3970 
+> summary(unlist(lapply(sim.dist, function (x) x["dist2"])), probs = c(2.5/100, 97.5/100))
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   8665    8746    8785    8781    8813    8883 
+> summary(unlist(lapply(sim.dist, function (x) x["dist3"])), probs = c(2.5/100, 97.5/100))
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   5779    5922    5974    5985    6039    6223 
+> summary(unlist(lapply(sim.dist, function (x) x["dist4"])), probs = c(2.5/100, 97.5/100))
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   6056    6162    6236    6251    6338    6537 
 > 
 > 
 > proc.time()
    user  system elapsed 
-220.674   8.106 231.393 
+212.988   6.736 223.895 
