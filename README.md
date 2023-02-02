@@ -25,15 +25,17 @@ cd hepcep_networks
 
 ### Restore the environment
 
+First ensure that the `.libPaths()` are set to the project's own library:
+
 In R,
 
 ```bash
 library(packrat)
 > library(packrat)
-> .libPaths()
+> .libPaths() # TEST - this is not the project-specific library
 [1] "/gpfs/home/akhann16/R/x86_64-pc-linux-gnu-library/3.6"
 [2] "/gpfs/rt/7.2/opt/R/3.6.0/lib64/R/library"             
-> packrat::init()
+> packrat::init() # CHANGE to the project-specific library
 Initializing packrat project in directory:
 - "/gpfs/home/akhann16/code/hepcep_networks"
 Initialization complete!
@@ -46,7 +48,6 @@ Packrat mode on. Using library in directory:
 >
 ```
 
-and do `packrat::init()` to change the libpaths to the specific project
 
 Then, restore the packages with
 
