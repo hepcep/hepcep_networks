@@ -14,14 +14,14 @@ git clone [git@bitbucket.org](mailto:git@bitbucket.org):jozik/hepcep_networks.gi
 
 ```bash
 module load R/3.6.0
-R
 cd hepcep_networks
+R
 ```
 
-<aside>
+
 💡 3.6.0 is the closest version of R that Oscar has to what I was running on Midway 2 (3.6.1)
 
-</aside>
+
 
 ### Restore the environment
 
@@ -158,4 +158,10 @@ dist1 dist2 dist3 dist4 dist5 dist6 dist7
         [fit-ergms/generate-starting-network-meta-data.R](https://bitbucket.org/jozik/hepcep_networks/src/master/fit-ergms/generate-starting-network-meta-data.R)
       * Update lat/lon data as needed (see section `Read lat/lon data ------------------------------ `)
 
+## Submitting the batch script
 
+```
+ sbatch fit-ergms/ergm-estimation-with-meta-mixing-data.sh 
+```
+ 
+💡 Remember to do this from `/gpfs/home/akhann16/code/hepcep_networks`
