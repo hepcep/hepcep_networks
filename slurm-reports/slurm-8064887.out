@@ -1,0 +1,11 @@
+## SLURM PROLOG ###############################################################
+##    Job ID : 8064887
+##  Job Name : ergm-estimation-with-meta-mixing-data.sh
+##  Nodelist : node1307
+##      CPUs : 1
+##  Mem/Node : 15000 MB
+## Directory : /gpfs/home/akhann16/code/hepcep_networks
+##   Job Started : Fri Feb  3 17:00:32 EST 2023
+###############################################################################
+module: loading 'R/3.6.0'
+slurmstepd: error: *** JOB 8064887 ON node1307 CANCELLED AT 2023-02-03T17:01:52 DUE TO TIME LIMIT ***

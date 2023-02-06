@@ -1,0 +1,10 @@
+## SLURM PROLOG ###############################################################
+##    Job ID : 8064920
+##  Job Name : ergm-estimation-with-meta-mixing-data.sh
+##  Nodelist : node1159
+##      CPUs : 1
+##  Mem/Node : 15000 MB
+## Directory : /gpfs/home/akhann16/code/hepcep_networks
+##   Job Started : Fri Feb  3 17:04:33 EST 2023
+###############################################################################
+module: loading 'R/3.6.0'
