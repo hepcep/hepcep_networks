@@ -225,5 +225,4 @@ fit.metadata.mixing <-
     )
   )
 
-#save.image("out/racemix-plus-dist-plus-negbin-indeg0-1-orignialdata.RData")
-save.image("out/racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
+save.image("on-oscar-racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
