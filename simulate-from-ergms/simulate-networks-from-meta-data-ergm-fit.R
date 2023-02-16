@@ -4,6 +4,13 @@
 
 rm(list=ls())
 
+# Initiate environment ------------------------------
+
+setwd(".")
+
+packrat::init()
+.libPaths()
+
 
 # Libraries ----------
 
@@ -15,7 +22,7 @@ library(ergm.userterms)
 
 # Data ----------
 
-load("../fit-ergms/out/racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
+load("fit-ergms/out/on-oscar-racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
 
 
 # Model summary
@@ -114,5 +121,5 @@ young <- unlist(lapply(sim_results,
 summary(sim_results[[10]] ~ nodemix("young"))
 round(c(tgt.old.pctold, tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung))
 
-save.image("out/simulate-racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
+save.image("simulate-from-ergms/out/simulate-on-oscar-racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
 
