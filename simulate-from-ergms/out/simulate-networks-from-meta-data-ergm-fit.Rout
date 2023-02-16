@@ -1,0 +1,310 @@
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Simulate network (n=32K) from ERGM fit 
+> # parameterized with meta data  
+> 
+> 
+> rm(list=ls())
+> 
+> # Initiate environment ------------------------------
+> 
+> setwd(".")
+> 
+> packrat::init()
+Initializing packrat project in directory:
+- "/gpfs/home/akhann16/code/hepcep_networks"
+Initialization complete!
+> .libPaths()
+[1] "/gpfs/home/akhann16/code/hepcep_networks/packrat/lib/x86_64-pc-linux-gnu/3.6.0"    
+[2] "/gpfs/home/akhann16/code/hepcep_networks/packrat/lib-ext/x86_64-pc-linux-gnu/3.6.0"
+[3] "/gpfs/home/akhann16/code/hepcep_networks/packrat/lib-R/x86_64-pc-linux-gnu/3.6.0"  
+> 
+> 
+> # Libraries ----------
+> 
+> library(network)
+network: Classes for Relational Data
+Version 1.16.0 created on 2019-11-30.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+                    Skye Bender-deMoll, University of Washington
+ For citation information, type citation("network").
+ Type help("network-package") to get started.
+
+> library(ergm)
+
+ergm: version 3.10.4, created on 2019-06-10
+Copyright (c) 2019, Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+                    with contributions from
+                    Li Wang
+                    Kirk Li, University of Washington
+                    Skye Bender-deMoll, University of Washington
+                    Chad Klumb
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm").
+
+NOTE: Versions before 3.6.1 had a bug in the implementation of the bd()
+constriant which distorted the sampled distribution somewhat. In
+addition, Sampson's Monks datasets had mislabeled vertices. See the
+NEWS and the documentation for more details.
+
+NOTE: Some common term arguments pertaining to vertex attribute and
+level selection have changed in 3.10.0. See terms help for more
+details. Use ‘options(ergm.term=list(version="3.9.4"))’ to use old
+behavior.
+
+> library(dplyr)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+> library(ergm.userterms)
+Loading required package: statnet.common
+
+Attaching package: ‘statnet.common’
+
+The following object is masked from ‘package:base’:
+
+    order
+
+
+ergm.userterms: version 3.1.1, created on 2020-02-01
+Copyright (c) 2020, Jonathan Ozik
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Carter T. Butts, University of California -- Irvine
+                    Steven M. Goodreau, University of Washington
+                    Pavel N. Krivitsky, University of Wollongong
+                    Martina Morris, University of Washington
+Based on "statnet" project software (statnet.org).
+For license and citation information see statnet.org/attribution
+or type citation("ergm.userterms").
+
+NOTE: If you use custom ERGM terms based on ‘ergm.userterms’ version
+prior to 3.1, you will need to perform a one-time update of the package
+boilerplate files (the files that you did not write or modify) from
+‘ergm.userterms’ 3.1 or later. See help('eut-upgrade') for
+instructions.
+
+> 
+> 
+> # Data ----------
+> 
+> load("fit-ergms/out/on-oscar-racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
+> 
+> 
+> # Model summary
+> summary(fit.metadata.mixing)
+
+==========================
+Summary of model fit
+==========================
+
+Formula:   TARGET_STATS ~ edges + nodemix("gender", base = 1) + nodemix("young", 
+    base = 1) + nodemix("race.num", base = 1) + idegree(indeg.terms) + 
+    odegree(deg.terms) + dist(dist.terms)
+<environment: 0x9992b88>
+
+Iterations:  12 out of 500 
+
+Monte Carlo MLE Results:
+                       Estimate Std. Error MCMC %  z value Pr(>|z|)    
+edges                  -8.97622    0.03966      0 -226.310   <1e-04 ***
+mix.gender.male.female  0.34507    0.02216      0   15.572   <1e-04 ***
+mix.gender.female.male  0.38591    0.02105      0   18.335   <1e-04 ***
+mix.gender.male.male   -0.19172    0.02009      0   -9.542   <1e-04 ***
+mix.young.1.0          -0.84618    0.01936      0  -43.713   <1e-04 ***
+mix.young.0.1          -1.37521    0.03042      0  -45.214   <1e-04 ***
+mix.young.1.1          -0.66142    0.02353      0  -28.111   <1e-04 ***
+mix.race.num.2.1       -1.68256    0.03875      0  -43.420   <1e-04 ***
+mix.race.num.3.1       -1.34754    0.03535      0  -38.122   <1e-04 ***
+mix.race.num.4.1       -0.46945    0.05569      0   -8.430   <1e-04 ***
+mix.race.num.1.2       -1.76986    0.03243      0  -54.567   <1e-04 ***
+mix.race.num.2.2        0.63393    0.01339      0   47.340   <1e-04 ***
+mix.race.num.3.2       -1.82018    0.04099      0  -44.402   <1e-04 ***
+mix.race.num.4.2       -1.57317    0.09744      0  -16.145   <1e-04 ***
+mix.race.num.1.3       -1.31684    0.03031      0  -43.446   <1e-04 ***
+mix.race.num.2.3       -1.34282    0.03561      0  -37.704   <1e-04 ***
+mix.race.num.3.3        0.29567    0.01665      0   17.759   <1e-04 ***
+mix.race.num.4.3       -1.17149    0.09601      0  -12.201   <1e-04 ***
+mix.race.num.1.4       -0.33540    0.04185      0   -8.014   <1e-04 ***
+mix.race.num.2.4       -0.69782    0.06340      0  -11.006   <1e-04 ***
+mix.race.num.3.4       -0.49047    0.06137      0   -7.992   <1e-04 ***
+mix.race.num.4.4        1.06053    0.07972      0   13.304   <1e-04 ***
+idegree0                3.94343    0.03803      0  103.705   <1e-04 ***
+idegree1                1.58830    0.03259      0   48.735   <1e-04 ***
+odegree0               -2.38181    0.13514      0  -17.625   <1e-04 ***
+odegree1               -2.81565    0.10485      0  -26.854   <1e-04 ***
+odegree2               -2.25967    0.07666      0  -29.478   <1e-04 ***
+odegree3               -1.48753    0.05299      0  -28.070   <1e-04 ***
+dist1                   7.03551    0.02058      0  341.780   <1e-04 ***
+dist2                   3.72713    0.01509      0  246.953   <1e-04 ***
+dist3                  -0.69194    0.01574      0  -43.968   <1e-04 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Log-likelihood was not estimated for this fit.
+To get deviances, AIC, and/or BIC from fit `fit.metadata.mixing` run 
+  > fit.metadata.mixing<-logLik(fit.metadata.mixing, add=TRUE)
+to add it to the object or rerun this function with eval.loglik=TRUE.
+> 
+> 
+> # Simulate 100 networks ----------
+> 
+> nsim.vec <- 1:100
+> sim_results <- as.list(nsim.vec)
+> set.seed(Sys.time())
+> 
+> for (iter in 1:length(nsim.vec)){
++   sim_results[[iter]] <- simulate(fit.metadata.mixing,
++                                   nsim=1
++                                   )
++ }
+In term ‘nodemix’ in package ‘ergm’: Argument ‘base’ has been superseded by ‘levels2’, and it is recommended to use the latter.  Note that its interpretation may be different.
+Warning message:
+`set_attrs()` is deprecated as of rlang 0.3.0
+This warning is displayed once per session. 
+> 
+> 
+> #  Investigate netstats on 100 networks ----------
+> 
+> ## edgecount
+> ecount <- unlist(lapply(sim_results, network.edgecount))
+> summary(ecount)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  23970   24265   24389   24395   24544   24973 
+> edges_target
+[1] 24650.46
+> 
+> ## outdegree
+> outdeg0 <- unlist(lapply(sim_results, 
++                         function (x) summary(x ~ odegree(0))
++                         ))
+> outdeg1 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ odegree(1))
++ ))
+> outdeg2 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ odegree(2))
++ ))
+> outdeg3 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ odegree(3))
++ ))
+> outdeg4 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ odegree(4))
++ ))
+> 
+> 
+> c(mean(outdeg0), mean(outdeg1), mean(outdeg2), mean(outdeg3), mean(outdeg4))
+[1] 20466.08  5354.65  2559.94  1398.72  1614.90
+> outedges$n_nodes[1:5] #target
+[1] 20376.3968  5367.6893  2578.0179  1424.5363   838.6435
+> 
+> ## indegree
+> indeg0 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ idegree(0))
++ ))
+> indeg1 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ idegree(1))
++ ))
+> indeg2 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ idegree(2))
++ ))
+> indeg3 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ idegree(3))
++ ))
+> indeg4 <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ idegree(4))
++ ))
+> 
+> 
+> c(mean(indeg0), mean(indeg1), mean(indeg2), mean(indeg3), mean(indeg4))
+[1] 23216.30  4156.60  1007.17   962.36   813.37
+> inedges$n_nodes[1:5]
+[1] 23162.4490  4159.8595  1896.6525  1039.4736   617.5664
+> 
+> ## nodemix(race.num)
+> race.num <- unlist(lapply(sim_results, 
++                          function (x) summary(x ~ nodemix("race.num"))
++ ))
+> 
+> summary(sim_results[[1]] ~ nodemix("race.num"))
+mix.race.num.1.1 mix.race.num.2.1 mix.race.num.3.1 mix.race.num.4.1 
+            5886              696              874              285 
+mix.race.num.1.2 mix.race.num.2.2 mix.race.num.3.2 mix.race.num.4.2 
+             995             8359              603              102 
+mix.race.num.1.3 mix.race.num.2.3 mix.race.num.3.3 mix.race.num.4.3 
+            1071              802             3225               97 
+mix.race.num.1.4 mix.race.num.2.4 mix.race.num.3.4 mix.race.num.4.4 
+             483              249              248              150 
+> round(
++   c(target.w.w, target.b.w, target.h.w, target.o.w,
++     target.w.b, target.b.b, target.h.b, target.o.b,
++     target.w.h, target.b.h, target.h.h, target.o.h,
++     target.w.o, target.b.o, target.h.o, target.o.o),
++   0
++ )
+ [1] 5488  752  902  301 1023 8491  614  102 1113  795 3286  106  477  233  244
+[16]  155
+> 
+> ## nodemix(gender)
+> gender <- unlist(lapply(sim_results, 
++                           function (x) summary(x ~ nodemix("gender"))
++ ))
+> 
+> summary(sim_results[[10]] ~ nodemix("gender"))
+mix.gender.female.female   mix.gender.male.female   mix.gender.female.male 
+                    2764                     7285                     6666 
+    mix.gender.male.male 
+                    7578 
+> round(c(tgt.female.pctfemale, tgt.female.pctmale, tgt.male.pctfemale, tgt.male.pctmale), 0)
+[1] 2196 7488 6778 7643
+> 
+> ## nodemix(young)
+> young <- unlist(lapply(sim_results, 
++                         function (x) summary(x ~ nodemix("young"))
++ )) 
+> 
+> summary(sim_results[[10]] ~ nodemix("young"))
+mix.young.0.0 mix.young.1.0 mix.young.0.1 mix.young.1.1 
+        18819          3092           958          1424 
+> round(c(tgt.old.pctold, tgt.old.pctyoung, tgt.young.pctold, tgt.young.pctyoung))
+[1] 19079  3106   986  1479
+> 
+> save.image("simulate-from-ergms/out/simulate-on-oscar-racemix-plus-dist-plus-negbin-odeg0-3-indeg0-1-orignialdata.RData")
+> 
+> 
+> proc.time()
+   user  system elapsed 
+747.670  16.856 765.097 
