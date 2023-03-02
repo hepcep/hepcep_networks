@@ -10,7 +10,7 @@ library(dplyr)
 
 # Data ----------
 
-demog_data <- read.csv("data/synthpop-2022-07-25 13_21_04.csv")
+demog_data <- read.csv("data/synthpop-2023-01-04 21_10_46.csv")
 glimpse(demog_data)
 
 
