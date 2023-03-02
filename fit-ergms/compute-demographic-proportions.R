@@ -10,7 +10,7 @@ library(dplyr)
 
 # Data ----------
 
-demog_data <- read.csv("../data/synthpop-2022-07-25 13_21_04.csv")
+demog_data <- read.csv("data/synthpop-2022-07-25 13_21_04.csv")
 glimpse(demog_data)
 
 
@@ -44,5 +44,5 @@ colnames(demog_dt_props)
 
 # Write data ----------
 
-write.csv(demog_dt_props, file = "../data/demog_dt_props.csv")                
+write.csv(demog_dt_props, file = "data/demog_dt_props.csv")                
   
