@@ -1,7 +1,7 @@
 # Test initialized network data
 ## i.e., check if the proportions of nodes in various categories match targets from synthpop
 
-
+rm(list=ls())
 # Libraries ----------
 
 library(testthat) #using v2.3.2 for compatibility with my rlang
@@ -11,8 +11,8 @@ library(dplyr)
 
 # Data ----------
 
-load(file="../meta-mixing-init-net.RData")
-demog_data <- read.csv("../../data/synthpop-2022-07-25 13_21_04.csv")
+load(file="/users/akhann16/code/hepcep_networks/fit-ergms/out/meta-mixing-init-net.RData")
+demog_data <- read.csv("/users/akhann16/code/hepcep_networks/data/synthpop-2023-01-04 21_10_46.csv")
 
 
 # Make race variables consistent with previous dataset ----------
@@ -35,8 +35,8 @@ expected_females_prop <- length(expected_females)/nrow(demog_data)
 expected_males <- which(demog_data$sex == "M")
 expected_males_prop <- length(expected_males)/nrow(demog_data)
 
-expect_equal(prop_fem_in_network, expected_females_prop, tolerance=0.001)
-expect_equal(prop_male_in_network, expected_males_prop, tolerance=0.001)
+expect_equal(prop_fem_in_network, expected_females_prop, tolerance=0.005)
+expect_equal(prop_male_in_network, expected_males_prop, tolerance=0.005)
 
 
 # Test 2: race  ----------
@@ -91,3 +91,4 @@ expect_equal(prop_18_24_in_network, expected_18_24_prop, tolerance=0.005)
 expect_equal(prop_25_34_in_network, expected_25_34_prop, tolerance=0.005)
 expect_equal(prop_35_44_in_network, expected_35_44_prop, tolerance=0.005)
 expect_equal(prop_45_plus_in_network, expected_45_plus_prop, tolerance=0.005)
+

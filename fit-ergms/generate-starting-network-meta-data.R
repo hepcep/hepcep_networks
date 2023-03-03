@@ -14,12 +14,12 @@ library(dplyr)
 # Data ----------
 
 # demography
-demog.data <- read.csv("../data/demog_dt_props.csv") #updated proportion from synthpop August 2022
+demog.data <- read.csv("data/demog_dt_props.csv") 
 
 
 # edge data
-inedges.data <- read.csv(file = "../data/inedges_data.csv", header = TRUE)
-outedges.data <- read.csv(file = "../data/outedges_data.csv", header = TRUE)
+inedges.data <- read.csv(file = "data/inedges_data.csv", header = TRUE)
+outedges.data <- read.csv(file = "data/outedges_data.csv", header = TRUE)
 
 
 # Initialize network ----------
@@ -37,7 +37,7 @@ edges_target <- mean(c(inedges_target, outedges_target))
 # Set vertex attributes ----------
 
 # group assignment
-groups <- demog.data$group
+groups <- demog.data$X
 group.assignment <- sample(groups, n, replace = TRUE, prob = demog.data$prop)
 set.vertex.attribute(n0, "group", value = group.assignment)
 
@@ -76,5 +76,4 @@ table(n0 %v% "age.cat")
 
 # Save RData ----------
 
-save.image(file="out/meta-mixing-init-net.RData")
-
+save.image(file="/users/akhann16/code/hepcep_networks/fit-ergms/out/meta-mixing-init-net.RData")

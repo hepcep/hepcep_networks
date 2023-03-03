@@ -3,7 +3,6 @@
 
 rm(list=ls())
 
-
 # Initiate environment ------------------------------
 setwd(".")
 
@@ -22,8 +21,6 @@ library(ergm.userterms)
 
 # Input Network Data ------------------------------
 
-
-#load("../../hepcep_networks-from-midway/fit-ergms/meta-mixing-init-net.RData") # starting network from meta mixing data on Aditya's local machine
 load("fit-ergms/out/meta-mixing-init-net.RData") #path for updated meta mixing with synthpop 
 
 inedges <- read.csv("data/pplrss.csv") #in- and out-edges
@@ -34,10 +31,8 @@ negbin_outdeg <- read.csv("data/negbin-outdeg.csv")
 
 # Read Latitude/Longidtude Data ------------------------------ 
 
-data_old <- read.csv("data/pwids_with_lat_lon_original_zips.csv", header = TRUE)
-data <- read.csv("data/synthpop-2022-07-25 13_21_04.csv")
+data <- read.csv("data/synthpop-2023-01-04 21_10_46.csv")
 
-glimpse(data_old)
 glimpse(data)
 
 # Recode to add new variables to dataset ------------------------------
