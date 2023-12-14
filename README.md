@@ -7,7 +7,7 @@
 ### Clone from Bitbucket
 
 ```bash
-git clone [git@bitbucket.org](mailto:git@bitbucket.org):jozik/hepcep_networks.git
+git clone git@bitbucket.org:jozik/hepcep_networks.git
 ```
 
 ### Load and launch R
