@@ -1,5 +1,13 @@
 # README #
 
+## Notice: Migration from Bitbucket
+
+This repository was cloned from Bitbucket using the Git **BUNDLE** feature.  
+The full version, including complete history, remains on Bitbucket:  
+👉 [Bitbucket Repository](https://bitbucket.org/jozik/hepcep_networks/)
+
+If you need access to older commits or untracked files, please refer to the Bitbucket repository.
+
 ## Setting up environment 
 - Brown's Oscar is used as an example
 - Instructions are general purpose Linux
