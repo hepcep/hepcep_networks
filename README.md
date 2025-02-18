@@ -1,13 +1,13 @@
 # README #
 
-## Purpose: ERGM `dist` Term for Location-Based Network Modeling
+## 📄 Purpose: ERGM `dist` Term for Location-Based Network Modeling
 
 This repository is used to create the **`dist` ERGM term**, which models network ties based on the geographic location of agents.  
 The full description of this term can be found in:  
 📄 ["People who inject drugs in metropolitan Chicago"](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0248850) (PLoS ONE, 2022).
 
 
-## Notice: Migration from Bitbucket
+## 🐙 Notice: Migration from Bitbucket
 
 This repository was cloned from Bitbucket using the Git **BUNDLE** feature.  
 The full version, including complete history, remains on Bitbucket:  
