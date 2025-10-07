@@ -76,6 +76,14 @@ CHANGESTAT_FN(d_dist) {
 }
 
 // c(num.cats, thresholds, base, nodelat, nodelon, nodecat)
+
+/** 
+ dnf (distance near/far)
+ 
+ 
+ 
+ 
+ **/
 CHANGESTAT_FN(d_dnf) {
   Vertex t, h;
   int i, j;

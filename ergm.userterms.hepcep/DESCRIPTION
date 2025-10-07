@@ -1,4 +1,4 @@
-Package: ergm.userterms
+Package: ergm.userterms.hepcep
 Version: 3.1.1 
 Date: 2020-02-01
 Title: User-specified terms for the statnet suite of packages (hepcep)

@@ -158,7 +158,7 @@ InitErgmTerm.dist <- function(nw, arglist, ...) {
   nodelon <- get.node.attr(nw, "lon")
   list(name = name,
       coef.names = coef.names,
-      pkgname = "ergm.userterms",
+      pkgname = "ergm.userterms.hepcep",
       inputs = c(dist, nodelat, nodelon),
       dependence = FALSE
   )
@@ -168,16 +168,16 @@ InitErgmTerm.dist <- function(nw, arglist, ...) {
 
 # Name: dnf (distance near far)
 # args:
-#   by          category name, e.g., "Chicago"
-#   thresholds  distance (in km) demarcating near vs. far for each category, e.g, c(2,4) => 2km for Chicago == 1, 4km for Chicago == 2
-#   base        statistic to omit (default is the last one), e.g., if there are 2 categories, 1-4, 
+#   by          category name, e.g., "chicago", with assumption that the n categories are 1,...,n
+#   thresholds  distance (in km) demarcating near vs. far for each category, e.g, c(2,4) => 2km for chicago == 1, 4km for chicago == 2
+#   base        statistic to omit (default is the last one), e.g., if there are 2 categories, there are 4-1 total terms, 
 #               where the terms would be dnf.<by>.<i>.<n/f>, where i = 1,.., number of categories
-#               e.g., dnf.Chicago.1.n , dnf.Chicago.1.f, dnf.Chicago.2.n, dnf.Chicago.2.f
+#               e.g., dnf.chicago.1.n , dnf.chicago.1.f, dnf.chicago.2.n, dnf.chicago.2.f
 InitErgmTerm.dnf <- function(nw, arglist, ...) {
   # should only apply to directed networks
   a <- check.ErgmTerm(nw, arglist, directed=TRUE, bipartite=FALSE,
                       varnames = c("by","thresholds","base"),
-                      vartypes = c("character","numeric","numeric"), # TODO make sure these types are correctly specified
+                      vartypes = c("character","numeric","numeric"), 
                       required = c(TRUE, TRUE, FALSE),
                       defaultvalues = list(NULL,NULL,NULL))
   
@@ -191,6 +191,7 @@ InitErgmTerm.dnf <- function(nw, arglist, ...) {
            "1, but received a vector of length 0")}
   
   thresholds = a$thresholds
+  # Note: number of categories depends on the number of thresholds specified
   num.cats = length(thresholds)
   
   # Assign end term as default base if base is unspecified
@@ -217,7 +218,7 @@ InitErgmTerm.dnf <- function(nw, arglist, ...) {
   
   list(name = name,
        coef.names = coef.names, 
-       pkgname = "ergm.userterms",
+       pkgname = "ergm.userterms.hepcep",
        inputs = c(num.cats, thresholds, base, nodelat, nodelon, nodecat),
        dependence = FALSE
   )
