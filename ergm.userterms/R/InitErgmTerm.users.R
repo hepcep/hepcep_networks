@@ -166,4 +166,63 @@ InitErgmTerm.dist <- function(nw, arglist, ...) {
 
 
 
+# Name: dnf (distance near far)
+# args:
+#   by          category name, e.g., "Chicago"
+#   thresholds  distance (in km) demarcating near vs. far for each category, e.g, c(2,4) => 2km for Chicago == 1, 4km for Chicago == 2
+#   base        statistic to omit (default is the last one), e.g., if there are 2 categories, 1-4, 
+#               where the terms would be dnf.<by>.<i>.<n/f>, where i = 1,.., number of categories
+#               e.g., dnf.Chicago.1.n , dnf.Chicago.1.f, dnf.Chicago.2.n, dnf.Chicago.2.f
+InitErgmTerm.dnf <- function(nw, arglist, ...) {
+  # should only apply to directed networks
+  a <- check.ErgmTerm(nw, arglist, directed=TRUE, bipartite=FALSE,
+                      varnames = c("by","thresholds","base"),
+                      vartypes = c("character","numeric","numeric"), # TODO make sure these types are correctly specified
+                      required = c(TRUE, TRUE, FALSE),
+                      defaultvalues = list(NULL,NULL,NULL))
+  
+  
+  # Category attribute
+  cat.name <- a$by
+  nodecat <- get.node.attr(nw, cat.name)
+  
+  if(length(a$thresholds)==0){
+      stop("The argument thresholds to dnf expected a vector of length at least ",
+           "1, but received a vector of length 0")}
+  
+  thresholds = a$thresholds
+  num.cats = length(thresholds)
+  
+  # Assign end term as default base if base is unspecified
+  if(is.null(a$base)) {
+    base = num.cats * 2
+  } else {
+    base = a$base
+    if (base > num.cats * 2){
+      stop("Base needs to be between 1 and the (number of thresholds * 2), ",
+           "inclusive, but it was specified as ", base, ".")
+    }
+  }
+  
+  # This will generate e.g.,:
+  # dnf.chicago.1.n , dnf.chicago.1.f, dnf.chicago.2.n, dnf.chicago.2.f 
+  # and then we remove the base term
+  coef.names <- paste("dnf", cat.name, rep(1:num.cats, each = 2), c("n","f") ,sep=".") 
+  # remove base
+  coef.names <- coef.names[-base]
+  
+  name <- "dnf"
+  nodelat <- get.node.attr(nw, "lat")
+  nodelon <- get.node.attr(nw, "lon")
+  
+  list(name = name,
+       coef.names = coef.names, 
+       pkgname = "ergm.userterms",
+       inputs = c(num.cats, thresholds, base, nodelat, nodelon, nodecat),
+       dependence = FALSE
+  )
+}
+
+
+
 
