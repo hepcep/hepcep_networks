@@ -121,7 +121,7 @@ behavior.
 From within R,
 
 ```
-install.packages("/oscar/home/akhann16/code/hepcep_networks-OLD/ergm.userterms", type="source", repos=NULL)
+install.packages("/oscar/home/akhann16/code/net-ergm-v4plus/ergm.userterms.hepcep", type="source", repos=NULL)
 ```
 
 Test if the correct `ergm.userterms` is loaded:
