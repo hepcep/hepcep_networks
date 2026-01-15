@@ -120,8 +120,8 @@ behavior.
 
 From within R,
 
-```bash
-install.packages("/gpfs/home/akhann16/code/hepcep_networks/ergm.userterms", type="source", repos=NULL)
+```
+install.packages("/oscar/home/akhann16/code/hepcep_networks-OLD/ergm.userterms", type="source", repos=NULL)
 ```
 
 Test if the correct `ergm.userterms` is loaded:
